@@ -27,6 +27,7 @@ namespace Willem
 		 void SetSrcRect(const SDL_Rect&);
 
 		 const Vector2& GetSpritePixelSize() { return m_SpritePixelSize; };
+		 const Vector2 GetSpritePixelSizeScaled();
 	private:
 
 		const Vector2 m_SpritePixelSize;

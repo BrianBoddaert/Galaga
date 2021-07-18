@@ -6,8 +6,7 @@ using namespace Willem;
 RenderComponent::RenderComponent(Texture2D* texture)
 	:m_pTexture{texture}
 	, m_SrcRect{0,0,0,0}
-	, m_SpritePixelSize{ 0,0 }
-		
+	, m_SpritePixelSize{ 0,0 }	
 {
 }
 
@@ -47,8 +46,6 @@ void RenderComponent::Render(const Willem::Vector2& pos, const Willem::Vector2& 
 
 }
 
-
-
 Texture2D* RenderComponent::GetTexture()
 {
 	return m_pTexture;
@@ -63,7 +60,20 @@ const SDL_Rect& RenderComponent::GetSrcRect() const
 {
 	return m_SrcRect;
 }
-void  RenderComponent::SetSrcRect(const SDL_Rect& src)
+void RenderComponent::SetSrcRect(const SDL_Rect& src)
 {
 	m_SrcRect = src;
+}
+
+const Vector2 RenderComponent::GetSpritePixelSizeScaled()
+{ 
+	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
+	if (!transform)
+	return m_SpritePixelSize; 
+	else
+	{
+		const Vector3& scale = transform->GetScale();
+		return m_SpritePixelSize * Vector2{ scale.x,scale.y};
+	}
+
 }

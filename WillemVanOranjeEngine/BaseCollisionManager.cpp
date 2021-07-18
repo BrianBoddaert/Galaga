@@ -48,9 +48,9 @@ void BaseCollisionManager::AddCollider(const std::shared_ptr<GameObject>& gameOb
 bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> player, std::shared_ptr<GameObject> collider)
 {
 	const Vector3 pos1 = player->GetComponent<TransformComponent>()->GetPosition();
-	const Vector2 size1 = player->GetComponent<RenderComponent>()->GetSpritePixelSize();
+	const Vector2 size1 = player->GetComponent<RenderComponent>()->GetSpritePixelSizeScaled();
 	const Vector3 pos2 = collider->GetComponent<TransformComponent>()->GetPosition();
-	const Vector2 size2 = collider->GetComponent<RenderComponent>()->GetSpritePixelSize();
+	const Vector2 size2 = collider->GetComponent<RenderComponent>()->GetSpritePixelSizeScaled();
 
 	const Vector2 TriggerOffset = { -(size2.x/1.75f),-(size2.y/ 1.75f) };
 

@@ -17,7 +17,6 @@ namespace Willem
 		virtual void Render(const Willem::Vector2&, const Willem::Vector2&) const {};
 		virtual ~Component() {};
 
-
 		void SetGameObject(GameObject* obj) { m_pGameObject = obj; }
 		GameObject* GetGameObject() { return m_pGameObject; }
 

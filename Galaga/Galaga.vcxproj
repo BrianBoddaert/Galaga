@@ -155,11 +155,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ControlComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minigin.cpp" />
+    <ClCompile Include="MoveCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControlComponent.h" />
     <ClInclude Include="Minigin.h" />
+    <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

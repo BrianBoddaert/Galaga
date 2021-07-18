@@ -32,3 +32,7 @@ Vector2 Willem::operator*(const Vector2& a, float scalar)
 {
 	return Vector2(a.x * scalar, a.y * scalar);
 }
+Vector2 Willem::operator*(const Vector2& a, const Vector2& b)
+{
+	return Vector2(a.x * b.x, a.y * b.y);
+}

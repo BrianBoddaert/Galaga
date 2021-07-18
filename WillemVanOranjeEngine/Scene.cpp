@@ -95,10 +95,6 @@ std::shared_ptr<GameObject> Scene::GetPlayer(int index) const
 	return m_pPlayers[index];
 }
 
-void Scene::SetCurrentMap(const std::shared_ptr<GameObject>& map)
-{
-	m_pCurrentMap = map;
-}
 
 std::shared_ptr<GameObject> Scene::GetCurrentMap() const
 {
@@ -142,18 +138,6 @@ void Scene::RemoveObjectsByName(const std::string& name)
 		if (m_pObjects[i]->GetName() == name)
 			m_pObjects.erase(m_pObjects.begin() + i);
 	}
-}
-
-void Scene::AddMap(const std::shared_ptr<GameObject>& map)
-{
-	m_pMaps.push_back(map);
-	m_pObjects.push_back(map);
-	m_pCurrentMap = map;
-}
-
-std::shared_ptr<GameObject> Scene::GetMap(int index) const
-{
-	return m_pMaps[index];
 }
 
 void Scene::SetGameModeToNext()

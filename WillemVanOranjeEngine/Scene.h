@@ -12,7 +12,6 @@ namespace Willem
 		Versus
 	};
 
-
 	class SceneObject;
 	class Scene
 	{
@@ -34,9 +33,6 @@ namespace Willem
 		std::vector<std::shared_ptr<GameObject>> GetObjectsByTag(const Willem::Tag& tag) const;
 		void AddPlayer(const std::shared_ptr<GameObject>& player);
 		std::shared_ptr<GameObject> GetPlayer(int index) const;
-		void AddMap(const std::shared_ptr<GameObject>& map);
-		std::shared_ptr<GameObject> GetMap(int index) const;
-		void SetCurrentMap(const std::shared_ptr<GameObject>&);
 		std::shared_ptr<GameObject> GetCurrentMap() const;
 		const std::vector< std::shared_ptr<GameObject>>& GetPlayers() const {return m_pPlayers;}
 		void RemoveObjectsByTag(const Willem::Tag& tag);
@@ -51,11 +47,9 @@ namespace Willem
 		explicit Scene(const std::string& name, const GameMode& gameMode);
 		GameMode m_GameMode;
 		const std::string m_Name;
+
 		std::vector< std::shared_ptr<GameObject>> m_pPlayers{};
-
 		std::vector < std::shared_ptr<GameObject>> m_pObjects{};
-
-		std::vector< std::shared_ptr<GameObject>> m_pMaps{};
 		std::shared_ptr<GameObject> m_pCurrentMap;
 	};
 

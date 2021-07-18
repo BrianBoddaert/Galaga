@@ -16,6 +16,9 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h"
 #include "TextComponent.h"
+#include "MoveCommand.h"
+#include "ControlComponent.h"
+
 
 #include "TimerComponent.h"
 #include "AudioClasses.h"
@@ -86,7 +89,7 @@ void Minigin::Initialize()
 
 void Minigin::AssignKeys()
 {
-	//auto& input = InputManager::GetInstance();
+	auto& input = InputManager::GetInstance();
 
 	//for (int i = 0; i < XUSER_MAX_COUNT; i++)
 	//{
@@ -107,10 +110,9 @@ void Minigin::AssignKeys()
 
 	//input.AssignKeyboardKey<PauseCommand>(KeyboardButton::P);
 
-	//input.AssignKeyboardKey<MoveCommand>(KeyboardButton::W, (int)MoveInputDirections::Up);
-	//input.AssignKeyboardKey<MoveCommand>(KeyboardButton::A, (int)MoveInputDirections::Left);
-	//input.AssignKeyboardKey<MoveCommand>(KeyboardButton::S, (int)MoveInputDirections::Down);
-	//input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
+	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::A, (int)MoveInputDirections::Left);
+	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
+
 
 	//input.AssignKeyboardKey<SwitchSceneCommand>(KeyboardButton::PLUS, 0);
 }
@@ -118,9 +120,32 @@ void Minigin::AssignKeys()
 void Minigin::LoadSinglePlayerScene() const
 {
 
-		auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
+	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
 	LoadHUD(scene);
 
+	auto player = std::make_shared<GameObject>("Player1");
+
+	SDL_Rect playerSrcRect = { 109,1,16,16 };
+	const Willem::Vector2 playerHalfSize = { playerSrcRect.w/2.0f,playerSrcRect.h/2.0f };
+	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
+
+	player->AddComponent(new ControlComponent(playerPos));
+
+	player->AddComponent(new RenderComponent(playerSrcRect));
+	player->SetTexture("Galaga.png");
+
+	player->AddComponent(new TransformComponent(playerPos, 2.0f));
+		
+	//player->AddComponent(new HealthComponent(3));							<<< UNCOMMENT
+	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
+
+	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
+	//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+	player->AddTag(Willem::Tag::Player);
+	player->AddTag(Willem::Tag::Player1);
+	//CollisionManager::GetInstance().AddCollider(player);					<<< UNCOMMENT
+	scene.AddPlayer(player);
+// 
 	//{
 	//	auto map = std::make_shared<GameObject>("Map");
 	//	//250,200
@@ -281,134 +306,134 @@ void Minigin::LoadVersusScene() const
 	//scene.SortOnZAxis();
 }
 
-void Minigin::LoadHUD(Willem::Scene& scene) const
+void Minigin::LoadHUD(Willem::Scene&) const
 {
-	{
-		
-		auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
-		player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
+	//{
+	//	
+	//	auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
+	//	player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		player1HUD->AddComponent(new Willem::TextComponent("Player1", font));
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	player1HUD->AddComponent(new Willem::TextComponent("Player1", font));
 
-		scene.Add(player1HUD);
-	}
-	{
-		auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
-		scoreDisplay->AddComponent(new TransformComponent({ 20,70.0f,10 }, 1.0f));
+	//	scene.Add(player1HUD);
+	//}
+	//{
+	//	auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
+	//	scoreDisplay->AddComponent(new TransformComponent({ 20,70.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto scoreCounter = new Willem::TextComponent("Score: 0", font);
-		scoreDisplay->AddComponent(scoreCounter);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	auto scoreCounter = new Willem::TextComponent("Score: 0", font);
+	//	scoreDisplay->AddComponent(scoreCounter);
 
-		scene.Add(scoreDisplay);
-	}
-	{
-		auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
-		livesDisplay->AddComponent(new TransformComponent({ 20.0f ,90.0f,10 }, 1.0f));
+	//	scene.Add(scoreDisplay);
+	//}
+	//{
+	//	auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
+	//	livesDisplay->AddComponent(new TransformComponent({ 20.0f ,90.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto livesCounter = new Willem::TextComponent("Remaining lives: 3", font);
-		livesDisplay->AddComponent(livesCounter);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	auto livesCounter = new Willem::TextComponent("Remaining lives: 3", font);
+	//	livesDisplay->AddComponent(livesCounter);
 
-		scene.Add(livesDisplay);
-	}
-	if (scene.GetGameMode() == Willem::GameMode::CoOp)
-	{
-		{
+	//	scene.Add(livesDisplay);
+	//}
+	//if (scene.GetGameMode() == Willem::GameMode::CoOp)
+	//{
+	//	{
 
-			auto player2HUD = std::make_shared<GameObject>("HUDPlayer2");
-			player2HUD->AddComponent(new TransformComponent({ 20,120.0f,10 }, 1.0f));
+	//		auto player2HUD = std::make_shared<GameObject>("HUDPlayer2");
+	//		player2HUD->AddComponent(new TransformComponent({ 20,120.0f,10 }, 1.0f));
 
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			player2HUD->AddComponent(new Willem::TextComponent("Player2", font));
+	//		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//		player2HUD->AddComponent(new Willem::TextComponent("Player2", font));
 
-			scene.Add(player2HUD);
-		}
-		{
-			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
-			scoreDisplay->AddComponent(new TransformComponent({ 20,140.0f,10 }, 1.0f));
+	//		scene.Add(player2HUD);
+	//	}
+	//	{
+	//		auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
+	//		scoreDisplay->AddComponent(new TransformComponent({ 20,140.0f,10 }, 1.0f));
 
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new Willem::TextComponent("Score: 0", font);
-			scoreDisplay->AddComponent(scoreCounter);
+	//		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//		auto scoreCounter = new Willem::TextComponent("Score: 0", font);
+	//		scoreDisplay->AddComponent(scoreCounter);
 
-			scene.Add(scoreDisplay);
-		}
-		{
-			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
-			livesDisplay->AddComponent(new TransformComponent({ 20.0f ,160.0f,10 }, 1.0f));
+	//		scene.Add(scoreDisplay);
+	//	}
+	//	{
+	//		auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
+	//		livesDisplay->AddComponent(new TransformComponent({ 20.0f ,160.0f,10 }, 1.0f));
 
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new Willem::TextComponent("Remaining lives: 3", font);
-			livesDisplay->AddComponent(livesCounter);
+	//		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//		auto livesCounter = new Willem::TextComponent("Remaining lives: 3", font);
+	//		livesDisplay->AddComponent(livesCounter);
 
-			scene.Add(livesDisplay);
-		}
-	}
-	{
-		auto levelDisplay = std::make_shared<GameObject>("LevelDisplay");
-		levelDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w -100.0f ,100.0f,10 }, 1.0f));
+	//		scene.Add(livesDisplay);
+	//	}
+	//}
+	//{
+	//	auto levelDisplay = std::make_shared<GameObject>("LevelDisplay");
+	//	levelDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w -100.0f ,100.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto levelCounter = new Willem::TextComponent("Level: 1", font);
-		levelDisplay->AddComponent(levelCounter);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	auto levelCounter = new Willem::TextComponent("Level: 1", font);
+	//	levelDisplay->AddComponent(levelCounter);
 
-		scene.Add(levelDisplay);
-	}
-	{
-		auto roundDisplay = std::make_shared<GameObject>("RoundDisplay");
-		roundDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 100.0f ,130.0f,10 }, 1.0f));
+	//	scene.Add(levelDisplay);
+	//}
+	//{
+	//	auto roundDisplay = std::make_shared<GameObject>("RoundDisplay");
+	//	roundDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 100.0f ,130.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto roundCounter = new Willem::TextComponent("Round: 1", font);
-		roundDisplay->AddComponent(roundCounter);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	auto roundCounter = new Willem::TextComponent("Round: 1", font);
+	//	roundDisplay->AddComponent(roundCounter);
 
-		scene.Add(roundDisplay);
-	}
-	{
-		auto pausedDisplay = std::make_shared<GameObject>("PauseDisplay");
-		pausedDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w/2 - 30.0f ,m_WindowSurface->h/2 - 10.0f,10 }, 1.0f));
+	//	scene.Add(roundDisplay);
+	//}
+	//{
+	//	auto pausedDisplay = std::make_shared<GameObject>("PauseDisplay");
+	//	pausedDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w/2 - 30.0f ,m_WindowSurface->h/2 - 10.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 30);
-		auto pausedText = new Willem::TextComponent("Paused", font);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 30);
+	//	auto pausedText = new Willem::TextComponent("Paused", font);
 
-		pausedDisplay->AddComponent(pausedText);
-		pausedDisplay->SetEnabled(false);
-		scene.Add(pausedDisplay);
-	}
-	{
-		auto gameOverDisplay = std::make_shared<GameObject>("GameOverDisplay");
-		gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 40.0f ,m_WindowSurface->h / 2 - 10.0f,10 }, 1.0f));
+	//	pausedDisplay->AddComponent(pausedText);
+	//	pausedDisplay->SetEnabled(false);
+	//	scene.Add(pausedDisplay);
+	//}
+	//{
+	//	auto gameOverDisplay = std::make_shared<GameObject>("GameOverDisplay");
+	//	gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 40.0f ,m_WindowSurface->h / 2 - 10.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 30);
-		auto gameOverText = new Willem::TextComponent("Game Over", font);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 30);
+	//	auto gameOverText = new Willem::TextComponent("Game Over", font);
 
-		gameOverDisplay->AddComponent(gameOverText);
-		gameOverDisplay->SetEnabled(false);
-		scene.Add(gameOverDisplay);
-	}
-	{
-		auto gameOverDisplay = std::make_shared<GameObject>("PressToRestart");
-		gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 100.0f ,m_WindowSurface->h / 2 + 20.0f,10 }, 1.0f));
+	//	gameOverDisplay->AddComponent(gameOverText);
+	//	gameOverDisplay->SetEnabled(false);
+	//	scene.Add(gameOverDisplay);
+	//}
+	//{
+	//	auto gameOverDisplay = std::make_shared<GameObject>("PressToRestart");
+	//	gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 100.0f ,m_WindowSurface->h / 2 + 20.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto gameOverText = new Willem::TextComponent("Press start or P to restart", font);
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	auto gameOverText = new Willem::TextComponent("Press start or P to restart", font);
 
-		gameOverDisplay->AddComponent(gameOverText);
-		gameOverDisplay->SetEnabled(false);
-		scene.Add(gameOverDisplay);
-	}
-	{
-		auto go = std::make_shared<GameObject>("Swearing");
-		go->AddComponent(new TransformComponent({ m_WindowSurface->w / 2.0f ,m_WindowSurface->h / 2.0f ,10 }, 1.0f));
+	//	gameOverDisplay->AddComponent(gameOverText);
+	//	gameOverDisplay->SetEnabled(false);
+	//	scene.Add(gameOverDisplay);
+	//}
+	//{
+	//	auto go = std::make_shared<GameObject>("Swearing");
+	//	go->AddComponent(new TransformComponent({ m_WindowSurface->w / 2.0f ,m_WindowSurface->h / 2.0f ,10 }, 1.0f));
 
-		SDL_Rect srcRect = { 128,83,48,25 };
-		go->AddComponent(new RenderComponent(srcRect));
-		go->SetTexture("Textures/Qbert2.png");
-		go->SetEnabled(false);
-		scene.Add(go);
-	}
+	//	SDL_Rect srcRect = { 128,83,48,25 };
+	//	go->AddComponent(new RenderComponent(srcRect));
+	//	go->SetTexture("Textures/Qbert2.png");
+	//	go->SetEnabled(false);
+	//	scene.Add(go);
+	//}
 }
 
 void Minigin::LoadSceneByGameMode(Willem::GameMode gamemode) const

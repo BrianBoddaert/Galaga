@@ -7,7 +7,6 @@ namespace Willem
 	{
 	public:
 
-
 		virtual ~Observer() = default;
 		virtual void OnNotify(const GameObject* actor, Event event) = 0;
 	};

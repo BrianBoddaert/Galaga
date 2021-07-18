@@ -3,7 +3,7 @@
 #include <vector>
 namespace Willem
 {
-	enum class Tag
+	enum class Tag 
 	{
 		Player1,
 		Player2,
