@@ -30,15 +30,15 @@ namespace Willem
 		Scene& operator=(Scene&& other) = delete;
 
 		std::shared_ptr<GameObject> GetObjectByName(const std::string& name) const;
-		std::vector<std::shared_ptr<GameObject>> GetObjectsByTag(const Willem::Tag& tag) const;
+		std::vector<std::shared_ptr<GameObject>> GetObjectsByTag(const std::string& tag) const;
 		void AddPlayer(const std::shared_ptr<GameObject>& player);
 		std::shared_ptr<GameObject> GetPlayer(int index) const;
 		std::shared_ptr<GameObject> GetCurrentMap() const;
 		const std::vector< std::shared_ptr<GameObject>>& GetPlayers() const {return m_pPlayers;}
-		void RemoveObjectsByTag(const Willem::Tag& tag);
-		void RemovePlayersByTag(const Willem::Tag& tag);
+		void RemoveObjectsByTag(const std::string& tag);
+		void RemovePlayersByTag(const std::string& tag);
 		void RemoveObjectsByName(const std::string& name);
-		void RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj);
+		void RemoveObjectsByObject(GameObject* obj);
 		void ClearObjects();
 		const GameMode& GetGameMode() const { return m_GameMode; };
 		void SetGameModeToNext();

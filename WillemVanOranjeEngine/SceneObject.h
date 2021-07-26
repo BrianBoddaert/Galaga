@@ -3,17 +3,6 @@
 #include <vector>
 namespace Willem
 {
-	enum class Tag 
-	{
-		Player1,
-		Player2,
-		Player,
-		Coily,
-		WrongWay,
-		Disc,
-		SlickSam,
-		Enemy
-	};
 
 	class SceneObject
 	{
@@ -28,10 +17,10 @@ namespace Willem
 		SceneObject& operator=(const SceneObject& other) = delete;
 		SceneObject& operator=(SceneObject&& other) = delete;
 
-		virtual void AddTag(const Tag& tag) { m_Tags.push_back(tag); }
-		virtual bool HasTag(const Tag& tag1) const
+		virtual void AddTag(const std::string& tag) { m_Tags.push_back(tag); }
+		virtual bool HasTag(const std::string& tag1) const
 		{
-			for (const Tag& tag2 : m_Tags)
+			for (const std::string& tag2 : m_Tags)
 			{
 				if (tag1 == tag2)
 					return true;
@@ -42,6 +31,6 @@ namespace Willem
 		const std::string& GetName() const { return m_Name; };
 	private:
 		const std::string m_Name;
-		std::vector<Tag> m_Tags;
+		std::vector<std::string> m_Tags;
 	};
 }

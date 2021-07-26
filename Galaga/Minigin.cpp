@@ -24,6 +24,10 @@
 #include "AudioClasses.h"
 #include <Xinput.h>
 #include <glm\vec2.hpp>
+#include "CollisionManager.h"
+#include "ShootCommand.h"
+#include "ShootComponent.h"
+#include "EnemyManager.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -52,7 +56,7 @@ void Minigin::Initialize()
 	//Mix_Chunk* soundEffect = Mix_LoadWAV("soundEffect.wav"); // Wav files
 
 	m_Window = SDL_CreateWindow(
-		"QBert",
+		"Galaga",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
 		640,
@@ -71,15 +75,15 @@ void Minigin::Initialize()
 
 	Willem::ServiceLocator::SetSoundSystem(new LoggingSoundSystem(new SdlSoundSystem()));
 	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Jump, "../Data/Audio/jump.mp3");
-	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fall, "../Data/Audio/fall.mp3");
-	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Lift, "../Data/Audio/lift.mp3");
-	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Victory, "../Data/Audio/victory.mp3");
+	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fall, "../Data/Audio/fall.mp3");
+	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Lift, "../Data/Audio/lift.mp3");
+	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Victory, "../Data/Audio/victory.mp3");
 	//ServiceLocator::GetSoundSystem().AddSoundToLibrary(MusicId::Ambient, "../Data/royaltyFreeSong.mp3");
 
 	//ServiceLocator::GetSoundSystem().QueueSound(MusicId::Ambient,0.3f);
 	////Mix_Music* music = Mix_LoadMUS("../Data/mortalkombat.mp3"); // Wav, mp3 both work
 
-	//ServiceLocator::GetSoundSystem().QueueSound(AudioId::Fire, 1.0f);
+	//ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 1.0f);
 
 }
 
@@ -112,7 +116,7 @@ void Minigin::AssignKeys()
 
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::A, (int)MoveInputDirections::Left);
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
-
+	input.AssignKeyboardKey<ShootCommand>(KeyboardButton::SPACE, 0);
 
 	//input.AssignKeyboardKey<SwitchSceneCommand>(KeyboardButton::PLUS, 0);
 }
@@ -127,22 +131,24 @@ void Minigin::LoadSinglePlayerScene() const
 
 	SDL_Rect playerSrcRect = { 109,1,16,16 };
 	const Willem::Vector2 playerHalfSize = { playerSrcRect.w/2.0f,playerSrcRect.h/2.0f };
-	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
+	const float offsetFromBottom = 40.0f;
+	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h - float(playerSrcRect.h) - offsetFromBottom,1 };
+//	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
 
 	player->AddComponent(new ControlComponent(playerPos));
 
 	player->AddComponent(new RenderComponent(playerSrcRect));
-	player->SetTexture("Galaga.png");
+	player->SetTexture("Galaga2.png");
 
 	player->AddComponent(new TransformComponent(playerPos, 2.0f));
-		
+	player->AddComponent(new ShootComponent());
 	//player->AddComponent(new HealthComponent(3));							<<< UNCOMMENT
 	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
 
 	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 	//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
-	player->AddTag(Willem::Tag::Player);
-	player->AddTag(Willem::Tag::Player1);
+	player->AddTag("Player");
+	player->AddTag("Player1");
 	//CollisionManager::GetInstance().AddCollider(player);					<<< UNCOMMENT
 	scene.AddPlayer(player);
 // 
@@ -176,8 +182,8 @@ void Minigin::LoadSinglePlayerScene() const
 	//	player->AddWatcher(new LivesObserver());
 	//	player->AddWatcher(new ScoreObserver());
 	//	player->AddComponent(new MoveComponent(0));
-	//	player->AddTag(Willem::Tag::Player);
-	//	player->AddTag(Willem::Tag::Player1);
+	//	player->AddTag(Tag::Player);
+	//	player->AddTag(Tag::Player1);
 	//	CollisionManager::GetInstance().AddCollider(player);
 	//	scene.AddPlayer(player);
 	//}
@@ -224,8 +230,8 @@ void Minigin::LoadCoOpScene() const
 	//		player->AddWatcher(new LivesObserver());
 	//		player->AddWatcher(new ScoreObserver());
 	//		player->AddComponent(new MoveComponent(27));
-	//		player->AddTag(Willem::Tag::Player);
-	//		player->AddTag(Willem::Tag::Player1);
+	//		player->AddTag(Tag::Player);
+	//		player->AddTag(Tag::Player1);
 	//		CollisionManager::GetInstance().AddCollider(player);
 	//		scene.AddPlayer(player);
 	//	}
@@ -250,8 +256,8 @@ void Minigin::LoadCoOpScene() const
 	//		player->AddWatcher(new LivesObserver());
 	//		player->AddWatcher(new ScoreObserver());
 	//		player->AddComponent(new MoveComponent(6));
-	//		player->AddTag(Willem::Tag::Player);
-	//		player->AddTag(Willem::Tag::Player2);
+	//		player->AddTag(Tag::Player);
+	//		player->AddTag(Tag::Player2);
 	//		CollisionManager::GetInstance().AddCollider(player);
 	//		scene.AddPlayer(player);
 	//	}
@@ -297,8 +303,8 @@ void Minigin::LoadVersusScene() const
 	//		player->AddWatcher(new LivesObserver());
 	//		player->AddWatcher(new ScoreObserver());
 	//		player->AddComponent(new MoveComponent(0));
-	//		player->AddTag(Willem::Tag::Player);
-	//		player->AddTag(Willem::Tag::Player1);
+	//		player->AddTag(Tag::Player);
+	//		player->AddTag(Tag::Player1);
 	//		CollisionManager::GetInstance().AddCollider(player);
 	//		scene.AddPlayer(player);
 	//	}
@@ -480,8 +486,8 @@ void Minigin::Run()
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
-	//auto& enemyManager = EnemyManager::GetInstance();
-	//auto& collisionManager = CollisionManager::GetInstance();
+	auto& enemyManager = EnemyManager::GetInstance();
+	auto& collisionManager = CollisionManager::GetInstance();
 	auto& input = InputManager::GetInstance();
 
 	bool doContinue = true;
@@ -489,6 +495,8 @@ void Minigin::Run()
 	float lag = 0.0f;
 	m_Gamestate = GameState::Playing;
 	std::thread audioThread(&SoundSystem::Update, &ServiceLocator::GetSoundSystem());
+
+	enemyManager.SpawnAliens();
 
 	while (doContinue)
 	{
@@ -505,8 +513,8 @@ void Minigin::Run()
 			if (m_Gamestate == GameState::Playing)
 			{
 				sceneManager.Update(deltaTime);
-				//enemyManager.Update(deltaTime);
-				//collisionManager.Update(deltaTime);
+				enemyManager.Update(deltaTime);
+				collisionManager.Update(deltaTime);
 			}
 			lag -= MsPerUpdate;
 		}
@@ -527,7 +535,7 @@ void Minigin::Run()
 void Minigin::ClearGame()
 {
 	//EnemyManager::GetInstance().Reset();
-	//CollisionManager::GetInstance().ClearColliders();
+	CollisionManager::GetInstance().ClearColliders();
 
 	auto& sceneManager = Willem::SceneManager::GetInstance();
 	auto scene = sceneManager.GetCurrentScene();

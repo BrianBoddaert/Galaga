@@ -13,7 +13,7 @@ namespace Willem
 		void AddCollider(const std::shared_ptr<GameObject>& gameObject);
 
 		void RemoveColliderByObject(const std::shared_ptr<GameObject>& obj);
-		void RemoveCollidersByTag(const Willem::Tag& tag);
+		void RemoveCollidersByTag(const std::string& tag);
 		void RemoveCollidersByName(const std::string& name);
 		void ClearColliders();
 	protected:

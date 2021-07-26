@@ -1,0 +1,140 @@
+#include "stdafx.h"
+#include "EnemyManager.h"
+#include <memory>
+#include <SDL.h>
+#include "TransformComponent.h"
+#include "RenderComponent.h"
+#include "HealthComponent.h"
+#include "CollisionManager.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "Minigin.h"
+#include "AIFlyComponent.h"
+
+using namespace Willem;
+
+void EnemyManager::SpawnAliens()
+{
+	SpawnBee();
+}
+void EnemyManager::SpawnBee()
+{
+	auto bee = std::make_shared<Willem::GameObject>("Bee");
+
+	const SDL_Rect srcRect = { 0,19,16,16 };
+	const SDL_Rect halfSize = { srcRect.x/2,srcRect.y/2,srcRect.w/2,srcRect.h/2 };
+	const SDL_Surface* surface = Minigin::GetWindowSurface();
+	const Vector3 spawnPos = { surface->w/2.0f - halfSize.w,0,0 };
+
+	bee->AddComponent(new RenderComponent(srcRect));
+	bee->SetTexture("Galaga2.png");
+	bee->AddComponent(new TransformComponent(spawnPos, 2.0f));
+	bee->AddComponent(new HealthComponent(1, false));
+	bee->AddComponent(new AIFlyComponent(bee.get()));
+	bee->AddTag("Bee");
+	bee->AddTag("Alien");
+
+	CollisionManager::GetInstance().AddCollider(bee);
+	SceneManager::GetInstance().GetCurrentScene()->Add(bee);
+}
+
+void EnemyManager::SpawnButterfly(){}
+void EnemyManager::SpawnBoss(){}
+
+void EnemyManager::ClaimSpotInBeeFormation(Willem::GameObject* go)
+{
+	for (int i = 0; i < m_BeeFormationSize * m_BeeFormationRowCount; i++)
+	{
+		if (m_pBeeFormation[i] == nullptr)
+		{
+			m_pBeeFormation[i] = go;
+			return;
+		}
+	}
+}
+void EnemyManager::ClaimSpotInButterflyFormation(Willem::GameObject*)
+{
+
+}
+void EnemyManager::ClaimSpotInBossFormation(Willem::GameObject*)
+{
+
+}
+
+void EnemyManager::UnclaimSpotInFormation(const Willem::GameObject* go)
+{
+	UnclaimSpotInBeeFormation(go);
+	UnclaimSpotInButterflyFormation(go);
+	UnclaimSpotInBossFormation(go);
+}
+void EnemyManager::UnclaimSpotInBeeFormation(const Willem::GameObject* go)
+{
+	for (int i = 0; i < m_BeeFormationSize * m_BeeFormationRowCount; i++)
+	{
+		if (m_pBeeFormation[i] == go)
+		{
+			m_pBeeFormation[i] = nullptr;
+			return;
+		}
+	}
+}
+void EnemyManager::UnclaimSpotInButterflyFormation(const Willem::GameObject* go)
+{
+	for (int i = 0; i < m_ButterflyFormationSize * m_ButterflyFormationRowCount; i++)
+	{
+		if (m_pButterflyFormation[i] == go)
+		{
+			m_pButterflyFormation[i] = nullptr;
+			return;
+		}
+	}
+}
+void EnemyManager::UnclaimSpotInBossFormation(const Willem::GameObject* go)
+{
+	for (int i = 0; i < m_BossFormationSize * m_BossFormationRowCount; i++)
+	{
+		if (m_pBossFormation[i] == go)
+		{
+			m_pBossFormation[i] = nullptr;
+			return;
+		}
+	}
+}
+
+Vector2 EnemyManager::GetBeeFormationPosition(const Willem::GameObject* go) const
+{
+	const Vector2 offset = { 10.0f ,5.0f};
+	const SDL_Rect srcRect = { 0,19,16,16 };
+	const Vector2 formationPos = {10,50};
+	float index;
+
+	for (int i = 0; i < m_BeeFormationSize; i++)
+	{
+		if (m_pBeeFormation[i] == go)
+		{
+			index = i;
+		}
+	}
+
+	Vector2 position = formationPos;
+
+	if (index > m_BeeFormationSize)
+	{
+		index -= m_BeeFormationSize;
+		position.y += offset.y;
+	}
+
+	position.x = formationPos.x + (index * offset.x) + (index* srcRect.w);
+	
+	return position;
+}
+
+Vector2 EnemyManager::GetButterflyFormationPosition(const Willem::GameObject*) const
+{
+	return Vector2{ 0,0 };
+}
+
+Vector2 EnemyManager::GetBossFormationPosition(const Willem::GameObject*) const
+{
+	return Vector2{ 0,0 };
+}

@@ -19,6 +19,9 @@
     <Filter Include="Components">
       <UniqueIdentifier>{1475d15a-f0d7-4aca-b8f9-9067eea57d78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="States">
+      <UniqueIdentifier>{bd15647f-e0a9-48d2-8623-7a562792dcad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -33,6 +36,39 @@
     <ClCompile Include="ControlComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="ShootCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ShootComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThrusterComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIFlyComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BombRunState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnDiveState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="FormationState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="AlienState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -46,6 +82,39 @@
     </ClInclude>
     <ClInclude Include="ControlComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ShootCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ShootComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThrusterComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIFlyComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AlienState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="BombRunState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="FormationState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnDiveState.h">
+      <Filter>States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

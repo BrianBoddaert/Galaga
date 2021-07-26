@@ -155,16 +155,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIFlyComponent.cpp" />
+    <ClCompile Include="AlienState.cpp" />
+    <ClCompile Include="BombRunState.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="ControlComponent.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="FormationState.cpp" />
+    <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="MoveCommand.cpp" />
+    <ClCompile Include="ShootCommand.cpp" />
+    <ClCompile Include="ShootComponent.cpp" />
+    <ClCompile Include="SpawnDiveState.cpp" />
+    <ClCompile Include="ThrusterComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIFlyComponent.h" />
+    <ClInclude Include="AlienState.h" />
+    <ClInclude Include="BombRunState.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="ControlComponent.h" />
+    <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="FormationState.h" />
+    <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="MoveCommand.h" />
+    <ClInclude Include="ShootCommand.h" />
+    <ClInclude Include="ShootComponent.h" />
+    <ClInclude Include="SpawnDiveState.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ThrusterComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WillemVanOranjeEngine\WillemVanOranjeEngine.vcxproj">

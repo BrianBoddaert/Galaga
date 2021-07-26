@@ -9,7 +9,7 @@ using namespace Willem;
 
 ControlComponent::ControlComponent(const Willem::Vector3& spawn)
 	:m_SpawnPosition{ spawn }
-	,m_Speed{100}
+	,m_Speed{200}
 {
 
 	Initialize();

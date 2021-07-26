@@ -2,12 +2,12 @@
 
 
 Willem::Subject::Subject()
-	:m_ObserverCount{ 0 }, m_pObservers{nullptr}
+	:m_pObservers{nullptr}
 {}
 
 Willem::Subject::~Subject()
 {
-	for (size_t i = 0; i < m_ObserverCount; i++)
+	for (size_t i = 0; i < m_pObservers.size(); i++)
 	{
 		delete m_pObservers[i];
 	}
@@ -15,13 +15,12 @@ Willem::Subject::~Subject()
 
 void Willem::Subject::AddObserver(Observer* observer)
 {
-	m_pObservers[m_ObserverCount] = observer;
-	m_ObserverCount++;
+	m_pObservers.push_back(observer);
 }
 
 void Willem::Subject::RemoveObserver(Observer* observer)
 {
-	for (size_t i = 0; i < m_ObserverCount; i++)
+	for (size_t i = 0; i < m_pObservers.size(); i++)
 	{
 		if (m_pObservers[i] == observer)
 		{
@@ -33,7 +32,7 @@ void Willem::Subject::RemoveObserver(Observer* observer)
 
 void Willem::Subject::Notify(const GameObject* actor, Event event)
 {
-	for (size_t i = 0; i < m_ObserverCount; i++)
+	for (size_t i = 0; i < m_pObservers.size(); i++)
 		m_pObservers[i]->OnNotify(actor, event);
 	
 }

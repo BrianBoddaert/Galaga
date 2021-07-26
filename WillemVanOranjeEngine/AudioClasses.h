@@ -36,15 +36,15 @@ namespace Willem
 	public:
 		virtual ~SoundSystem() = default;
 
-		virtual void QueueSound(const EffectId&, float = 1.0f) = 0;
-		virtual void QueueSound(const MusicId&, float = 1.0f) = 0;
+		virtual void QueueSound(const EffectId&, float) = 0;
+		virtual void QueueSound(const MusicId&, float) = 0;
 		virtual void AddSoundToLibrary(const EffectId&, const std::string&) = 0;
 		virtual void AddSoundToLibrary(const MusicId&, const std::string&) = 0;
 		virtual void Update() = 0;
 		virtual void TogglePause() = 0;
 	protected:
-		virtual void Play(const EffectId&, float = 1.0f) = 0;
-		virtual void Play(const MusicId&, float = 1.0f) = 0;
+		virtual void Play(const EffectId&, float) = 0;
+		virtual void Play(const MusicId&, float) = 0;
 	public:
 
 		SoundSystem() = default;
@@ -201,10 +201,10 @@ namespace Willem
 		NullSoundSystem& operator=(const NullSoundSystem&) = delete;
 		NullSoundSystem(NullSoundSystem&&) = delete;
 		NullSoundSystem& operator= (NullSoundSystem&&) = delete;
-		void QueueSound(const EffectId&, float = 1.0f) override {};
-		void QueueSound(const MusicId&, float = 1.0f) override {};
-		void Play(const EffectId&, float = 1.0f) override {};
-		void Play(const MusicId&, float = 1.0f) override {};
+		void QueueSound(const EffectId&, float) override {};
+		void QueueSound(const MusicId&, float) override {};
+		void Play(const EffectId&, float ) override {};
+		void Play(const MusicId&, float) override {};
 		void Update() override {};
 		void AddSoundToLibrary(const EffectId&, const std::string&) override {};
 		void AddSoundToLibrary(const MusicId&, const std::string&) override {};
@@ -275,8 +275,8 @@ namespace Willem
 		bool m_Muted{};
 
 	protected:
-		void Play(const EffectId&, float = 1.0f) override {}
-		void Play(const MusicId&, float = 1.0f) override {};
+		void Play(const EffectId&, float) override {}
+		void Play(const MusicId&, float) override {};
 
 	};
 

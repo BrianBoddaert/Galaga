@@ -35,7 +35,7 @@ void BaseCollisionManager::RemoveColliderByObject(const std::shared_ptr<GameObje
 }
 void BaseCollisionManager::AddCollider(const std::shared_ptr<GameObject>& gameObject)
 {
-	if (gameObject->HasTag(Willem::Tag::Player))
+	if (gameObject->HasTag("Player"))
 	{
 		m_pPlayers.push_back(gameObject);
 	}
@@ -66,7 +66,7 @@ bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> player, std::
 	return false;
 }
 
-void BaseCollisionManager::RemoveCollidersByTag(const Willem::Tag& tag)
+void BaseCollisionManager::RemoveCollidersByTag(const std::string& tag)
 {
 	for (size_t i = 0; i < m_pColliders.size(); i++)
 	{

@@ -3,9 +3,7 @@
 
 enum class MoveInputDirections
 {
-	Up,
 	Right,
-	Down,
 	Left,
 	Count
 };

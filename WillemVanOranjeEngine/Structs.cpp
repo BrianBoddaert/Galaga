@@ -7,6 +7,27 @@ Vector3 Willem::operator-(const Vector3& a, const Vector3& b)
 	return Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
+Vector3 Willem::operator+(const Vector3& a, const Vector3& b)
+{
+	return Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+}
+
+Vector3 Willem::Vector3::operator+=(const Vector3& b)
+{
+	x += b.x;
+	y += b.y;
+	z += b.z;
+	return Vector3(x, y, z);
+}
+
+Vector3 Willem::Vector3::operator-=(const Vector3& b)
+{
+	x -= b.x;
+	y -= b.y;
+	z -= b.z;
+	return Vector3(x, y, z);
+}
+
 bool Willem::operator==(const Vector3& a, const Vector3& b)
 {
 	float x = abs(a.x - b.x);

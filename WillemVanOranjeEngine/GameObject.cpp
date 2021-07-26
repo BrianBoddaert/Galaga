@@ -1,13 +1,9 @@
-
 #include "TransformComponent.h"
-
 #include "RenderComponent.h"
 #include "TextComponent.h"
-
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-
 #include "Subject.h"
 
 
@@ -99,7 +95,7 @@ void Willem::GameObject::AddWatcher(Observer* obs)
 	m_pActorChanged->AddObserver(obs);
 }
 
-void Willem::GameObject::Notify(Event event)
+void Willem::GameObject::Notify(const Event& event)
 {
 	m_pActorChanged->Notify(this,event);
 }

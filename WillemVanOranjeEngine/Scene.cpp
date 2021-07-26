@@ -100,7 +100,7 @@ std::shared_ptr<GameObject> Scene::GetCurrentMap() const
 {
 	return m_pCurrentMap;
 }
-void Scene::RemoveObjectsByTag(const Willem::Tag& tag)
+void Scene::RemoveObjectsByTag(const std::string &tag)
 {
 	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
@@ -109,7 +109,7 @@ void Scene::RemoveObjectsByTag(const Willem::Tag& tag)
 	}
 }
 
-void Scene::RemovePlayersByTag(const Willem::Tag& tag)
+void Scene::RemovePlayersByTag(const std::string& tag)
 {
 	for (size_t i = 0; i < m_pPlayers.size(); i++)
 	{
@@ -118,11 +118,11 @@ void Scene::RemovePlayersByTag(const Willem::Tag& tag)
 	}
 }
 
-void Scene::RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj)
+void Scene::RemoveObjectsByObject(GameObject* obj)
 {
 	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
-		if (m_pObjects[i] == obj)
+		if (m_pObjects[i].get() == obj)
 			m_pObjects.erase(m_pObjects.begin() + i);
 	}
 }
@@ -149,7 +149,7 @@ void Scene::SetGameModeToNext()
 
 }
 
-std::vector<std::shared_ptr<GameObject>> Scene::GetObjectsByTag(const Willem::Tag& tag) const
+std::vector<std::shared_ptr<GameObject>> Scene::GetObjectsByTag(const std::string& tag) const
 {
 	std::vector<std::shared_ptr<GameObject>> objects;
 	for (size_t i = 0; i < m_pObjects.size(); i++)

@@ -1,20 +1,12 @@
 #pragma once
 #include <iostream>
 #include "SceneObject.h"
+#include "Event.h"
 #include <vector>
 
 
 namespace Willem
 {
-	enum class Event
-	{
-		ActorDied,
-		ScoreSet,
-		ColorChanged = 25,
-		CoilyHitWithFlyingDisc = 500,
-		DiscLeftAtEndOfTheStage = 50,
-		CatchSlickOrSam = 300
-	};
 
 	class Observer;
 	class Subject;
@@ -33,7 +25,7 @@ namespace Willem
 		void AddWatcher(Observer*);
 
 		void SetEnabled(bool);
-		void Notify(Event event);
+		void Notify(const Event& event);
 
 		template<typename T>
 		T* GetComponent() const

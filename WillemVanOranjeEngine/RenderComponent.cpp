@@ -68,6 +68,7 @@ void RenderComponent::SetSrcRect(const SDL_Rect& src)
 const Vector2 RenderComponent::GetSpritePixelSizeScaled()
 { 
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
+	
 	if (!transform)
 	return m_SpritePixelSize; 
 	else
