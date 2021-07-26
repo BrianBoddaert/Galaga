@@ -35,13 +35,22 @@ namespace Willem
 
 		Vector2() {};
 
-		Vector2& Normalize()
+		Vector2 Normalize()
 		{
-			float sum = sqrt(x * x + y * y);
-			x = abs(x) / sum;
-			y = abs(y) / sum;
+			float sum = Magnitude();
+			float X = x;
+			float Y = y;
 
-			return *this;
+			X = abs(X) / sum;
+			Y = abs(Y) / sum;
+
+			if (x < 0)
+				X *= -1;
+
+			if (y < 0)
+				Y *= -1;
+
+			return Vector2(X,Y);
 		}
 		float Magnitude()
 		{

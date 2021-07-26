@@ -30,6 +30,8 @@ protected:
 	void Enter() override;
 	void Exit() override;
 
+	float DirectionToLocalOrientationAngle(const Willem::Vector2& dir);
+
 	DiveStages m_Stage;
 
 	const float m_Speed;

@@ -14,8 +14,8 @@ using namespace Willem;
 
 SpawnDiveState::SpawnDiveState(Willem::GameObject* go) noexcept
 	:AlienState{go}
-	, m_Speed{ 100 }
-	, m_RotationSpeed{ float(M_PI) }
+	, m_Speed{ 250 }
+	, m_RotationSpeed{ 4.0f }
 	, m_CircularTurnRadians{ -(M_PI / 2) }
 	, m_Stage{ DiveStages::FlyDownDiagonally }
 {
@@ -37,15 +37,12 @@ void SpawnDiveState::Update(float deltaT)
 	{
 		Vector2 distanceTravelled = m_DestinationDirection * (m_Speed * deltaT);
 		transform->SetPosition(pos + distanceTravelled);
-		// The below two lines are done to revert the effects of the inversed y coordinate.
-		float angle = atan2(m_DestinationDirection.y * -1, m_DestinationDirection.x);
-		angle = (M_PI * 2) - abs(angle);
-		// This is done because the angle 0 is set upwards instead of to the right.
-		m_RotationRadians = angle + M_PI / 2;
+
+		m_RotationRadians = DirectionToLocalOrientationAngle(m_DestinationDirection);
 
 		// Finished condition
-		const float parkingMinimalOffset = 1.0f;
-		if ((pos - m_DestinationPosition).Magnitude() <= parkingMinimalOffset)
+		const float minimalOffset = 0.015f * m_Speed;
+		if ((pos - m_DestinationPosition).Magnitude() <= minimalOffset)
 		{
 			m_Stage = DiveStages::FlyInCircle;
 			m_CircularTurnCenter = pos + Vector2(0, 50);
@@ -86,24 +83,22 @@ void SpawnDiveState::Update(float deltaT)
 			EnemyManager& enemyManager = EnemyManager::GetInstance();
 			enemyManager.ClaimSpotInBeeFormation(m_pGameObject);
 			m_DestinationPosition = enemyManager.GetBeeFormationPosition(m_pGameObject);
-			m_DestinationDirection = (m_DestinationPosition - pos).Normalize();
+			Vector2 direction = (m_DestinationPosition - pos); // not yet normalized
+			m_DestinationDirection = direction.Normalize();
+
 		}
 	}
 
 	if (m_Stage == DiveStages::ReturnToFormation)
 	{
 		Vector2 distanceTravelled = m_DestinationDirection * (m_Speed * deltaT);
-		transform->SetPosition(pos + distanceTravelled);
-		// The below two lines are done to revert the effects of the inversed y coordinate.
-		float angle = atan2(m_DestinationDirection.y * -1, m_DestinationDirection.x);
-		angle = (M_PI * 2) - abs(angle);
-		// This is done because the angle 0 is set upwards instead of to the right.
-		m_RotationRadians = angle + M_PI / 2;
-		
+		transform->SetPosition(pos + distanceTravelled);		
+
+		m_RotationRadians = DirectionToLocalOrientationAngle(m_DestinationDirection);
 
 		// Finished condition
-		const float parkingMinimalOffset = 1.0f;
-		if ((pos - m_DestinationPosition).Magnitude() <= parkingMinimalOffset)
+		const float minimalOffset = 0.015f * m_Speed;
+		if ((pos - m_DestinationPosition).Magnitude() <= minimalOffset)
 			m_StateFinished = true;
 
 
@@ -125,12 +120,27 @@ void SpawnDiveState::Enter()
 	transform->SetPosition({ surface->w / 2.0f - halfSize.w,0,0 });
 	m_Stage = DiveStages::FlyDownDiagonally;
 
-	m_DestinationPosition = { float(surface->w - halfSize.w), float(surface->h / 2.0f - halfSize.h) };
-	m_DestinationDirection = (m_DestinationPosition - pos).Normalize();
+	float borderOffset = 100.0f;
+	m_DestinationPosition = { float(surface->w - halfSize.w - borderOffset), float(surface->h / 2.0f - halfSize.h) };
+	Vector2 direction = (m_DestinationPosition - pos); // not yet normalized
+	m_DestinationDirection = direction.Normalize();
+
+
 }
 void SpawnDiveState::Exit() {}
 
 AlienState* SpawnDiveState::GetFollowUpState() const
 {
 	return new FormationState(m_pGameObject);
+}
+
+float SpawnDiveState::DirectionToLocalOrientationAngle(const Vector2& dir )
+{
+	float angle = atan2(dir.y, dir.x);
+	// My angle to sprite can't handle negative numbers so I do this.
+	if (angle < 0)
+		angle = (M_PI * 2) - abs(angle);
+	// This is done because the angle 0 is set upwards instead of to the right.
+	 angle += M_PI / 2;
+	 return angle;
 }
