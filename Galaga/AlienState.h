@@ -16,7 +16,7 @@ public:
 	AlienState& operator=(const AlienState& other) = delete;
 	AlienState& operator=(AlienState&& other) = delete;
 
-	virtual void Update(float deltaT) {};
+	virtual void Update(float) {};
 
 	bool GetStateFinished() const { return m_StateFinished; }
 	virtual AlienState* GetFollowUpState() const = 0;

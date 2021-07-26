@@ -16,7 +16,7 @@ SpawnDiveState::SpawnDiveState(Willem::GameObject* go) noexcept
 	:AlienState{go}
 	, m_Speed{ 250 }
 	, m_RotationSpeed{ 4.0f }
-	, m_CircularTurnRadians{ -(M_PI / 2) }
+	, m_CircularTurnRadians{ -float(M_PI / 2) }
 	, m_Stage{ DiveStages::FlyDownDiagonally }
 {
 	Enter();
@@ -30,7 +30,6 @@ SpawnDiveState::~SpawnDiveState()
 void SpawnDiveState::Update(float deltaT)
 {
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
-	const SDL_Surface* surface = Minigin::GetWindowSurface();
 	const Vector3& pos = transform->GetPosition();
 
 	if (m_Stage == DiveStages::FlyDownDiagonally)
@@ -48,19 +47,6 @@ void SpawnDiveState::Update(float deltaT)
 			m_CircularTurnCenter = pos + Vector2(0, 50);
 		}
 
-
-		//const float borderOffset = 100.0f;
-
-		//// cos of 45 degrees calculates the length of both sides if the hypothenuse is length 1
-		//float xyLength = cos(float(M_PI) / 4.0f) * (m_Speed * deltaT);
-		//transform->SetPosition(pos + Vector2(xyLength, xyLength));
-		//m_RotationRadians = float(M_PI - M_PI / 4.0);
-
-		//if (pos.x >= surface->w - borderOffset)
-		//{
-		//	m_Stage = DiveStages::FlyInCircle;
-		//	m_CircularTurnCenter = pos + Vector2(0, 50);
-		//}
 	}
 
 	if (m_Stage == DiveStages::FlyInCircle)
@@ -139,8 +125,8 @@ float SpawnDiveState::DirectionToLocalOrientationAngle(const Vector2& dir )
 	float angle = atan2(dir.y, dir.x);
 	// My angle to sprite can't handle negative numbers so I do this.
 	if (angle < 0)
-		angle = (M_PI * 2) - abs(angle);
+		angle = float((M_PI * 2.0) - abs(angle));
 	// This is done because the angle 0 is set upwards instead of to the right.
-	 angle += M_PI / 2;
+	 angle += float(M_PI / 2.0);
 	 return angle;
 }

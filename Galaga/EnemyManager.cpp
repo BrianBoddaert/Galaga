@@ -10,13 +10,38 @@
 #include "Scene.h"
 #include "Minigin.h"
 #include "AIFlyComponent.h"
+#include "TxtParser.h"
 
 using namespace Willem;
 
+EnemyManager::EnemyManager()
+{
+	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
+}
+
+void EnemyManager::Update(float deltaT)
+{
+	if (m_SpawningEnemies)
+	{
+		if (m_pBeeFormation.size() < m_BeeFormationLocations.size())
+		{
+			m_SpawnEnemyTimer += deltaT;
+
+			if (m_SpawnEnemyTimer >= m_SpawnEnemyInterval)
+			{
+				m_SpawnEnemyTimer = 0.0f;
+				SpawnBee();
+			}
+		}
+	}
+
+}
+
 void EnemyManager::SpawnAliens()
 {
-	SpawnBee();
+	m_SpawningEnemies = true;
 }
+
 void EnemyManager::SpawnBee()
 {
 	auto bee = std::make_shared<Willem::GameObject>("Bee");
@@ -37,20 +62,13 @@ void EnemyManager::SpawnBee()
 	CollisionManager::GetInstance().AddCollider(bee);
 	SceneManager::GetInstance().GetCurrentScene()->Add(bee);
 }
-
 void EnemyManager::SpawnButterfly(){}
 void EnemyManager::SpawnBoss(){}
 
 void EnemyManager::ClaimSpotInBeeFormation(Willem::GameObject* go)
 {
-	for (int i = 0; i < m_BeeFormationSize * m_BeeFormationRowCount; i++)
-	{
-		if (m_pBeeFormation[i] == nullptr)
-		{
-			m_pBeeFormation[i] = go;
-			return;
-		}
-	}
+	if (m_pBeeFormation.size() < m_BeeFormationLocations.size())
+		m_pBeeFormation.push_back(go);
 }
 void EnemyManager::ClaimSpotInButterflyFormation(Willem::GameObject*)
 {
@@ -69,7 +87,7 @@ void EnemyManager::UnclaimSpotInFormation(const Willem::GameObject* go)
 }
 void EnemyManager::UnclaimSpotInBeeFormation(const Willem::GameObject* go)
 {
-	for (int i = 0; i < m_BeeFormationSize * m_BeeFormationRowCount; i++)
+	for (int i = 0; i < m_pBeeFormation.size(); i++)
 	{
 		if (m_pBeeFormation[i] == go)
 		{
@@ -80,7 +98,7 @@ void EnemyManager::UnclaimSpotInBeeFormation(const Willem::GameObject* go)
 }
 void EnemyManager::UnclaimSpotInButterflyFormation(const Willem::GameObject* go)
 {
-	for (int i = 0; i < m_ButterflyFormationSize * m_ButterflyFormationRowCount; i++)
+	for (int i = 0; i < m_pButterflyFormation.size(); i++)
 	{
 		if (m_pButterflyFormation[i] == go)
 		{
@@ -91,7 +109,7 @@ void EnemyManager::UnclaimSpotInButterflyFormation(const Willem::GameObject* go)
 }
 void EnemyManager::UnclaimSpotInBossFormation(const Willem::GameObject* go)
 {
-	for (int i = 0; i < m_BossFormationSize * m_BossFormationRowCount; i++)
+	for (int i = 0; i < m_pBossFormation.size(); i++)
 	{
 		if (m_pBossFormation[i] == go)
 		{
@@ -103,12 +121,9 @@ void EnemyManager::UnclaimSpotInBossFormation(const Willem::GameObject* go)
 
 Vector2 EnemyManager::GetBeeFormationPosition(const Willem::GameObject* go) const
 {
-	const Vector2 offset = { 10.0f ,5.0f};
-	const SDL_Rect srcRect = { 0,19,16,16 };
-	const Vector2 formationPos = {10,50};
-	float index;
+	int index = -1;
 
-	for (int i = 0; i < m_BeeFormationSize; i++)
+	for (int i = 0; i < m_pBeeFormation.size(); i++)
 	{
 		if (m_pBeeFormation[i] == go)
 		{
@@ -116,17 +131,13 @@ Vector2 EnemyManager::GetBeeFormationPosition(const Willem::GameObject* go) cons
 		}
 	}
 
-	Vector2 position = formationPos;
-
-	if (index > m_BeeFormationSize)
+	if (index == -1) // NO SPOTS LEFT
 	{
-		index -= m_BeeFormationSize;
-		position.y += offset.y;
+		std::cout << "No spot left in formation for bee to park in" << std::endl;
+		return Vector2(0, 0);
 	}
 
-	position.x = formationPos.x + (index * offset.x) + (index* srcRect.w);
-	
-	return position;
+	return m_BeeFormationLocations[index];
 }
 
 Vector2 EnemyManager::GetButterflyFormationPosition(const Willem::GameObject*) const

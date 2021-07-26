@@ -2,13 +2,15 @@
 #include "Singleton.h"
 #include "Structs.h"
 #include "GameObject.h"
+#include <vector>
 
 class EnemyManager : public Willem::Singleton<EnemyManager>
 	// Also serves as a formation manager
 {
 public:
+	EnemyManager();
 	void SpawnAliens();
-	void Update(float) {};
+	void Update(float);
 
 	void ClaimSpotInBeeFormation(Willem::GameObject*);
 	void ClaimSpotInButterflyFormation(Willem::GameObject*);
@@ -29,18 +31,22 @@ private:
 	void SpawnBee();
 	void SpawnButterfly();
 	void SpawnBoss();
-	
+
+	bool m_SpawningEnemies = false;
+	float m_SpawnEnemyTimer = 0.0f;
+	const float m_SpawnEnemyInterval = 0.5f;
 
 
-	static const int m_BeeFormationSize = 10;
-	static const int m_BeeFormationRowCount = 2;
-	static const int m_ButterflyFormationSize = 8;
-	static const int m_ButterflyFormationRowCount = 2;
-	static const int m_BossFormationSize = 4;
-	static const int m_BossFormationRowCount = 1;
+	std::vector<Willem::Vector2> m_BeeFormationLocations;
+	std::vector<Willem::GameObject*> m_pBeeFormation;
+	// Change to pairs? Maybe maps?
+	// Order matters, if number 3 dies a new bee will have to go in his place not at the end
 
-	Willem::GameObject* m_pBeeFormation[m_BeeFormationSize * m_BeeFormationRowCount];
-	Willem::GameObject* m_pButterflyFormation[m_ButterflyFormationSize * m_ButterflyFormationRowCount];
-	Willem::GameObject* m_pBossFormation[m_BossFormationSize * m_BossFormationRowCount];
+
+	std::vector<Willem::Vector2> m_ButterflyFormationLocations;
+	std::vector<Willem::GameObject*> m_pButterflyFormation;
+
+	std::vector<Willem::Vector2> m_BossFormationLocations;
+	std::vector<Willem::GameObject*> m_pBossFormation;
 };
 

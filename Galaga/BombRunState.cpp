@@ -13,7 +13,7 @@ BombRunState::~BombRunState()
 
 }
 
-void BombRunState::Update(float deltaT)
+void BombRunState::Update(float)
 {
 
 }
