@@ -1,8 +1,10 @@
 #pragma once
 #include <cmath>
 
+#define PI 3.14159265358979323846264338327950288f
 namespace Willem
 {
+
 
 	struct Vector3
 	{
@@ -58,6 +60,17 @@ namespace Willem
 			float absY = abs(y);
 
 			return sqrt(absX * absX + absY * absY);			
+		}
+
+		float DirectionToLocalOrientationAngle()
+		{
+			float angle = atan2(y, x);
+			// My angle to sprite can't handle negative numbers so I do this.
+			if (angle < 0)
+				angle = float((PI * 2.0) - abs(angle));
+			// This is done because the angle 0 is set upwards instead of to the right.
+			angle += float(PI / 2.0);
+			return angle;
 		}
 
 		float x, y;

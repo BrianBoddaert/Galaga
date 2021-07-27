@@ -1,16 +1,12 @@
 #pragma once
 #include "AlienState.h"
 #include "Structs.h"
+#include "DiveSubState.h"
+
 
 class GameObject;
 
-enum class DiveStages
-{
-	Initialize,
-	FlyDownDiagonally,
-	FlyInCircle,
-	ReturnToFormation
-};
+class Dive;
 
 class SpawnDiveState final :
     public AlienState
@@ -30,19 +26,16 @@ protected:
 	void Enter() override;
 	void Exit() override;
 
-	float DirectionToLocalOrientationAngle(const Willem::Vector2& dir);
+	Dive* m_pDive;
 
-	DiveStages m_Stage;
+	//// Turning in a circular motion 
+	//float m_CircularTurnRadians;
+	//Willem::Vector2 m_CircularTurnCenter;
 
-	const float m_Speed;
-	const float m_RotationSpeed;
+	////Go to Formation
+	//Willem::Vector2 m_DestinationPosition;
+	//Willem::Vector2 m_DestinationDirection;
 
-	// Turning in a circular motion 
-	float m_CircularTurnRadians;
-	Willem::Vector2 m_CircularTurnCenter;
 
-	//Go to Formation
-	Willem::Vector2 m_DestinationPosition;
-	Willem::Vector2 m_DestinationDirection;
 };
 

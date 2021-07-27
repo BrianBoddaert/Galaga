@@ -9,15 +9,13 @@
 #include "EnemyManager.h"
 #include <cmath>
 #include "FormationState.h"
+#include "DSS_MoveToPoint.h"
+#include "Dive.h"
 
 using namespace Willem;
 
 SpawnDiveState::SpawnDiveState(Willem::GameObject* go) noexcept
 	:AlienState{go}
-	, m_Speed{ 250 }
-	, m_RotationSpeed{ 4.0f }
-	, m_CircularTurnRadians{ -float(M_PI / 2) }
-	, m_Stage{ DiveStages::FlyDownDiagonally }
 {
 	Enter();
 }
@@ -29,88 +27,26 @@ SpawnDiveState::~SpawnDiveState()
 
 void SpawnDiveState::Update(float deltaT)
 {
-	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
-	const Vector3& pos = transform->GetPosition();
-
-	if (m_Stage == DiveStages::FlyDownDiagonally)
-	{
-		Vector2 distanceTravelled = m_DestinationDirection * (m_Speed * deltaT);
-		transform->SetPosition(pos + distanceTravelled);
-
-		m_RotationRadians = DirectionToLocalOrientationAngle(m_DestinationDirection);
-
-		// Finished condition
-		const float minimalOffset = 0.015f * m_Speed;
-		if ((pos - m_DestinationPosition).Magnitude() <= minimalOffset)
-		{
-			m_Stage = DiveStages::FlyInCircle;
-			m_CircularTurnCenter = pos + Vector2(0, 50);
-		}
-
-	}
-
-	if (m_Stage == DiveStages::FlyInCircle)
-	{
-		const float offset = 50;
-
-		transform->SetPosition(m_CircularTurnCenter +
-			Vector2(offset * cos(m_CircularTurnRadians), offset * sin(m_CircularTurnRadians)));
-
-		m_CircularTurnRadians += m_RotationSpeed * deltaT;
-		//m_CircularTurnRadians = std::fmod(m_CircularTurnRadians,float(M_PI*2));
-		m_RotationRadians = m_CircularTurnRadians + float(M_PI);
-		//m_RotationRadians = std::fmod(m_RotationRadians, float(M_PI * 2));
-
-		if (m_CircularTurnRadians >= M_PI - M_PI/5)
-		{
-			m_Stage = DiveStages::ReturnToFormation;
-
-			// Reserve a spot in the formation, calculate the direction to this point
-			EnemyManager& enemyManager = EnemyManager::GetInstance();
-			enemyManager.ClaimSpotInBeeFormation(m_pGameObject);
-			m_DestinationPosition = enemyManager.GetBeeFormationPosition(m_pGameObject);
-			Vector2 direction = (m_DestinationPosition - pos); // not yet normalized
-			m_DestinationDirection = direction.Normalize();
-
-		}
-	}
-
-	if (m_Stage == DiveStages::ReturnToFormation)
-	{
-		Vector2 distanceTravelled = m_DestinationDirection * (m_Speed * deltaT);
-		transform->SetPosition(pos + distanceTravelled);		
-
-		m_RotationRadians = DirectionToLocalOrientationAngle(m_DestinationDirection);
-
-		// Finished condition
-		const float minimalOffset = 0.015f * m_Speed;
-		if ((pos - m_DestinationPosition).Magnitude() <= minimalOffset)
-			m_StateFinished = true;
-
-
-	}
-
-	AdjustSpritesToFitDirection();
+	m_pDive->Update(deltaT);
 }
 void SpawnDiveState::Enter()
 {
 
-	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
-	const Vector3& pos = transform->GetPosition();
+	//TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
+	//const Vector3& pos = transform->GetPosition();
 
-	SDL_Rect srcRect = m_pGameObject->GetComponent<RenderComponent>()->GetSrcRect();
-	SDL_Rect halfSize = { srcRect.x / 2,srcRect.y / 2,srcRect.w / 2,srcRect.h / 2 };
-	const SDL_Surface* surface = Minigin::GetWindowSurface();
+	//SDL_Rect srcRect = m_pGameObject->GetComponent<RenderComponent>()->GetSrcRect();
+	//SDL_Rect halfSize = { srcRect.x / 2,srcRect.y / 2,srcRect.w / 2,srcRect.h / 2 };
+	//const SDL_Surface* surface = Minigin::GetWindowSurface();
 
-	// Set initial location
-	transform->SetPosition({ surface->w / 2.0f - halfSize.w,0,0 });
-	m_Stage = DiveStages::FlyDownDiagonally;
+	//// Set initial location
+	//transform->SetPosition({ surface->w / 2.0f - halfSize.w,0,0 });
 
-	float borderOffset = 100.0f;
-	m_DestinationPosition = { float(surface->w - halfSize.w - borderOffset), float(surface->h / 2.0f - halfSize.h) };
-	Vector2 direction = (m_DestinationPosition - pos); // not yet normalized
-	m_DestinationDirection = direction.Normalize();
 
+	//float borderOffset = 100.0f;
+	//const Vector2 destination  = { float(surface->w - halfSize.w - borderOffset), float(surface->h / 2.0f - halfSize.h) };
+	//const Vector2 direction = (destination - pos).Normalize(); 
+	//m_SubStage = new DSS_MoveToPoint(m_pGameObject,this, destination,direction);
 
 }
 void SpawnDiveState::Exit() {}
@@ -118,15 +54,4 @@ void SpawnDiveState::Exit() {}
 AlienState* SpawnDiveState::GetFollowUpState() const
 {
 	return new FormationState(m_pGameObject);
-}
-
-float SpawnDiveState::DirectionToLocalOrientationAngle(const Vector2& dir )
-{
-	float angle = atan2(dir.y, dir.x);
-	// My angle to sprite can't handle negative numbers so I do this.
-	if (angle < 0)
-		angle = float((M_PI * 2.0) - abs(angle));
-	// This is done because the angle 0 is set upwards instead of to the right.
-	 angle += float(M_PI / 2.0);
-	 return angle;
 }
