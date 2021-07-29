@@ -81,10 +81,10 @@
     <ClCompile Include="DSS_MoveToPoint.cpp">
       <Filter>SubStates</Filter>
     </ClCompile>
-    <ClCompile Include="Dive_BeesFromUpToRight.cpp">
+    <ClCompile Include="Dive_UpToRight.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
-    <ClCompile Include="Dive_BeesFromUpToLeft.cpp">
+    <ClCompile Include="Dive_UpToLeft.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
     <ClCompile Include="Dive_BeesButterfliesFromUp.cpp">
@@ -158,10 +158,10 @@
     <ClInclude Include="Dive.h">
       <Filter>Dives</Filter>
     </ClInclude>
-    <ClInclude Include="Dive_BeesFromUpToRight.h">
+    <ClInclude Include="Dive_UpToRight.h">
       <Filter>Dives</Filter>
     </ClInclude>
-    <ClInclude Include="Dive_BeesFromUpToLeft.h">
+    <ClInclude Include="Dive_UpToLeft.h">
       <Filter>Dives</Filter>
     </ClInclude>
     <ClInclude Include="Dive_BeesButterfliesFromUp.h">

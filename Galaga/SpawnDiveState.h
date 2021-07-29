@@ -12,7 +12,7 @@ class SpawnDiveState final :
     public AlienState
 {
 public:
-	SpawnDiveState(Willem::GameObject* go) noexcept;
+	SpawnDiveState(Willem::GameObject* go, Dive* dive) noexcept;
 	~SpawnDiveState();
 	SpawnDiveState(const SpawnDiveState& other) = delete;
 	SpawnDiveState(SpawnDiveState&& other) = delete;

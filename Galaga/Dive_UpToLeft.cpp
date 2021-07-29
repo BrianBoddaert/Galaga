@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Dive_BeesFromUpToRight.h"
+#include "Dive_UpToLeft.h"
 
 #include "DSS_MoveToPoint.h"
 #include "DSS_CircleAroundPoint.h"
@@ -12,52 +12,72 @@
 
 using namespace Willem;
 
-Dive_BeesFromUpToRight::Dive_BeesFromUpToRight(Willem::GameObject* go)
+Dive_UpToLeft::Dive_UpToLeft(Willem::GameObject* go)
 	:Dive{ go }
-	,m_DiveProcess{ 0 }
 {
 	Enter();
 }
 
-Dive_BeesFromUpToRight::~Dive_BeesFromUpToRight()
+Dive_UpToLeft::~Dive_UpToLeft()
 {
 	Exit();
 }
 
-void Dive_BeesFromUpToRight::Update(float deltaT)
+void Dive_UpToLeft::Update(float deltaT)
 {
 	m_pState->Update(deltaT);
 
-	
 	if (m_pState->GetStateFinished())
 	{
+		TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
+		const Vector3& pos = transform->GetPosition();
+
 		switch (m_DiveProcess)
 		{
 		case 0:
-			TransformComponent * transform = m_pGameObject->GetComponent<TransformComponent>();
-			const Vector3& pos = transform->GetPosition();
-
-			m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos,0,M_PI - M_PI/5);
-			break;
+		{
+			m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float(M_PI * 1.5), float(M_PI /4),false);
+		}
+		break;
 		case 1:
-
+		{
 			// Reserve a spot in the formation, calculate the direction to this point
 			EnemyManager& enemyManager = EnemyManager::GetInstance();
-			enemyManager.ClaimSpotInBeeFormation(m_pGameObject);
-			Vector2 destination = enemyManager.GetBeeFormationPosition(m_pGameObject);
+			Vector2 destination;
+			if (m_pGameObject->HasTag("Bee"))
+			{
+				enemyManager.ClaimSpotInBeeFormation(m_pGameObject);
+				destination = enemyManager.GetBeeFormationPosition(m_pGameObject);
+			}
+			else if (m_pGameObject->HasTag("Butterfly"))
+			{
+				enemyManager.ClaimSpotInButterflyFormation(m_pGameObject);
+				destination = enemyManager.GetButterflyFormationPosition(m_pGameObject);
+			}
+			else if (m_pGameObject->HasTag("Boss"))
+			{
+				enemyManager.ClaimSpotInBossFormation(m_pGameObject);
+				destination = enemyManager.GetBossFormationPosition(m_pGameObject);
+			}
+
 			Vector2 direction = (destination - pos).Normalize();
 
 			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
-			break;
-		case 2:
-			m_Completed = true;
-			break;
 		}
+		break;
+		case 2:
+		{
+			m_Completed = true;
+		}
+		break;
+		}
+
+
 		m_DiveProcess++;
 	}
 }
 
-void Dive_BeesFromUpToRight::Enter()
+void Dive_UpToLeft::Enter()
 {
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 	const Vector3& pos = transform->GetPosition();
@@ -66,12 +86,12 @@ void Dive_BeesFromUpToRight::Enter()
 	const SDL_Surface* surface = Minigin::GetWindowSurface();
 
 	float borderOffset = 100.0f;
-	const Vector2 destination = { float(surface->w - halfSize.w - borderOffset), float(surface->h / 2.0f - halfSize.h) };
+	const Vector2 destination = { float(halfSize.w + borderOffset), float(surface->h / 2.0f - halfSize.h) };
 	const Vector2 direction = (destination - pos).Normalize();
 	m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
 }
 
-void Dive_BeesFromUpToRight::Exit()
+void Dive_UpToLeft::Exit()
 {
 
 }

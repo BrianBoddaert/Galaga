@@ -4,6 +4,14 @@
 #include "GameObject.h"
 #include <vector>
 
+class Dive;
+
+enum class IntroDiveFormation
+{
+	None,
+	ButterFliesAndBeesFromUpToBothSides,
+	ButterfliesAndBossesFromLeftToMiddle
+};
 class EnemyManager : public Willem::Singleton<EnemyManager>
 	// Also serves as a formation manager
 {
@@ -28,13 +36,18 @@ public:
 private:
 	friend class Willem::Singleton<EnemyManager>;
 
+	template<typename T>
 	void SpawnBee();
+	template<typename T>
 	void SpawnButterfly();
+		template<typename T>
 	void SpawnBoss();
 
-	bool m_SpawningEnemies = false;
+	IntroDiveFormation m_IntroDiveFormation;
 	float m_SpawnEnemyTimer = 0.0f;
+	int m_EnemySpawnedCounter = 0;
 	const float m_SpawnEnemyInterval = 0.5f;
+
 
 
 	std::vector<Willem::Vector2> m_BeeFormationLocations;
@@ -48,5 +61,9 @@ private:
 
 	std::vector<Willem::Vector2> m_BossFormationLocations;
 	std::vector<Willem::GameObject*> m_pBossFormation;
+
+
+	//ButterFliesAndBeesFromUpToBothSides
+	const int m_FormationOneSpawnLimit;
 };
 

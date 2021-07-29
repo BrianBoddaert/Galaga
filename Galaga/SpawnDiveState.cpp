@@ -9,13 +9,15 @@
 #include "EnemyManager.h"
 #include <cmath>
 #include "FormationState.h"
-#include "DSS_MoveToPoint.h"
 #include "Dive.h"
+#include "Dive_UpToRight.h"
+#include "Dive_UpToLeft.h"
 
 using namespace Willem;
 
-SpawnDiveState::SpawnDiveState(Willem::GameObject* go) noexcept
+SpawnDiveState::SpawnDiveState(Willem::GameObject* go, Dive* dive) noexcept
 	:AlienState{go}
+	, m_pDive{ dive }
 {
 	Enter();
 }
@@ -28,10 +30,13 @@ SpawnDiveState::~SpawnDiveState()
 void SpawnDiveState::Update(float deltaT)
 {
 	m_pDive->Update(deltaT);
+	
+	if (m_pDive->GetCompleted())
+		m_StateFinished = true;
+
 }
 void SpawnDiveState::Enter()
 {
-
 	//TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 	//const Vector3& pos = transform->GetPosition();
 
@@ -49,7 +54,9 @@ void SpawnDiveState::Enter()
 	//m_SubStage = new DSS_MoveToPoint(m_pGameObject,this, destination,direction);
 
 }
-void SpawnDiveState::Exit() {}
+void SpawnDiveState::Exit() 
+{
+}
 
 AlienState* SpawnDiveState::GetFollowUpState() const
 {
