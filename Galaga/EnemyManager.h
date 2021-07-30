@@ -74,5 +74,6 @@ private:
 	const float m_AlteringBetweenSpritesInterval;
 	float m_AlteringBetweenSpritesTimer;
 	bool m_UpperSpriteActive;
+	bool m_SpawnBoss;
 };
 

@@ -40,6 +40,8 @@ void FormationState::Enter()
 		desiredPosition = EnemyManager::GetInstance().GetBeeFormationPosition(m_pGameObject);
 	else if (m_pGameObject->HasTag("Butterfly"))
 		desiredPosition = EnemyManager::GetInstance().GetButterflyFormationPosition(m_pGameObject);
+	else if (m_pGameObject->HasTag("Boss"))
+		desiredPosition = EnemyManager::GetInstance().GetBossFormationPosition(m_pGameObject);
 
 	m_pGameObject->GetComponent<TransformComponent>()->SetPosition(desiredPosition);
 	
