@@ -15,13 +15,14 @@
 #include "Dive_UpToLeft.h"
 #include "Dive_UpToRight.h"
 #include "Dive_LeftToMiddle.h"
+#include "Dive_RightToMiddle.h"
 #include "FormationState.h"
 
 using namespace Willem;
 
 EnemyManager::EnemyManager()
 	:m_IntroDiveFormation{IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides }
-	, m_FormationOneSpawnLimit{8} //8
+	, m_FormationSpawnLimit{8}
 	, m_AlteringBetweenSpritesInterval{1.0f}
 	, m_AlteringBetweenSpritesTimer{0.0f}
 	, m_UpperSpriteActive{true}
@@ -59,16 +60,17 @@ bool EnemyManager::AreAllEnemiesInFormation()
 
 void EnemyManager::SpawnAliens(float deltaT)
 {
+	m_SpawnEnemyTimer += deltaT;
+
+	if (m_SpawnEnemyTimer < m_SpawnEnemyInterval)
+		return;
+
 	switch (m_IntroDiveFormation)
 	{
 	case IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides:
 	{
 
-		m_SpawnEnemyTimer += deltaT;
-		if (m_SpawnEnemyTimer < m_SpawnEnemyInterval)
-			return;
-
-		if ( m_EnemySpawnedCounter < m_FormationOneSpawnLimit)
+		if ( m_EnemySpawnedCounter < m_FormationSpawnLimit)
 		{
 			const int halfWidthOfSrcRect = 8;
 			const SDL_Surface* surface = Minigin::GetWindowSurface();
@@ -89,31 +91,84 @@ void EnemyManager::SpawnAliens(float deltaT)
 	break;
 	case IntroDiveFormation::ButterfliesAndBossesFromLeftToMiddle:
 	{
-		if (m_EnemySpawnedCounter >= m_FormationOneSpawnLimit)
-		{
-			m_IntroDiveFormation = IntroDiveFormation::None;
-			m_EnemySpawnedCounter = 0;
-		}
 
-		m_SpawnEnemyTimer += deltaT;
-
-		if (m_SpawnEnemyTimer >= m_SpawnEnemyInterval)
+		if (m_EnemySpawnedCounter < m_FormationSpawnLimit)
 		{
 			const SDL_Surface* surface = Minigin::GetWindowSurface();
 			const Vector3 spawnPos = { 0,surface->h - 50.0f,0 };
 
 			m_SpawnEnemyTimer = 0.0f;
-			if (m_SpawnBoss)
-				SpawnBoss<Dive_LeftToMiddle>(spawnPos);
-			else
-				SpawnButterfly<Dive_LeftToMiddle>(spawnPos);
-
-			m_SpawnBoss = !m_SpawnBoss;
+				if (m_SpawnBoss)
+					SpawnBoss<Dive_LeftToMiddle>(spawnPos);
+				else
+					SpawnButterfly<Dive_LeftToMiddle>(spawnPos);
 			m_EnemySpawnedCounter++;
+			m_SpawnBoss = !m_SpawnBoss;
+
+		}
+		else if (AreAllEnemiesInFormation())
+		{
+			m_IntroDiveFormation = IntroDiveFormation::ButterfliesFromRightToMiddle;
+			m_EnemySpawnedCounter = 0;
 		}
 	}
 	break;
+	case IntroDiveFormation::ButterfliesFromRightToMiddle:
+	{
+		if (m_EnemySpawnedCounter < m_FormationSpawnLimit)
+		{
+			const SDL_Surface* surface = Minigin::GetWindowSurface();
+			const Vector3 spawnPos = { float(surface->w),surface->h - 50.0f,0 };
 
+			m_SpawnEnemyTimer = 0.0f;
+			SpawnButterfly<Dive_RightToMiddle>(spawnPos);
+			m_EnemySpawnedCounter++;
+		}
+		else if (AreAllEnemiesInFormation())
+		{
+			m_IntroDiveFormation = IntroDiveFormation::BeesFromUpToLeft;
+			m_EnemySpawnedCounter = 0;
+		}
+	}
+	break;
+	case IntroDiveFormation::BeesFromUpToLeft:
+	{
+		if (m_EnemySpawnedCounter < m_FormationSpawnLimit)
+		{
+			const int halfWidthOfSrcRect = 8;
+			const SDL_Surface* surface = Minigin::GetWindowSurface();
+			const Vector3 spawnPos = { surface->w / 2.0f - halfWidthOfSrcRect,0,0 };
+
+			m_SpawnEnemyTimer = 0.0f;
+			SpawnBee<Dive_UpToLeft>(spawnPos);
+			m_EnemySpawnedCounter++;
+		}
+		else if (AreAllEnemiesInFormation())
+		{
+			m_IntroDiveFormation = IntroDiveFormation::BeesFromUpToRight;
+			m_EnemySpawnedCounter = 0;
+		}
+	}
+	break;
+	case IntroDiveFormation::BeesFromUpToRight:
+	{
+		if (m_EnemySpawnedCounter < m_FormationSpawnLimit)
+		{
+			const int halfWidthOfSrcRect = 8;
+			const SDL_Surface* surface = Minigin::GetWindowSurface();
+			const Vector3 spawnPos = { surface->w / 2.0f - halfWidthOfSrcRect,0,0 };
+
+			m_SpawnEnemyTimer = 0.0f;
+			SpawnBee<Dive_UpToRight>(spawnPos);
+			m_EnemySpawnedCounter++;
+		}
+		else if (AreAllEnemiesInFormation())
+		{
+			m_IntroDiveFormation = IntroDiveFormation::None;
+			m_EnemySpawnedCounter = 0;
+		}
+	}
+	break;
 	case IntroDiveFormation::None:
 	{
 

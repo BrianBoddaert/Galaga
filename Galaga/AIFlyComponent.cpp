@@ -12,8 +12,8 @@ using namespace Willem;
 AIFlyComponent::AIFlyComponent(Willem::GameObject* go, SpawnDiveState* state, int srcRectYPos)
 	:Component{ go }
 	,m_pState{ state }
-	, m_Speed{ 200.0f }
-	, m_RotationSpeed{4} // 4
+	, m_Speed{ 300.0f }
+	, m_RotationSpeed{8} // 4
 	, m_RotationRadians{float(M_PI)}
 	, m_UpperSrcRectYPos{ srcRectYPos }
 {

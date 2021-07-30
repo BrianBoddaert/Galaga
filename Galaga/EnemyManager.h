@@ -10,7 +10,10 @@ enum class IntroDiveFormation
 {
 	None,
 	ButterFliesAndBeesFromUpToBothSides,
-	ButterfliesAndBossesFromLeftToMiddle
+	ButterfliesAndBossesFromLeftToMiddle,
+	ButterfliesFromRightToMiddle,
+	BeesFromUpToLeft,
+	BeesFromUpToRight
 };
 class EnemyManager : public Willem::Singleton<EnemyManager>
 	// Also serves as a formation manager
@@ -50,8 +53,7 @@ private:
 	IntroDiveFormation m_IntroDiveFormation;
 	float m_SpawnEnemyTimer = 0.0f;
 	int m_EnemySpawnedCounter = 0;
-	const float m_SpawnEnemyInterval = 0.5f;
-
+	const float m_SpawnEnemyInterval = 0.25f;
 
 	std::vector<Willem::Vector2> m_BeeFormationLocations;
 	std::vector<Willem::GameObject*> m_pBeeFormation;
@@ -66,7 +68,7 @@ private:
 
 
 	//ButterFliesAndBeesFromUpToBothSides
-	const int m_FormationOneSpawnLimit;	
+	const int m_FormationSpawnLimit;	
 
 	// Altering between upper and lower sprites
 	void AlterBetweenSprites(float deltaT);

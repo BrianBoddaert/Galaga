@@ -166,6 +166,7 @@
     <ClCompile Include="ControlComponent.cpp" />
     <ClCompile Include="Dive.cpp" />
     <ClCompile Include="Dive_LeftToMiddle.cpp" />
+    <ClCompile Include="Dive_RightToMiddle.cpp" />
     <ClCompile Include="Dive_UpToLeft.cpp" />
     <ClCompile Include="Dive_UpToRight.cpp" />
     <ClCompile Include="DSS_CircleAroundPoint.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Dive.h" />
     <ClInclude Include="DiveSubState.h" />
     <ClInclude Include="Dive_LeftToMiddle.h" />
+    <ClInclude Include="Dive_RightToMiddle.h" />
     <ClInclude Include="Dive_UpToLeft.h" />
     <ClInclude Include="Dive_UpToRight.h" />
     <ClInclude Include="DSS_CircleAroundPoint.h" />

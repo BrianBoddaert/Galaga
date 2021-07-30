@@ -96,6 +96,9 @@
     <ClCompile Include="Dive.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
+    <ClCompile Include="Dive_RightToMiddle.cpp">
+      <Filter>Dives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -165,6 +168,9 @@
       <Filter>SubStates</Filter>
     </ClInclude>
     <ClInclude Include="Dive_LeftToMiddle.h">
+      <Filter>Dives</Filter>
+    </ClInclude>
+    <ClInclude Include="Dive_RightToMiddle.h">
       <Filter>Dives</Filter>
     </ClInclude>
   </ItemGroup>
