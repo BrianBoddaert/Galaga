@@ -14,12 +14,17 @@
 #include "SpawnDiveState.h"
 #include "Dive_UpToLeft.h"
 #include "Dive_UpToRight.h"
+#include "Dive_LeftToMiddle.h"
+#include "FormationState.h"
 
 using namespace Willem;
 
 EnemyManager::EnemyManager()
-	:m_IntroDiveFormation{IntroDiveFormation::None}
-	, m_FormationOneSpawnLimit{8}
+	:m_IntroDiveFormation{IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides }
+	, m_FormationOneSpawnLimit{8} //8
+	, m_AlteringBetweenSpritesInterval{1.0f}
+	, m_AlteringBetweenSpritesTimer{0.0f}
+	, m_UpperSpriteActive{true}
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
@@ -27,29 +32,60 @@ EnemyManager::EnemyManager()
 
 void EnemyManager::Update(float deltaT)
 {
+	AlterBetweenSprites(deltaT);
+	SpawnAliens(deltaT);
+
+}
+
+bool EnemyManager::AreAllEnemiesInFormation()
+{
+	for (size_t i = 0; i < m_pEnemies.size(); i++)
+	{
+		if (m_pEnemies[i].use_count() <= 1)
+			m_pEnemies.erase(m_pEnemies.begin() + i);
+		else
+		{
+			std::shared_ptr<Willem::GameObject> enemy = m_pEnemies[i].lock();
+			if (!enemy->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
+				return false;
+		}
+
+	}
+
+	return true;
+}
+
+void EnemyManager::SpawnAliens(float deltaT)
+{
 	switch (m_IntroDiveFormation)
 	{
 	case IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides:
+	{
+
+		m_SpawnEnemyTimer += deltaT;
+		if (m_SpawnEnemyTimer < m_SpawnEnemyInterval)
+			return;
+
+		if ( m_EnemySpawnedCounter < m_FormationOneSpawnLimit)
 		{
-			if (m_EnemySpawnedCounter >= m_FormationOneSpawnLimit)
-			{
-				m_IntroDiveFormation = IntroDiveFormation::None;
-				m_EnemySpawnedCounter = 0;
-			}
+			const int halfWidthOfSrcRect = 8;
+			const SDL_Surface* surface = Minigin::GetWindowSurface();
+			const Vector3 spawnPos = { surface->w / 2.0f - halfWidthOfSrcRect,0,0 };
 
-			m_SpawnEnemyTimer += deltaT;
-
-			if (m_SpawnEnemyTimer >= m_SpawnEnemyInterval)
-			{
-				m_SpawnEnemyTimer = 0.0f;
-				SpawnBee<Dive_UpToLeft>();
-				SpawnButterfly<Dive_UpToRight>();
-				m_EnemySpawnedCounter++;
-				m_EnemySpawnedCounter++;
-			}
+			m_SpawnEnemyTimer = 0.0f;
+			SpawnBee<Dive_UpToLeft>(spawnPos);
+			SpawnButterfly<Dive_UpToRight>(spawnPos);
+			m_EnemySpawnedCounter++;
+			m_EnemySpawnedCounter++;
 		}
-		break;
-	case IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides:
+		else if (AreAllEnemiesInFormation())
+		{
+			m_IntroDiveFormation = IntroDiveFormation::ButterfliesAndBossesFromLeftToMiddle;
+			m_EnemySpawnedCounter = 0;
+		}
+	}
+	break;
+	case IntroDiveFormation::ButterfliesAndBossesFromLeftToMiddle:
 	{
 		if (m_EnemySpawnedCounter >= m_FormationOneSpawnLimit)
 		{
@@ -61,54 +97,47 @@ void EnemyManager::Update(float deltaT)
 
 		if (m_SpawnEnemyTimer >= m_SpawnEnemyInterval)
 		{
+			const SDL_Surface* surface = Minigin::GetWindowSurface();
+			const Vector3 spawnPos = { 0,surface->h - 50.0f,0 };
+
 			m_SpawnEnemyTimer = 0.0f;
-			SpawnBee<Dive_UpToLeft>();
-			SpawnButterfly<Dive_UpToRight>();
-			m_EnemySpawnedCounter++;
+			SpawnButterfly<Dive_LeftToMiddle>(spawnPos);
 			m_EnemySpawnedCounter++;
 		}
 	}
 	break;
 
 	case IntroDiveFormation::None:
-		{
+	{
 
-		}
-		break;
-	
 	}
+	break;
 
-
-}
-
-void EnemyManager::SpawnAliens()
-{
-	m_IntroDiveFormation = IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides;
+	}
 }
 
 template <typename T>
-void EnemyManager::SpawnBee()
+void EnemyManager::SpawnBee(const Willem::Vector2& pos)
 {
 	auto bee = std::make_shared<Willem::GameObject>("Bee");
 
 	const SDL_Rect srcRect = { 1,19,16,16 };
-	const SDL_Rect halfSize = { srcRect.x/2,srcRect.y/2,srcRect.w/2,srcRect.h/2 };
-	const SDL_Surface* surface = Minigin::GetWindowSurface();
-	const Vector3 spawnPos = { surface->w/2.0f - halfSize.w,0,0 };
 
 	bee->AddComponent(new RenderComponent(srcRect));
 	bee->SetTexture("Galaga2.png");
-	bee->AddComponent(new TransformComponent(spawnPos, 2.0f));
+	bee->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	bee->AddComponent(new HealthComponent(1, false));
-	bee->AddComponent(new AIFlyComponent(bee.get(),new SpawnDiveState(bee.get(),new T(bee.get()) )));
+	bee->AddComponent(new AIFlyComponent(bee.get(),new SpawnDiveState(bee.get(),new T(bee.get())), srcRect.y));
 	bee->AddTag("Bee");
 	bee->AddTag("Alien");
 
 	CollisionManager::GetInstance().AddCollider(bee);
 	SceneManager::GetInstance().GetCurrentScene()->Add(bee);
+	m_pEnemies.push_back(bee);
 }
+
 template <typename T>
-void EnemyManager::SpawnButterfly()
+void EnemyManager::SpawnButterfly(const Willem::Vector2& pos)
 {
 	auto butterfly = std::make_shared<Willem::GameObject>("Butterfly");
 
@@ -119,18 +148,56 @@ void EnemyManager::SpawnButterfly()
 
 	butterfly->AddComponent(new RenderComponent(srcRect));
 	butterfly->SetTexture("Galaga2.png");
-	butterfly->AddComponent(new TransformComponent(spawnPos, 2.0f));
+	butterfly->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	butterfly->AddComponent(new HealthComponent(1, false));
-	butterfly->AddComponent(new AIFlyComponent(butterfly.get(), new SpawnDiveState(butterfly.get(), new T(butterfly.get()))));
+	butterfly->AddComponent(new AIFlyComponent(butterfly.get(), new SpawnDiveState(butterfly.get(), new T(butterfly.get())), srcRect.y));
 	butterfly->AddTag("Butterfly");
 	butterfly->AddTag("Alien");
 
 	CollisionManager::GetInstance().AddCollider(butterfly);
 	SceneManager::GetInstance().GetCurrentScene()->Add(butterfly);
+	m_pEnemies.push_back(butterfly);
 }
 
 template <typename T>
-void EnemyManager::SpawnBoss(){}
+void EnemyManager::SpawnBoss(const Willem::Vector2& pos) {}
+
+void EnemyManager::AlterBetweenSprites(float deltaT)
+{
+	m_AlteringBetweenSpritesTimer += deltaT;
+
+	if (m_AlteringBetweenSpritesTimer < m_AlteringBetweenSpritesInterval)
+		return;
+
+	m_AlteringBetweenSpritesTimer = 0.0f;
+
+	for (size_t i = 0; i < m_pEnemies.size(); i++)
+	{
+		if (m_pEnemies[i].use_count() <= 1)
+			m_pEnemies.erase(m_pEnemies.begin() + i);
+		else
+		{
+			std::shared_ptr<Willem::GameObject> enemy = m_pEnemies[i].lock(); 
+			const int upperSrcRectYPos = enemy->GetComponent<AIFlyComponent>()->GetUpperSrcRectYPos();
+			RenderComponent* renderComp = enemy->GetComponent<RenderComponent>();
+			SDL_Rect srcRect = renderComp->GetSrcRect();
+			const int offsetHeight = 2;
+
+			if (m_UpperSpriteActive)
+				srcRect.y = upperSrcRectYPos + srcRect.h + offsetHeight;
+			else
+				srcRect.y = upperSrcRectYPos;
+
+			renderComp->SetSrcRect(srcRect);
+
+		}
+			
+	}
+
+	m_UpperSpriteActive = !m_UpperSpriteActive;
+}
+
+
 
 void EnemyManager::ClaimSpotInBeeFormation(Willem::GameObject* go)
 {
@@ -207,7 +274,6 @@ Vector2 EnemyManager::GetBeeFormationPosition(const Willem::GameObject* go) cons
 
 	return m_BeeFormationLocations[index];
 }
-
 Vector2 EnemyManager::GetButterflyFormationPosition(const Willem::GameObject* go) const
 {
 	int index = -1;
@@ -229,7 +295,6 @@ Vector2 EnemyManager::GetButterflyFormationPosition(const Willem::GameObject* go
 
 	return m_ButterflyFormationLocations[index];
 }
-
 Vector2 EnemyManager::GetBossFormationPosition(const Willem::GameObject*) const
 {
 	return Vector2{ 0,0 };

@@ -12,7 +12,13 @@ namespace Willem
 	class Component
 	{
 	public:
+		Component(GameObject* go)
+			:m_pGameObject{go}
+		{}
 
+		Component()
+			:m_pGameObject{nullptr}
+		{}
 		virtual void Update(float) {};
 		virtual void Render(const Willem::Vector2&, const Willem::Vector2&) const {};
 		virtual ~Component() {};

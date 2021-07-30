@@ -17,7 +17,7 @@ class EnemyManager : public Willem::Singleton<EnemyManager>
 {
 public:
 	EnemyManager();
-	void SpawnAliens();
+
 	void Update(float);
 
 	void ClaimSpotInBeeFormation(Willem::GameObject*);
@@ -36,12 +36,16 @@ public:
 private:
 	friend class Willem::Singleton<EnemyManager>;
 
+	void SpawnAliens(float deltaT);
+
 	template<typename T>
-	void SpawnBee();
+	void SpawnBee(const Willem::Vector2& pos);
 	template<typename T>
-	void SpawnButterfly();
-		template<typename T>
-	void SpawnBoss();
+	void SpawnButterfly(const Willem::Vector2& pos);
+	template<typename T>
+	void SpawnBoss(const Willem::Vector2& pos);
+
+	std::vector<std::weak_ptr<Willem::GameObject>> m_pEnemies;
 
 	IntroDiveFormation m_IntroDiveFormation;
 	float m_SpawnEnemyTimer = 0.0f;
@@ -49,12 +53,10 @@ private:
 	const float m_SpawnEnemyInterval = 0.5f;
 
 
-
 	std::vector<Willem::Vector2> m_BeeFormationLocations;
 	std::vector<Willem::GameObject*> m_pBeeFormation;
 	// Change to pairs? Maybe maps?
 	// Order matters, if number 3 dies a new bee will have to go in his place not at the end
-
 
 	std::vector<Willem::Vector2> m_ButterflyFormationLocations;
 	std::vector<Willem::GameObject*> m_pButterflyFormation;
@@ -64,6 +66,13 @@ private:
 
 
 	//ButterFliesAndBeesFromUpToBothSides
-	const int m_FormationOneSpawnLimit;
+	const int m_FormationOneSpawnLimit;	
+
+	// Altering between upper and lower sprites
+	void AlterBetweenSprites(float deltaT);
+	bool AreAllEnemiesInFormation();
+	const float m_AlteringBetweenSpritesInterval;
+	float m_AlteringBetweenSpritesTimer;
+	bool m_UpperSpriteActive;
 };
 

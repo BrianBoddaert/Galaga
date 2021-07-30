@@ -27,50 +27,31 @@ void Dive_UpToRight::Update(float deltaT)
 {
 	m_pState->Update(deltaT);
 
-	
 	if (m_pState->GetStateFinished())
 	{
 		TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 		const Vector3& pos = transform->GetPosition();
 
+		delete m_pState;
+		m_pState = nullptr;
+
 		switch (m_DiveProcess)
 		{
 		case 0:
 		{
-			m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float (-M_PI/2.0), float(M_PI - M_PI / 5.0));
+			m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float(-M_PI / 2.0), float(M_PI - M_PI / 5.0));
 		}
-			break;
+		break;
 		case 1:
 		{
-			// Reserve a spot in the formation, calculate the direction to this point
-			EnemyManager& enemyManager = EnemyManager::GetInstance();
-			Vector2 destination;
-			if (m_pGameObject->HasTag("Bee"))
-			{
-				enemyManager.ClaimSpotInBeeFormation(m_pGameObject);
-				destination = enemyManager.GetBeeFormationPosition(m_pGameObject);
-			}
-			else if (m_pGameObject->HasTag("Butterfly"))
-			{
-				enemyManager.ClaimSpotInButterflyFormation(m_pGameObject);
-				destination = enemyManager.GetButterflyFormationPosition(m_pGameObject);
-			}
-			else if (m_pGameObject->HasTag("Boss"))
-			{
-				enemyManager.ClaimSpotInBossFormation(m_pGameObject);
-				destination = enemyManager.GetBossFormationPosition(m_pGameObject);
-			}
-
-			Vector2 direction = (destination - pos).Normalize();
-
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			ReserveSpotAndMoveToIt();
 		}
-			break;
+		break;
 		case 2:
 		{
 			m_Completed = true;
 		}
-			break;
+		break;
 		}
 
 
@@ -94,5 +75,6 @@ void Dive_UpToRight::Enter()
 
 void Dive_UpToRight::Exit()
 {
-
+	if (m_pState)
+		delete m_pState;
 }

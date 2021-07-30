@@ -140,7 +140,7 @@ void Minigin::LoadSinglePlayerScene() const
 	player->AddComponent(new RenderComponent(playerSrcRect));
 	player->SetTexture("Galaga2.png");
 
-	player->AddComponent(new TransformComponent(playerPos, 2.0f));
+	player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
 	player->AddComponent(new ShootComponent());
 	//player->AddComponent(new HealthComponent(3));							<<< UNCOMMENT
 	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
@@ -495,8 +495,6 @@ void Minigin::Run()
 	float lag = 0.0f;
 	m_Gamestate = GameState::Playing;
 	std::thread audioThread(&SoundSystem::Update, &ServiceLocator::GetSoundSystem());
-
-	enemyManager.SpawnAliens();
 
 	while (doContinue)
 	{

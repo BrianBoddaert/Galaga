@@ -56,6 +56,8 @@ void SpawnDiveState::Enter()
 }
 void SpawnDiveState::Exit() 
 {
+	if (m_pDive)
+		delete m_pDive;
 }
 
 AlienState* SpawnDiveState::GetFollowUpState() const

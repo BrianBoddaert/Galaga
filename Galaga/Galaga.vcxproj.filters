@@ -87,17 +87,14 @@
     <ClCompile Include="Dive_UpToLeft.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
-    <ClCompile Include="Dive_BeesButterfliesFromUp.cpp">
-      <Filter>Dives</Filter>
-    </ClCompile>
-    <ClCompile Include="Dive_BossButterfliesFromLeft.cpp">
-      <Filter>Dives</Filter>
-    </ClCompile>
-    <ClCompile Include="Dive_ButterfliesFromRight.cpp">
-      <Filter>Dives</Filter>
-    </ClCompile>
     <ClCompile Include="DSS_CircleAroundPoint.cpp">
       <Filter>SubStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Dive_LeftToMiddle.cpp">
+      <Filter>Dives</Filter>
+    </ClCompile>
+    <ClCompile Include="Dive.cpp">
+      <Filter>Dives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,17 +161,11 @@
     <ClInclude Include="Dive_UpToLeft.h">
       <Filter>Dives</Filter>
     </ClInclude>
-    <ClInclude Include="Dive_BeesButterfliesFromUp.h">
-      <Filter>Dives</Filter>
-    </ClInclude>
-    <ClInclude Include="Dive_BossButterfliesFromLeft.h">
-      <Filter>Dives</Filter>
-    </ClInclude>
-    <ClInclude Include="Dive_ButterfliesFromRight.h">
-      <Filter>Dives</Filter>
-    </ClInclude>
     <ClInclude Include="DSS_CircleAroundPoint.h">
       <Filter>SubStates</Filter>
+    </ClInclude>
+    <ClInclude Include="Dive_LeftToMiddle.h">
+      <Filter>Dives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

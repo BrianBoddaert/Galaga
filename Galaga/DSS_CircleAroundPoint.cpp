@@ -41,7 +41,7 @@ void DSS_CircleAroundPoint::Update(float deltaT)
 		flyComp->SetRotationRadians(m_Rotation);
 
 		if (m_Rotation <= m_RotationLimit)
-			m_SubStateFinished = true;
+				m_SubStateFinished = true;
 	}
 
 	transform->SetPosition(m_Center +

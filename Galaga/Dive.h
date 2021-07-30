@@ -11,12 +11,15 @@ public:
 		, m_DiveProcess{ 0 }
 		, m_pState{ nullptr }
 	{}
+	virtual ~Dive() {}
 	virtual void Update(float deltaT) = 0;
 
 	bool GetCompleted() const { return m_Completed; };
 protected:
 	virtual void Enter() {};
 	virtual void Exit() {};
+
+	void ReserveSpotAndMoveToIt();
 
 	Willem::GameObject* m_pGameObject;
 	bool m_Completed = false;

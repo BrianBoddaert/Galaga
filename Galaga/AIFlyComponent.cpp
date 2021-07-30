@@ -2,27 +2,22 @@
 #include "AIFlyComponent.h"
 #include "TransformComponent.h"
 #include "Minigin.h"
-#include "RenderComponent.h"
 #include "SpawnDiveState.h"
 #include "EnemyManager.h"
 #include <cmath>
 
 using namespace Willem;
 
-AIFlyComponent::AIFlyComponent(Willem::GameObject*)
-	:m_pState{ nullptr }
-	, m_Speed{ 200.0f }
-	, m_RotationSpeed{ 4.0f }
-	, m_RotationRadians{ float(M_PI) }
-{
-}
 
-AIFlyComponent::AIFlyComponent(Willem::GameObject*, SpawnDiveState* state)
-	:m_pState{ state }
+AIFlyComponent::AIFlyComponent(Willem::GameObject* go, SpawnDiveState* state, int srcRectYPos)
+	:Component{ go }
+	,m_pState{ state }
 	, m_Speed{ 200.0f }
-	, m_RotationSpeed{4.0f}
+	, m_RotationSpeed{4} // 4
 	, m_RotationRadians{float(M_PI)}
+	, m_UpperSrcRectYPos{ srcRectYPos }
 {
+	m_pRenderComponent = m_pGameObject->GetComponent<Willem::RenderComponent>();
 }
 
 void AIFlyComponent::SetSpawnDiveState(SpawnDiveState* state)
@@ -52,16 +47,27 @@ void AIFlyComponent::Update(float deltaT)
 
 }
 
+
 void AIFlyComponent::AdjustSpritesToFitDirection()
 {
-	RenderComponent* renderComp = m_pGameObject->GetComponent<RenderComponent>();
-	SDL_Rect srcRect = renderComp->GetSrcRect();
+
 	int initialOffsetWidth = 1;
 	int offsetWidth = 2;
-	int spriteIndex = int(std::round(m_RotationRadians / float(M_PI / 8.0)));
+	int highestSprite = 15;
+	int spriteIndex;
+
+
+	if (m_RotationRadians > 0.0f)
+		spriteIndex = int(std::round(m_RotationRadians / float(M_PI / 8.0)));
+	else
+	{
+		spriteIndex = highestSprite - int(std::round(std::fmod(abs(m_RotationRadians),float(M_PI*2)) / float(M_PI / 8.0)));
+	}
+		
 
 	spriteIndex = spriteIndex % 16;
 
+	SDL_Rect srcRect = m_pRenderComponent->GetSrcRect();
 	srcRect.x = initialOffsetWidth + (spriteIndex * srcRect.w) + (spriteIndex * offsetWidth);
-	renderComp->SetSrcRect(srcRect);
+	m_pRenderComponent->SetSrcRect(srcRect);
 }

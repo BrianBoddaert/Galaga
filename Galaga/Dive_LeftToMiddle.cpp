@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Dive_BeesButterfliesFromUp.h"
+#include "Dive_LeftToMiddle.h"
 
 #include "DSS_MoveToPoint.h"
 #include "DSS_CircleAroundPoint.h"
@@ -12,24 +12,26 @@
 
 using namespace Willem;
 
-Dive_BeesButterfliesFromUp::Dive_BeesButterfliesFromUp(Willem::GameObject* go)
+Dive_LeftToMiddle::Dive_LeftToMiddle(Willem::GameObject* go)
 	:Dive{ go }
 {
 	Enter();
 }
 
-Dive_BeesButterfliesFromUp::~Dive_BeesButterfliesFromUp()
+Dive_LeftToMiddle::~Dive_LeftToMiddle()
 {
 	Exit();
 }
 
-void Dive_BeesButterfliesFromUp::Update(float deltaT)
+void Dive_LeftToMiddle::Update(float deltaT)
 {
 	m_pState->Update(deltaT);
 
-
 	if (m_pState->GetStateFinished())
 	{
+		delete m_pState;
+		m_pState = nullptr;
+
 		TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 		const Vector3& pos = transform->GetPosition();
 
@@ -37,21 +39,24 @@ void Dive_BeesButterfliesFromUp::Update(float deltaT)
 		{
 		case 0:
 		{
-			m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float(-M_PI / 2.0), float(M_PI - M_PI / 5.0));
+			const Vector3 center = { pos.x,pos.y - 100.0f,pos.z };
+			m_pState = new DSS_CircleAroundPoint(m_pGameObject, center, float(M_PI / 2), float(-M_PI * 1.5), false);
 		}
 		break;
 		case 1:
 		{
-			// Reserve a spot in the formation, calculate the direction to this point
-			EnemyManager& enemyManager = EnemyManager::GetInstance();
-			enemyManager.ClaimSpotInBeeFormation(m_pGameObject);
-			Vector2 destination = enemyManager.GetBeeFormationPosition(m_pGameObject);
-			Vector2 direction = (destination - pos).Normalize();
-
+			const SDL_Surface* surface = Minigin::GetWindowSurface();
+			const Vector2 destination = { float(surface->w/2) , float(surface->h/2 + 100.0) };
+			const Vector2 direction = (destination - pos).Normalize();
 			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
 		}
 		break;
 		case 2:
+		{
+			ReserveSpotAndMoveToIt();
+		}
+		break;
+		case 3:
 		{
 			m_Completed = true;
 		}
@@ -63,7 +68,7 @@ void Dive_BeesButterfliesFromUp::Update(float deltaT)
 	}
 }
 
-void Dive_BeesButterfliesFromUp::Enter()
+void Dive_LeftToMiddle::Enter()
 {
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 	const Vector3& pos = transform->GetPosition();
@@ -71,13 +76,13 @@ void Dive_BeesButterfliesFromUp::Enter()
 	SDL_Rect halfSize = { srcRect.x / 2,srcRect.y / 2,srcRect.w / 2,srcRect.h / 2 };
 	const SDL_Surface* surface = Minigin::GetWindowSurface();
 
-	float borderOffset = 100.0f;
-	const Vector2 destination = { float(surface->w - halfSize.w - borderOffset), float(surface->h / 2.0f - halfSize.h) };
+	const Vector2 destination = { float(surface->w / 4),float(surface->h * 0.8) };
 	const Vector2 direction = (destination - pos).Normalize();
 	m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
 }
 
-void Dive_BeesButterfliesFromUp::Exit()
+void Dive_LeftToMiddle::Exit()
 {
-
+	if (m_pState)
+		delete m_pState;
 }

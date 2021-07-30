@@ -6,7 +6,7 @@ class Dive_UpToLeft final :
 {
 public:
 	Dive_UpToLeft(Willem::GameObject* go);
-	~Dive_UpToLeft();
+	~Dive_UpToLeft() override;
 	void Update(float deltaT) override;
 protected:
 	void Enter() override;
