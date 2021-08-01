@@ -21,6 +21,5 @@ void ServiceLocator::SetSoundSystem(SoundSystem* ss)
 
 void ServiceLocator::CleanUp()
 {
-	if (m_pSsInstance)
-		delete m_pSsInstance;
+	delete m_pSsInstance;
 }

@@ -53,7 +53,7 @@ void Dive_LeftToMiddle::Update(float deltaT)
 		break;
 		case 2:
 		{
-			ReserveSpotAndMoveToIt();
+			FindFormationPosAndMoveToIt();
 		}
 		break;
 		case 3:

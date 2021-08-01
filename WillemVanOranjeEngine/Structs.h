@@ -68,7 +68,7 @@ namespace Willem
 			// My angle to sprite can't handle negative numbers so I do this.
 			if (angle < 0)
 				angle = float((PI * 2.0) - abs(angle));
-			// This is done because the angle 0 is set upwards instead of to the right.
+			// This is done because the angle 0 is set upwards instead of to the right. ( angle 0 starts at -90)
 			angle += float(PI / 2.0);
 			return angle;
 		}

@@ -69,6 +69,7 @@ namespace Willem
 			m_Playing.store(false);
 			m_QueueActive.notify_one();
 
+			std::cout << " ";
 			for (auto const& x : m_SoundLibrary)
 			{
 				Mix_FreeChunk(m_SoundLibrary.at(x.first));
@@ -257,7 +258,10 @@ namespace Willem
 			m_pRealSoundSystem->AddSoundToLibrary(soundId, path);
 		}
 
-		~LoggingSoundSystem() override { delete m_pRealSoundSystem; };
+		~LoggingSoundSystem() 
+		{
+			delete m_pRealSoundSystem; 
+		};
 
 		LoggingSoundSystem(const LoggingSoundSystem&) = delete;
 		LoggingSoundSystem& operator=(const LoggingSoundSystem&) = delete;

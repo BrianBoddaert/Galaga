@@ -27,7 +27,6 @@ void AIFlyComponent::SetSpawnDiveState(SpawnDiveState* state)
 
 AIFlyComponent::~AIFlyComponent()
 {
-	EnemyManager::GetInstance().UnclaimSpotInFormation(m_pGameObject);
 	delete m_pState;
 }
 void AIFlyComponent::Update(float deltaT)

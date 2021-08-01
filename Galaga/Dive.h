@@ -19,7 +19,7 @@ protected:
 	virtual void Enter() {};
 	virtual void Exit() {};
 
-	void ReserveSpotAndMoveToIt();
+	void FindFormationPosAndMoveToIt();
 
 	Willem::GameObject* m_pGameObject;
 	bool m_Completed = false;

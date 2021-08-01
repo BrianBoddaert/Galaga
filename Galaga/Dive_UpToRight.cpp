@@ -44,7 +44,7 @@ void Dive_UpToRight::Update(float deltaT)
 		break;
 		case 1:
 		{
-			ReserveSpotAndMoveToIt();
+			FindFormationPosAndMoveToIt();
 		}
 		break;
 		case 2:
