@@ -52,11 +52,15 @@ void Willem::GameObject::Render() const
 		pos = Vector3(1, 1,1);
 		scale = Vector3(1, 1,1);
 	}
-	for (size_t i = 0; i < m_Components.size(); i++)
-	{
 
-		m_Components[i]->Render(Willem::Vector2(pos.x,pos.y), Willem::Vector2(scale.x, scale.y));
-	}
+	RenderComponent* rendercomp = GetComponent<RenderComponent>();
+
+	if (rendercomp)
+		rendercomp->Render(Willem::Vector2(pos.x, pos.y), Willem::Vector2(scale.x, scale.y));
+	
+
+
+	
 }
 
 

@@ -20,7 +20,7 @@ namespace Willem
 			:m_pGameObject{nullptr}
 		{}
 		virtual void Update(float) {};
-		virtual void Render(const Willem::Vector2&, const Willem::Vector2&) const {};
+		//virtual void Render(const Willem::Vector2&, const Willem::Vector2&) const {};
 		virtual ~Component() {};
 
 		void SetGameObject(GameObject* obj) { m_pGameObject = obj; }

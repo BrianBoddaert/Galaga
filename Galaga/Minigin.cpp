@@ -74,7 +74,7 @@ void Minigin::Initialize()
 	m_WindowSurface = SDL_GetWindowSurface(m_Window);
 
 	Willem::ServiceLocator::SetSoundSystem(new LoggingSoundSystem(new SdlSoundSystem()));
-	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Jump, "../Data/Audio/jump.mp3");
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Jump, "../Data/Audio/jump.mp3");
 	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fall, "../Data/Audio/fall.mp3");
 	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Lift, "../Data/Audio/lift.mp3");
 	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Victory, "../Data/Audio/victory.mp3");
@@ -312,18 +312,20 @@ void Minigin::LoadVersusScene() const
 	//scene.SortOnZAxis();
 }
 
-void Minigin::LoadHUD(Willem::Scene&) const
+void Minigin::LoadHUD(Willem::Scene& scene) const
 {
-	//{
-	//	
-	//	auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
-	//	player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
+	{
+		
+		auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
+		player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
 
-	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-	//	player1HUD->AddComponent(new Willem::TextComponent("Player1", font));
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		player1HUD->AddComponent(new RenderComponent());
+		player1HUD->AddComponent(new Willem::TextComponent(player1HUD.get(),"Player1", font));
 
-	//	scene.Add(player1HUD);
-	//}
+
+		scene.Add(player1HUD);
+	}
 	//{
 	//	auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
 	//	scoreDisplay->AddComponent(new TransformComponent({ 20,70.0f,10 }, 1.0f));
@@ -494,6 +496,7 @@ void Minigin::Run()
 	auto lastTime = high_resolution_clock::now();
 	float lag = 0.0f;
 	m_Gamestate = GameState::Playing;
+
 	std::thread audioThread(&SoundSystem::Update, &ServiceLocator::GetSoundSystem());
 
 	while (doContinue)

@@ -46,6 +46,7 @@ void RenderComponent::Render(const Willem::Vector2& pos, const Willem::Vector2& 
 
 }
 
+
 Texture2D* RenderComponent::GetTexture()
 {
 	return m_pTexture;

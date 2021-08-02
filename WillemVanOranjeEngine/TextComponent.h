@@ -9,12 +9,13 @@ namespace Willem
 	{
 	public:
 		void Update(float deltaT) override;
-		void Render(const Vector2& pos, const Vector2& scale = { 1,1 }) const override;
 
 		void SetText(const std::string& text);
 
 		void UpdateTexture();
-		explicit TextComponent(const std::string& text, Font* font, float wrap = 1.0f);
+
+
+		explicit TextComponent(GameObject* gameObject, const std::string& text, Font* font, float wrap = 1.0f);
 		virtual ~TextComponent() override = default;
 		TextComponent(const TextComponent& other) = delete;
 		TextComponent(TextComponent&& other) = delete;
@@ -25,6 +26,5 @@ namespace Willem
 		float m_Wrap;
 		std::string m_Text;
 		std::shared_ptr<Font> m_pFont;
-		std::shared_ptr<Texture2D> m_pTexture;
 	};
 }

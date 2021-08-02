@@ -20,7 +20,7 @@ namespace Willem
 		RenderComponent& operator= (RenderComponent&&) = delete;
 
 		 void Update(float deltaT) override;
-		 void Render(const Vector2& pos, const Vector2& scale) const override;
+		 void Render(const Vector2& pos, const Vector2& scale) const;
 		 Texture2D* GetTexture();
 		 void SetTexture(Texture2D* texture);
 		 const SDL_Rect& GetSrcRect() const;
