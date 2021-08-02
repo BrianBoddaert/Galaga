@@ -43,15 +43,19 @@ void EnemyManager::Update(float deltaT)
 
 bool EnemyManager::AreAllEnemiesInFormation()
 {
-	for (auto& pair : m_pEnemies)
+	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
+
+	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
 	{
-		if (pair.second.use_count() <= 1)
-			m_pEnemies.erase(pair.first);
+		if (it->second.use_count() <= 1)
+			m_pEnemies.erase(it++);
 		else
 		{
-			std::shared_ptr<Willem::GameObject> enemy = pair.second.lock();
+			std::shared_ptr<Willem::GameObject> enemy = it->second.lock();
 			if (!enemy->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
 				return false;
+
+			++it;
 		}
 	}
 
@@ -194,6 +198,7 @@ void EnemyManager::SpawnBee(const Willem::Vector2& pos)
 	bee->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	bee->AddComponent(new HealthComponent(1, false));
 	bee->AddComponent(new AIFlyComponent(bee.get(), new SpawnDiveState(bee.get(), new T(bee.get())), srcRect.y));
+	//bee->AddComponent();
 	bee->AddTag("Bee");
 	bee->AddTag("Alien");
 
@@ -266,13 +271,15 @@ void EnemyManager::AlterBetweenSprites(float deltaT)
 
 	m_AlteringBetweenSpritesTimer = 0.0f;
 
-	for (auto& pair : m_pEnemies)
+	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
+
+	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
 	{
-		if (pair.second.use_count() <= 1)
-			m_pEnemies.erase(pair.first);
+		if (it->second.use_count() <= 1)
+			m_pEnemies.erase(it++);
 		else
 		{
-			std::shared_ptr<Willem::GameObject> enemy = pair.second.lock();
+			std::shared_ptr<Willem::GameObject> enemy = it->second.lock();
 			const int upperSrcRectYPos = enemy->GetComponent<AIFlyComponent>()->GetUpperSrcRectYPos();
 			RenderComponent* renderComp = enemy->GetComponent<RenderComponent>();
 			SDL_Rect srcRect = renderComp->GetSrcRect();
@@ -284,6 +291,7 @@ void EnemyManager::AlterBetweenSprites(float deltaT)
 				srcRect.y = upperSrcRectYPos;
 
 			renderComp->SetSrcRect(srcRect);
+			++it;
 		}
 	}
 

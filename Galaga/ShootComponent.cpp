@@ -35,7 +35,7 @@ void ShootComponent::Fire(const Vector2& dir)
 	bullet->AddComponent(new TransformComponent(spawnPos, 2.0f));
 	bullet->AddComponent(new ThrusterComponent(dir));
 	bullet->AddComponent(new HealthComponent(1,true));
-	bullet->AddTag("Bullet");
+	bullet->AddTag("PlayerBullet");
 
 	CollisionManager::GetInstance().AddCollider(bullet);
 	SceneManager::GetInstance().GetCurrentScene()->Add(bullet);

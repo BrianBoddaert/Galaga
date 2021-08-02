@@ -12,47 +12,73 @@ BaseCollisionManager::BaseCollisionManager()
 void BaseCollisionManager::Update(float)
 {
 
-	for (size_t i = 0; i < m_pPlayers.size(); i++)
+	for (size_t i = 0; i < m_pCollidersA.size(); i++)
 	{
-		for (size_t j = 0; j < m_pColliders.size(); j++)
+		for (size_t j = 0; j < m_pCollidersB.size(); j++)
 		{
-			if (IsColliding(m_pPlayers[i], m_pColliders[j]))
+			if (IsColliding(m_pCollidersA[i], m_pCollidersB[j]))
 			{
-				CollisionEffect(m_pPlayers[i], m_pColliders[j]);
+				CollisionEffect(m_pCollidersA[i], m_pCollidersB[j]);
+				return;
 			}
 		}
 	}
 
 }
-
+void BaseCollisionManager::RemoveColliderByObject(GameObject* obj)
+{
+	for (size_t i = 0; i < m_pCollidersA.size(); i++)
+	{
+		if (m_pCollidersA[i].get() == obj)
+		{
+			m_pCollidersA.erase(m_pCollidersA.begin() + i);
+			return;
+		}
+			
+	}
+	for (size_t i = 0; i < m_pCollidersB.size(); i++)
+	{
+		if (m_pCollidersB[i].get() == obj)
+		{
+			m_pCollidersB.erase(m_pCollidersB.begin() + i);
+			return;
+		}
+			
+	}
+}
 void BaseCollisionManager::RemoveColliderByObject(const std::shared_ptr<GameObject>& obj)
 {
-	for (size_t i = 0; i < m_pColliders.size(); i++)
+	for (size_t i = 0; i < m_pCollidersA.size(); i++)
 	{
-		if (m_pColliders[i] == obj)
-			m_pColliders.erase(m_pColliders.begin() + i);
+		if (m_pCollidersA[i] == obj)
+			m_pCollidersA.erase(m_pCollidersA.begin() + i);
+	}
+	for (size_t i = 0; i < m_pCollidersB.size(); i++)
+	{
+		if (m_pCollidersB[i] == obj)
+			m_pCollidersB.erase(m_pCollidersB.begin() + i);
 	}
 }
 void BaseCollisionManager::AddCollider(const std::shared_ptr<GameObject>& gameObject)
 {
-	if (gameObject->HasTag("Player"))
+	if (gameObject->HasTag("Alien") || gameObject->HasTag("AlienBullet"))
 	{
-		m_pPlayers.push_back(gameObject);
+		m_pCollidersB.push_back(gameObject);
 	}
 	else
 	{
-		m_pColliders.push_back(gameObject);
+		m_pCollidersA.push_back(gameObject);
 	}
 }
 
-bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> player, std::shared_ptr<GameObject> collider)
+bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> colliderA, std::shared_ptr<GameObject> colliderB)
 {
-	const Vector3 pos1 = player->GetComponent<TransformComponent>()->GetPosition();
-	const Vector2 size1 = player->GetComponent<RenderComponent>()->GetSpritePixelSizeScaled();
-	const Vector3 pos2 = collider->GetComponent<TransformComponent>()->GetPosition();
-	const Vector2 size2 = collider->GetComponent<RenderComponent>()->GetSpritePixelSizeScaled();
+	const Vector3 pos1 = colliderA->GetComponent<TransformComponent>()->GetPosition();
+	const Vector2 size1 = colliderA->GetComponent<RenderComponent>()->GetSpritePixelSizeScaled();
+	const Vector3 pos2 = colliderB->GetComponent<TransformComponent>()->GetPosition();
+	const Vector2 size2 = colliderB->GetComponent<RenderComponent>()->GetSpritePixelSizeScaled();
 
-	const Vector2 TriggerOffset = { -(size2.x/1.75f),-(size2.y/ 1.75f) };
+	const Vector2 TriggerOffset = {0,0 };
 
 	if (pos1.x + size1.x + TriggerOffset.x >= pos2.x && pos1.y + size1.y + TriggerOffset.y >= pos2.y && !(pos1.x > pos2.x + size2.x + TriggerOffset.x) && !(pos1.y > pos2.y + size2.y + TriggerOffset.y))
 	{
@@ -68,24 +94,35 @@ bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> player, std::
 
 void BaseCollisionManager::RemoveCollidersByTag(const std::string& tag)
 {
-	for (size_t i = 0; i < m_pColliders.size(); i++)
+	for (size_t i = 0; i < m_pCollidersA.size(); i++)
 	{
-		if (m_pColliders[i]->HasTag(tag))
-			m_pColliders.erase(m_pColliders.begin() + i);
+		if (m_pCollidersA[i]->HasTag(tag))
+			m_pCollidersA.erase(m_pCollidersA.begin() + i);
+	}
+
+	for (size_t i = 0; i < m_pCollidersB.size(); i++)
+	{
+		if (m_pCollidersB[i]->HasTag(tag))
+			m_pCollidersB.erase(m_pCollidersB.begin() + i);
 	}
 }
 
 void BaseCollisionManager::RemoveCollidersByName(const std::string& name)
 {
-	for (size_t i = 0; i < m_pColliders.size(); i++)
+	for (size_t i = 0; i < m_pCollidersA.size(); i++)
 	{
-		if (m_pColliders[i]->GetName() == name)
-			m_pColliders.erase(m_pColliders.begin() + i);
+		if (m_pCollidersA[i]->GetName() == name)
+			m_pCollidersA.erase(m_pCollidersA.begin() + i);
+	}
+	for (size_t i = 0; i < m_pCollidersB.size(); i++)
+	{
+		if (m_pCollidersB[i]->GetName() == name)
+			m_pCollidersB.erase(m_pCollidersB.begin() + i);
 	}
 }
 
 void BaseCollisionManager::ClearColliders()
 {
-	m_pPlayers.clear();
-	m_pColliders.clear();
+	m_pCollidersA.clear();
+	m_pCollidersB.clear();
 }

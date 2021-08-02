@@ -4,7 +4,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "Minigin.h"
-
+#include "CollisionManager.h"
 using namespace Willem;
 
 HealthComponent::HealthComponent(int health, bool removeWhenOutOfScreen)
@@ -57,4 +57,5 @@ void HealthComponent::Die()
 	auto scene = Willem::SceneManager::GetInstance().GetCurrentScene();
 	scene->RemoveObjectsByObject(m_pGameObject);
 	
+	CollisionManager::GetInstance().RemoveColliderByObject(m_pGameObject);
 }

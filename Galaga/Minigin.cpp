@@ -312,20 +312,20 @@ void Minigin::LoadVersusScene() const
 	//scene.SortOnZAxis();
 }
 
-void Minigin::LoadHUD(Willem::Scene& scene) const
+void Minigin::LoadHUD(Willem::Scene&) const
 {
-	{
-		
-		auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
-		player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
+	//{
+	//	
+	//	auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
+	//	player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		player1HUD->AddComponent(new RenderComponent());
-		player1HUD->AddComponent(new Willem::TextComponent(player1HUD.get(),"Player1", font));
+	//	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	//	player1HUD->AddComponent(new RenderComponent());
+	//	player1HUD->AddComponent(new Willem::TextComponent(player1HUD.get(),"Player1", font));
 
 
-		scene.Add(player1HUD);
-	}
+	//	scene.Add(player1HUD);
+	//}
 	//{
 	//	auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
 	//	scoreDisplay->AddComponent(new TransformComponent({ 20,70.0f,10 }, 1.0f));

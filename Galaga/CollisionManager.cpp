@@ -2,10 +2,15 @@
 #include "CollisionManager.h"
 #include "TransformComponent.h"
 #include "SceneManager.h"
+#include "HealthComponent.h"
 
-void CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> player, std::shared_ptr<Willem::GameObject> collider)
+void CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playersCollider, std::shared_ptr<Willem::GameObject> aliensCollider)
 {
-
+	if (playersCollider->HasTag("PlayerBullet") && aliensCollider->HasTag("Alien"))
+	{
+		aliensCollider->GetComponent<HealthComponent>()->Hit();
+		playersCollider->GetComponent<HealthComponent>()->Hit();
+	}
 	//if (player->GetComponent<MoveComponent>()->GetIsOnDisc() || player->GetComponent<MoveComponent>()->IsFallingToDeath())
 	//	return;
 
