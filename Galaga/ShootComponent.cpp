@@ -26,16 +26,21 @@ void ShootComponent::Fire(const Vector2& dir)
 	auto bullet = std::make_shared<GameObject>("Bullet");
 
 	SDL_Rect srcRect = { 313,140,3,8 };
-	const Vector2 playerHalfSize = { srcRect.w / 2.0f,srcRect.h / 2.0f };
+	RenderComponent* renderComp = m_pGameObject->GetComponent<RenderComponent>();
+	const SDL_Rect& playerSrcRect = renderComp->GetSrcRect();
+	const Vector2 playerHalfSize = { playerSrcRect.w / 2.0f ,playerSrcRect.h / 2.0f };
+
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
-	const Vector3 spawnPos = { transform->GetPosition() + Vector3(playerHalfSize.x,0,0) };
+
+	const Vector3 spawnPos = { transform->GetPosition() + Vector3(playerHalfSize.x * GAMESCALE - (srcRect.w/2*GAMESCALE),0,0) };
 
 	bullet->AddComponent(new RenderComponent(srcRect));
 	bullet->SetTexture("Galaga2.png");
-	bullet->AddComponent(new TransformComponent(spawnPos, 2.0f));
+	bullet->AddComponent(new TransformComponent(spawnPos, GAMESCALE));
 	bullet->AddComponent(new ThrusterComponent(dir));
 	bullet->AddComponent(new HealthComponent(1,true));
 	bullet->AddTag("PlayerBullet");
+	bullet->AddTag("Bullet");
 
 	CollisionManager::GetInstance().AddCollider(bullet);
 	SceneManager::GetInstance().GetCurrentScene()->Add(bullet);

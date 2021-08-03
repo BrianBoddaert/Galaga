@@ -8,8 +8,8 @@ void CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playe
 {
 	if (playersCollider->HasTag("PlayerBullet") && aliensCollider->HasTag("Alien"))
 	{
-		aliensCollider->GetComponent<HealthComponent>()->Hit();
 		playersCollider->GetComponent<HealthComponent>()->Hit();
+		aliensCollider->GetComponent<HealthComponent>()->Hit();
 	}
 	//if (player->GetComponent<MoveComponent>()->GetIsOnDisc() || player->GetComponent<MoveComponent>()->IsFallingToDeath())
 	//	return;

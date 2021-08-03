@@ -24,6 +24,7 @@ public:
 	void SetSpawnDiveState(SpawnDiveState*);
 
 	int GetUpperSrcRectYPos() const { return m_UpperSrcRectYPos; }
+	void SetUpperSrcRectYPos(int upperSrcRectYPos) { m_UpperSrcRectYPos = upperSrcRectYPos; }
 
 	template<typename T>
 	bool CheckIfStateEqualsTemplate()
@@ -40,7 +41,7 @@ private:
 	const float m_Speed;
 	const float m_RotationSpeed;
 	float m_RotationRadians;
-	const int m_UpperSrcRectYPos;
+	int m_UpperSrcRectYPos;
 
 };
 

@@ -5,15 +5,17 @@
 #include "Scene.h"
 #include "Minigin.h"
 #include "CollisionManager.h"
+
+#include "RenderComponent.h"
+#include "AIFlyComponent.h"
+#include "ExplosionManager.h"
 using namespace Willem;
 
 HealthComponent::HealthComponent(int health, bool removeWhenOutOfScreen)
-	: m_HealthPoints{health}
-	, m_MaxHealthPoints{health}
-	, m_RemoveWhenOutOfScreen{removeWhenOutOfScreen}
-{
-
-}
+	: m_HealthPoints{ health }
+	, m_MaxHealthPoints{ health }
+	, m_RemoveWhenOutOfScreen{ removeWhenOutOfScreen }
+{}
 
 void HealthComponent::Update(float)
 {
@@ -31,6 +33,7 @@ void HealthComponent::Update(float)
 		Die();
 
 }
+
 const int HealthComponent::GetHealthPoints() const
 {
 	return m_HealthPoints;
@@ -40,8 +43,20 @@ void HealthComponent::Hit(int amount)
 {
 	m_HealthPoints -= amount;
 
-	if (m_HealthPoints < 0)
+	if (m_HealthPoints <= 0)
 		Die();
+	else if (m_pGameObject->HasTag("Boss"))
+	{
+		RenderComponent* renderComp = m_pGameObject->GetComponent<RenderComponent>();
+		SDL_Rect srcRect = renderComp->GetSrcRect();
+		const int offsetY = 2;
+		srcRect.y += srcRect.h * 2 + offsetY * 2;
+
+		AIFlyComponent* flyComp = m_pGameObject->GetComponent<AIFlyComponent>();
+		flyComp->SetUpperSrcRectYPos(flyComp->GetUpperSrcRectYPos() + (srcRect.h * 2 + offsetY * 2));
+
+		renderComp->SetSrcRect(srcRect);
+	}
 
 }
 void HealthComponent::Heal(int amount)
@@ -54,8 +69,12 @@ void HealthComponent::Heal(int amount)
 
 void HealthComponent::Die()
 {
+	if (!m_pGameObject->HasTag("Bullet"))
+	ExplosionManager::GetInstance().SpawnExplosion(m_pGameObject->GetComponent<TransformComponent>()->GetPosition());
+
 	auto scene = Willem::SceneManager::GetInstance().GetCurrentScene();
 	scene->RemoveObjectsByObject(m_pGameObject);
-	
+
 	CollisionManager::GetInstance().RemoveColliderByObject(m_pGameObject);
+
 }

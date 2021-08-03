@@ -172,6 +172,7 @@
     <ClCompile Include="DSS_CircleAroundPoint.cpp" />
     <ClCompile Include="DSS_MoveToPoint.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="ExplosionManager.cpp" />
     <ClCompile Include="FormationState.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="main.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="DSS_CircleAroundPoint.h" />
     <ClInclude Include="DSS_MoveToPoint.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="ExplosionManager.h" />
     <ClInclude Include="FormationState.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="Minigin.h" />

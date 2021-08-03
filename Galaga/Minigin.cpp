@@ -28,6 +28,7 @@
 #include "ShootCommand.h"
 #include "ShootComponent.h"
 #include "EnemyManager.h"
+#include "ExplosionManager.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -490,6 +491,7 @@ void Minigin::Run()
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& enemyManager = EnemyManager::GetInstance();
 	auto& collisionManager = CollisionManager::GetInstance();
+	auto& explosionManager = ExplosionManager::GetInstance();
 	auto& input = InputManager::GetInstance();
 
 	bool doContinue = true;
@@ -516,6 +518,7 @@ void Minigin::Run()
 				sceneManager.Update(deltaTime);
 				enemyManager.Update(deltaTime);
 				collisionManager.Update(deltaTime);
+				explosionManager.Update(deltaTime);
 			}
 			lag -= MsPerUpdate;
 		}

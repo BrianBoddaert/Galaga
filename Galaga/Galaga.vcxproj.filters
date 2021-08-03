@@ -99,6 +99,9 @@
     <ClCompile Include="Dive_RightToMiddle.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
+    <ClCompile Include="ExplosionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="Dive_RightToMiddle.h">
       <Filter>Dives</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplosionManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
