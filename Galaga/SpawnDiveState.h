@@ -28,14 +28,5 @@ protected:
 
 	Dive* m_pDive;
 
-	//// Turning in a circular motion 
-	//float m_CircularTurnRadians;
-	//Willem::Vector2 m_CircularTurnCenter;
-
-	////Go to Formation
-	//Willem::Vector2 m_DestinationPosition;
-	//Willem::Vector2 m_DestinationDirection;
-
-
 };
 

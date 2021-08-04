@@ -162,6 +162,7 @@
     <ClCompile Include="AIFlyComponent.cpp" />
     <ClCompile Include="AlienState.cpp" />
     <ClCompile Include="BombRunState.cpp" />
+    <ClCompile Include="ButterflyDive.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="ControlComponent.cpp" />
     <ClCompile Include="Dive.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="AIFlyComponent.h" />
     <ClInclude Include="AlienState.h" />
     <ClInclude Include="BombRunState.h" />
+    <ClInclude Include="ButterflyDive.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="ControlComponent.h" />
     <ClInclude Include="Dive.h" />

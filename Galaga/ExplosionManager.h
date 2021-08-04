@@ -13,7 +13,7 @@ public:
 private:
 	friend class Willem::Singleton<ExplosionManager>;
 	
-	const float m_ExplosionSpriteDuration = 0.1f;
+	const float m_ExplosionSpriteDuration = 0.05f;
 	std::vector<std::pair< std::weak_ptr<Willem::GameObject>, float >> m_pExplosions;
 };
 

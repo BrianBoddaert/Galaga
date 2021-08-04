@@ -4,10 +4,10 @@
 #include "AIFlyComponent.h"
 using namespace Willem;
 
-DSS_CircleAroundPoint::DSS_CircleAroundPoint(Willem::GameObject* go, const Willem::Vector2& pos,float rot, float rotlimit,bool clockWise) noexcept
+DSS_CircleAroundPoint::DSS_CircleAroundPoint(Willem::GameObject* go, const Willem::Vector2& pos,float rot, float rotlimit,bool clockWise, const Vector2& offset) noexcept
 	:DiveSubState{ go }
-	, m_Center{ pos + Vector2(0,50) }
-	,m_Offset{50}
+	, m_Center{ pos + offset }
+	,m_Offset{ abs(offset.x) + abs(offset.y)}
 	,m_Rotation{rot}
 	,m_RotationLimit{rotlimit}
 	, m_Clockwise{ clockWise }

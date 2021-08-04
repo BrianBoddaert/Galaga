@@ -12,16 +12,19 @@ using namespace Willem;
 AIFlyComponent::AIFlyComponent(Willem::GameObject* go, SpawnDiveState* state, int srcRectYPos)
 	:Component{ go }
 	,m_pState{ state }
-	, m_Speed{ 300.0f }
-	, m_RotationSpeed{8} // 4
+	, m_Speed{ 400.0f }
+	, m_RotationSpeed{9} 
 	, m_RotationRadians{float(M_PI)}
 	, m_UpperSrcRectYPos{ srcRectYPos }
 {
 	m_pRenderComponent = m_pGameObject->GetComponent<Willem::RenderComponent>();
 }
 
-void AIFlyComponent::SetSpawnDiveState(SpawnDiveState* state)
+void AIFlyComponent::SetState(AlienState* state)
 {
+	if (m_pState)
+	delete m_pState;
+
 	m_pState = state;
 }
 
@@ -49,12 +52,10 @@ void AIFlyComponent::Update(float deltaT)
 
 void AIFlyComponent::AdjustSpritesToFitDirection()
 {
-
 	int initialOffsetWidth = 1;
 	int offsetWidth = 2;
 	int highestSprite = 15;
 	int spriteIndex;
-
 
 	if (m_RotationRadians > 0.0f)
 		spriteIndex = int(std::round(m_RotationRadians / float(M_PI / 8.0)));
@@ -63,7 +64,6 @@ void AIFlyComponent::AdjustSpritesToFitDirection()
 		spriteIndex = highestSprite - int(std::round(std::fmod(abs(m_RotationRadians),float(M_PI*2)) / float(M_PI / 8.0)));
 	}
 		
-
 	spriteIndex = spriteIndex % 16;
 
 	SDL_Rect srcRect = m_pRenderComponent->GetSrcRect();

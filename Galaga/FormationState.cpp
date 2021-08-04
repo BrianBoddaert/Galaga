@@ -28,7 +28,7 @@ void FormationState::Update(float)
 
 AlienState* FormationState::GetFollowUpState() const
 {
-	return new BombRunState(m_pGameObject);
+	return nullptr;
 }
 
 void FormationState::Enter()

@@ -7,7 +7,7 @@ class DSS_CircleAroundPoint final :
 	public DiveSubState
 {
 public:
-	DSS_CircleAroundPoint(Willem::GameObject* go, const Willem::Vector2& pos, float rot, float rotlimit, bool clockWise = true) noexcept;
+	DSS_CircleAroundPoint(Willem::GameObject* go, const Willem::Vector2& pos, float rot, float rotlimit, bool clockWise = true, const Willem::Vector2& offset = { 0,50 }) noexcept;
 
 	~DSS_CircleAroundPoint();
 	DSS_CircleAroundPoint(const DSS_CircleAroundPoint& other) = delete;

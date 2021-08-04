@@ -21,7 +21,7 @@ public:
 	void SetRotationRadians(float radians) { m_RotationRadians = radians;};
 	float GetRotationRadians() const { return m_RotationRadians; };
 
-	void SetSpawnDiveState(SpawnDiveState*);
+	void SetState(AlienState*);
 
 	int GetUpperSrcRectYPos() const { return m_UpperSrcRectYPos; }
 	void SetUpperSrcRectYPos(int upperSrcRectYPos) { m_UpperSrcRectYPos = upperSrcRectYPos; }

@@ -17,6 +17,13 @@ enum class IntroDiveFormation
 	BeesFromUpToRight
 };
 
+enum class BombDiveStage
+{
+	None,
+	ButterflyAndBee,
+	BossAndTwoButterflies
+};
+
 enum class EnemyType
 {
 	Bee,
@@ -50,6 +57,10 @@ private:
 	template<typename T>
 	void SpawnBoss(const Willem::Vector2& pos);
 
+	void SendAliensOnBombRuns(float deltaT);
+	void UpdateEnemiesList();
+
+
 	std::map<std::pair<int,EnemyType>, std::weak_ptr<Willem::GameObject>> m_pEnemies;
 	// Enemy, Index
 
@@ -58,9 +69,10 @@ private:
 	int m_BossIndexCounter;
 
 	IntroDiveFormation m_IntroDiveFormation;
+	BombDiveStage m_BossDiveStage;
 	float m_SpawnEnemyTimer = 0.0f;
 	int m_EnemySpawnedCounter = 0;
-	const float m_SpawnEnemyInterval = 0.25f;
+	const float m_SpawnEnemyInterval;
 
 	std::vector<Willem::Vector2> m_BeeFormationLocations;
 	std::vector<Willem::Vector2> m_ButterflyFormationLocations;

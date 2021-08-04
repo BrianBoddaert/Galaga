@@ -102,6 +102,9 @@
     <ClCompile Include="ExplosionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ButterflyDive.cpp">
+      <Filter>Dives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="ExplosionManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ButterflyDive.h">
+      <Filter>Dives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -17,6 +17,9 @@
 #include "Dive_LeftToMiddle.h"
 #include "Dive_RightToMiddle.h"
 #include "FormationState.h"
+
+#include "BombRunState.h"
+#include "ButterflyDive.h"
 using namespace Willem;
 
 EnemyManager::EnemyManager()
@@ -29,6 +32,7 @@ EnemyManager::EnemyManager()
 	, m_BeeIndexCounter{ 0 }
 	, m_ButterflyIndexCounter{ 0 }
 	, m_BossIndexCounter{ 0 }
+	, m_SpawnEnemyInterval{ 0.1f }
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
@@ -37,26 +41,22 @@ EnemyManager::EnemyManager()
 
 void EnemyManager::Update(float deltaT)
 {
+	UpdateEnemiesList();
 	AlterBetweenSprites(deltaT);
 	SpawnAliens(deltaT);
+	SendAliensOnBombRuns(deltaT);
 }
 
 bool EnemyManager::AreAllEnemiesInFormation()
 {
 	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
 
-	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
+	for (it = m_pEnemies.begin(); it != m_pEnemies.end(); it++)
 	{
-		if (it->second.use_count() <= 1)
-			m_pEnemies.erase(it++);
-		else
-		{
-			std::shared_ptr<Willem::GameObject> enemy = it->second.lock();
-			if (!enemy->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
-				return false;
+		std::shared_ptr<Willem::GameObject> enemy = it->second.lock();
+		if (!enemy->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
+			return false;
 
-			++it;
-		}
 	}
 
 	return true;
@@ -198,7 +198,6 @@ void EnemyManager::SpawnBee(const Willem::Vector2& pos)
 	bee->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	bee->AddComponent(new HealthComponent(1, false));
 	bee->AddComponent(new AIFlyComponent(bee.get(), new SpawnDiveState(bee.get(), new T(bee.get())), srcRect.y));
-	//bee->AddComponent();
 	bee->AddTag("Bee");
 	bee->AddTag("Alien");
 
@@ -273,29 +272,26 @@ void EnemyManager::AlterBetweenSprites(float deltaT)
 
 	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
 
-	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
+	for (it = m_pEnemies.begin(); it != m_pEnemies.end(); it++)
 	{
-		if (it->second.use_count() <= 1)
-			m_pEnemies.erase(it++);
+		std::shared_ptr<Willem::GameObject> enemy = it->second.lock();
+		const int upperSrcRectYPos = enemy->GetComponent<AIFlyComponent>()->GetUpperSrcRectYPos();
+		RenderComponent* renderComp = enemy->GetComponent<RenderComponent>();
+		SDL_Rect srcRect = renderComp->GetSrcRect();
+		const int offsetHeight = 2;
+
+		if (m_UpperSpriteActive)
+			srcRect.y = upperSrcRectYPos + srcRect.h + offsetHeight;
 		else
-		{
-			std::shared_ptr<Willem::GameObject> enemy = it->second.lock();
-			const int upperSrcRectYPos = enemy->GetComponent<AIFlyComponent>()->GetUpperSrcRectYPos();
-			RenderComponent* renderComp = enemy->GetComponent<RenderComponent>();
-			SDL_Rect srcRect = renderComp->GetSrcRect();
-			const int offsetHeight = 2;
+			srcRect.y = upperSrcRectYPos;
 
-			if (m_UpperSpriteActive)
-				srcRect.y = upperSrcRectYPos + srcRect.h + offsetHeight;
-			else
-				srcRect.y = upperSrcRectYPos;
-
-			renderComp->SetSrcRect(srcRect);
-			++it;
-		}
+		renderComp->SetSrcRect(srcRect);
+		
 	}
 
 	m_UpperSpriteActive = !m_UpperSpriteActive;
+
+	m_BossDiveStage = BombDiveStage::None;
 }
 
 int EnemyManager::GetIndexOfGameObject(const Willem::GameObject* go) const
@@ -313,6 +309,7 @@ int EnemyManager::GetIndexOfGameObject(const Willem::GameObject* go) const
 
 	return index;
 }
+
 Vector2 EnemyManager::GetBeeFormationPosition(const Willem::GameObject* go) const
 {
 	int index = GetIndexOfGameObject(go);
@@ -337,7 +334,6 @@ Vector2 EnemyManager::GetButterflyFormationPosition(const Willem::GameObject* go
 
 	return m_ButterflyFormationLocations[index];
 }
-
 Vector2 EnemyManager::GetBossFormationPosition(const Willem::GameObject* go) const
 {
 	int index = GetIndexOfGameObject(go);
@@ -349,4 +345,50 @@ Vector2 EnemyManager::GetBossFormationPosition(const Willem::GameObject* go) con
 	}
 
 	return m_BossFormationLocations[index];
+}
+
+
+void EnemyManager::UpdateEnemiesList()
+{
+	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
+
+	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
+	{
+		if (it->second.use_count() <= 1)
+			m_pEnemies.erase(it++);
+		else
+			++it;
+	}
+}
+void EnemyManager::SendAliensOnBombRuns(float)
+{
+	if (m_IntroDiveFormation != IntroDiveFormation::None || m_BossDiveStage != BombDiveStage::None)
+		return;
+
+	m_BossDiveStage = BombDiveStage::ButterflyAndBee;
+
+	bool foundBee = false;
+	bool foundBF = false;
+
+	for (auto& pair : m_pEnemies)
+	{
+		Willem::GameObject* go = pair.second.lock().get();
+		AIFlyComponent* flyComp = go->GetComponent<AIFlyComponent>();
+
+		if (flyComp->CheckIfStateEqualsTemplate<BombRunState>())
+			continue;
+
+		if (!foundBee && pair.first.second == EnemyType::Bee)
+		{
+			foundBee = true;
+			//Willem::GameObject* go = pair.second.lock().get();
+			//go->GetComponent<AIFlyComponent>()->SetState(new BombRunState(go,new ButterflyDive(go,true)));
+
+		}
+		else if (!foundBF && pair.first.second == EnemyType::Butterfly)
+		{
+			foundBF = true;
+			flyComp->SetState(new BombRunState(go, new ButterflyDive(go, true)));
+		}
+	}
 }

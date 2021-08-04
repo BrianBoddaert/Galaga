@@ -29,7 +29,7 @@ void DSS_MoveToPoint::Update(float deltaT)
 	flyComp->SetRotationRadians(m_Direction.DirectionToLocalOrientationAngle());
 
 	// Finished condition
-	const float minimalOffset = 0.015f * speed;
+	const float minimalOffset = 0.02f * speed;
 	if ((pos - m_Destination).Magnitude() <= minimalOffset)
 		m_SubStateFinished = true;
 

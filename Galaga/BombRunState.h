@@ -1,13 +1,18 @@
 #pragma once
 #include "AlienState.h"
+#include "Structs.h"
+#include "DiveSubState.h"
+
 
 class GameObject;
 
+class Dive;
+
 class BombRunState final :
-    public AlienState
+	public AlienState
 {
 public:
-	BombRunState(Willem::GameObject* go) noexcept;
+	BombRunState(Willem::GameObject* go, Dive* dive) noexcept;
 	~BombRunState();
 	BombRunState(const BombRunState& other) = delete;
 	BombRunState(BombRunState&& other) = delete;
@@ -20,5 +25,8 @@ public:
 protected:
 	void Enter() override;
 	void Exit() override;
+
+	Dive* m_pDive;
+
 };
 
