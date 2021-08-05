@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="AIFlyComponent.cpp" />
     <ClCompile Include="AlienState.cpp" />
+    <ClCompile Include="BeeDive.cpp" />
     <ClCompile Include="BombRunState.cpp" />
     <ClCompile Include="ButterflyDive.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -188,6 +189,7 @@
   <ItemGroup>
     <ClInclude Include="AIFlyComponent.h" />
     <ClInclude Include="AlienState.h" />
+    <ClInclude Include="BeeDive.h" />
     <ClInclude Include="BombRunState.h" />
     <ClInclude Include="ButterflyDive.h" />
     <ClInclude Include="CollisionManager.h" />

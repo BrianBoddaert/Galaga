@@ -12,5 +12,6 @@ class ButterflyDive final:
 		void Exit() override;
 
 		const bool m_DiveToTheRight;
+		bool m_HeadingBack;
 };
 

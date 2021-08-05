@@ -20,6 +20,7 @@
 
 #include "BombRunState.h"
 #include "ButterflyDive.h"
+#include "BeeDive.h"
 using namespace Willem;
 
 EnemyManager::EnemyManager()
@@ -374,6 +375,8 @@ void EnemyManager::SendAliensOnBombRuns(float)
 	{
 		Willem::GameObject* go = pair.second.lock().get();
 		AIFlyComponent* flyComp = go->GetComponent<AIFlyComponent>();
+		TransformComponent* transformComponent = go->GetComponent<TransformComponent>();
+		const SDL_Surface* surface = Minigin::GetWindowSurface();
 
 		if (flyComp->CheckIfStateEqualsTemplate<BombRunState>())
 			continue;
@@ -381,14 +384,13 @@ void EnemyManager::SendAliensOnBombRuns(float)
 		if (!foundBee && pair.first.second == EnemyType::Bee)
 		{
 			foundBee = true;
-			//Willem::GameObject* go = pair.second.lock().get();
-			//go->GetComponent<AIFlyComponent>()->SetState(new BombRunState(go,new ButterflyDive(go,true)));
+			flyComp->SetState(new BombRunState(go, new BeeDive(go, transformComponent->GetPosition().x < (surface->w/2))));
 
 		}
 		else if (!foundBF && pair.first.second == EnemyType::Butterfly)
 		{
 			foundBF = true;
-			flyComp->SetState(new BombRunState(go, new ButterflyDive(go, true)));
+			flyComp->SetState(new BombRunState(go, new ButterflyDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
 		}
 	}
 }

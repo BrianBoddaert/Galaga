@@ -105,6 +105,9 @@
     <ClCompile Include="ButterflyDive.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
+    <ClCompile Include="BeeDive.cpp">
+      <Filter>Dives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -183,6 +186,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ButterflyDive.h">
+      <Filter>Dives</Filter>
+    </ClInclude>
+    <ClInclude Include="BeeDive.h">
       <Filter>Dives</Filter>
     </ClInclude>
   </ItemGroup>
