@@ -37,7 +37,7 @@ namespace Willem
 
 		Vector2() {};
 
-		Vector2 Normalize()
+		Vector2 Normalize() const
 		{
 			float sum = Magnitude();
 			float X = x;
@@ -54,7 +54,7 @@ namespace Willem
 
 			return Vector2(X,Y);
 		}
-		float Magnitude()
+		float Magnitude() const
 		{
 			float absX = abs(x);
 			float absY = abs(y);
@@ -62,7 +62,7 @@ namespace Willem
 			return sqrt(absX * absX + absY * absY);			
 		}
 
-		float DirectionToLocalOrientationAngle()
+		float DirectionToLocalOrientationAngle() const
 		{
 			float angle = atan2(y, x);
 			// My angle to sprite can't handle negative numbers so I do this.

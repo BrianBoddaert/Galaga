@@ -21,6 +21,7 @@
 #include "BombRunState.h"
 #include "ButterflyDive.h"
 #include "BeeDive.h"
+#include "ShootComponent.h"
 using namespace Willem;
 
 EnemyManager::EnemyManager()
@@ -198,6 +199,7 @@ void EnemyManager::SpawnBee(const Willem::Vector2& pos)
 	bee->SetTexture("Galaga2.png");
 	bee->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	bee->AddComponent(new HealthComponent(1, false));
+	bee->AddComponent(new ShootComponent());
 	bee->AddComponent(new AIFlyComponent(bee.get(), new SpawnDiveState(bee.get(), new T(bee.get())), srcRect.y));
 	bee->AddTag("Bee");
 	bee->AddTag("Alien");
@@ -224,6 +226,7 @@ void EnemyManager::SpawnButterfly(const Willem::Vector2& pos)
 	butterfly->SetTexture("Galaga2.png");
 	butterfly->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	butterfly->AddComponent(new HealthComponent(1, false));
+	butterfly->AddComponent(new ShootComponent());
 	butterfly->AddComponent(new AIFlyComponent(butterfly.get(), new SpawnDiveState(butterfly.get(), new T(butterfly.get())), srcRect.y));
 	butterfly->AddTag("Butterfly");
 	butterfly->AddTag("Alien");
@@ -250,6 +253,7 @@ void EnemyManager::SpawnBoss(const Willem::Vector2& pos)
 	boss->SetTexture("Galaga2.png");
 	boss->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
 	boss->AddComponent(new HealthComponent(2, false));
+	boss->AddComponent(new ShootComponent());
 	boss->AddComponent(new AIFlyComponent(boss.get(), new SpawnDiveState(boss.get(), new T(boss.get())), srcRect.y));
 	boss->AddTag("Boss");
 	boss->AddTag("Alien");
@@ -292,7 +296,6 @@ void EnemyManager::AlterBetweenSprites(float deltaT)
 
 	m_UpperSpriteActive = !m_UpperSpriteActive;
 
-	m_BossDiveStage = BombDiveStage::None;
 }
 
 int EnemyManager::GetIndexOfGameObject(const Willem::GameObject* go) const
@@ -363,10 +366,10 @@ void EnemyManager::UpdateEnemiesList()
 }
 void EnemyManager::SendAliensOnBombRuns(float)
 {
-	if (m_IntroDiveFormation != IntroDiveFormation::None || m_BossDiveStage != BombDiveStage::None)
+	if (m_IntroDiveFormation != IntroDiveFormation::None || m_BombDiveStage != BombDiveStage::None)
 		return;
 
-	m_BossDiveStage = BombDiveStage::ButterflyAndBee;
+	m_BombDiveStage = BombDiveStage::ButterflyAndBee;
 
 	bool foundBee = false;
 	bool foundBF = false;

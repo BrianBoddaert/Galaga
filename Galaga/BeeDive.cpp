@@ -10,6 +10,11 @@
 #include "RenderComponent.h"
 #include "EnemyManager.h"
 
+#include "ShootComponent.h"
+#include "Scene.h"
+#include "SceneManager.h"
+#include <cmath>
+
 using namespace Willem;
 
 BeeDive::BeeDive(Willem::GameObject* go, bool diveToTheRight)
@@ -23,6 +28,42 @@ BeeDive::~BeeDive()
 {
 	Exit();
 }
+
+Willem::Vector2 BeeDive::GetClosestPlayerPos() const
+{
+	const Vector2 alienPos = m_pGameObject->GetComponent<TransformComponent>()->GetPosition();
+	const auto& players = SceneManager::GetInstance().GetCurrentScene()->GetPlayers();
+
+	if (players.empty())
+	{
+		std::cout << "WARNING: GetClosestPlayer returned no player found" << std::endl;
+		return Vector2(0,0);
+	}
+		
+	float closestDistance = FLT_MAX;
+	int closestPlayerIndex = -1;
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		const Vector2 playerPos = players[i]->GetComponent<TransformComponent>()->GetPosition();
+		const float distance = (playerPos - alienPos).Magnitude();
+		if (distance < closestDistance)
+		{
+			closestDistance = distance;
+			closestPlayerIndex = i;
+		}
+	}
+
+	if (closestPlayerIndex == -1)
+	{
+		std::cout << "WARNING: Closest player not found!" << std::endl;
+		return Vector2(0, 0);
+	}
+
+	return players[closestPlayerIndex]->GetComponent<TransformComponent>()->GetPosition();
+
+}
+
 
 void BeeDive::Update(float deltaT)
 {
@@ -56,6 +97,8 @@ void BeeDive::Update(float deltaT)
 			const Vector2 direction = (destination - pos).Normalize();
 			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
 
+			// Fire
+			m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((GetClosestPlayerPos() - pos).Normalize());
 		}
 		break;
 		case 1:
@@ -84,7 +127,7 @@ void BeeDive::Update(float deltaT)
 			if (m_DiveToTheRight)
 				m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, -float(M_PI / 3), float(M_PI * 0.75), true, Vector2{ -25,0 });
 			else
-				m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, -float(M_PI / 1.5), -float(M_PI * 1.75), false, Vector2{ 25,0 });
+				m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, -float(M_PI), -float(M_PI * 1.75), false, Vector2{ 25,0 });
 		}
 		break;
 		case 4:

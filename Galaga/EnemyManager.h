@@ -69,7 +69,7 @@ private:
 	int m_BossIndexCounter;
 
 	IntroDiveFormation m_IntroDiveFormation;
-	BombDiveStage m_BossDiveStage;
+	BombDiveStage m_BombDiveStage;
 	float m_SpawnEnemyTimer = 0.0f;
 	int m_EnemySpawnedCounter = 0;
 	const float m_SpawnEnemyInterval;
