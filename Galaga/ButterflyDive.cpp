@@ -98,7 +98,7 @@ void ButterflyDive::Update(float deltaT)
 
 			const Vector2 destination = { pos.x,  float(-srcRect.h * GAMESCALE - distanceTravelledEachStroke.y) };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 		}
 		else
 		{
@@ -108,7 +108,7 @@ void ButterflyDive::Update(float deltaT)
 			{
 				const Vector2 destination = { pos.x,  pos.y + distanceTravelledEachStroke.y };
 				const Vector2 direction = (destination - pos).Normalize();
-				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 
 			}
 			break;
@@ -129,7 +129,7 @@ void ButterflyDive::Update(float deltaT)
 					destination = { pos.x - distanceTravelledEachStroke.x,  pos.y };
 
 				const Vector2 direction = (destination - pos).Normalize();
-				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 			}
 			break;
 			case 3:
@@ -152,7 +152,7 @@ void ButterflyDive::Update(float deltaT)
 		{
 			const Vector2 destination = { float(surface->w/2),  pos.y };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 		}
 		break;
 		case 2:

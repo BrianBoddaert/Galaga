@@ -7,7 +7,7 @@ class DSS_MoveToPoint final:
     public DiveSubState
 {
 public:
-	DSS_MoveToPoint(Willem::GameObject* go, const Willem::Vector2& pos, const Willem::Vector2& dir) noexcept;
+	DSS_MoveToPoint(Willem::GameObject* go, const Willem::Vector2& pos, const Willem::Vector2& dir, bool introDive = true) noexcept;
 
 	~DSS_MoveToPoint();
 	DSS_MoveToPoint(const DSS_MoveToPoint& other) = delete;
@@ -23,6 +23,7 @@ protected:
 
 	Willem::Vector2 m_Direction;
 	Willem::Vector2 m_Destination;
+	const bool m_IntroDive;
 
 
 };

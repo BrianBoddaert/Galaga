@@ -82,14 +82,6 @@ void BossDive::Update(float deltaT)
 
 	const Vector2 distanceTravelledBeforePirouette = { 75,75 };
 
-	// Fire
-	if (m_FirstCycle)
-	{
-		m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((GetClosestPlayerPos() - pos).Normalize());
-		m_FirstCycle = false;
-	}
-
-
 	if (!m_HeadingBack)
 	{
 		if (pos.x + srcRect.w * GAMESCALE < 0 || pos.x > surface->w)
@@ -99,7 +91,7 @@ void BossDive::Update(float deltaT)
 
 			const Vector2 destination = { pos.x,  float(-srcRect.h * GAMESCALE - distanceTravelledBeforePirouette.y) };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 		}
 		else
 		{
@@ -115,20 +107,21 @@ void BossDive::Update(float deltaT)
 
 				
 				const Vector2 direction = (destination - pos).Normalize();
-				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 
 			}
 			break;
 			case 1:
 			{
 				if (m_DiveToTheRight)
-					m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, -float(M_PI), float(M_PI), false, Vector2{ 25,0 });
+					m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float(M_PI), -float(M_PI), false, Vector2{ 50,0 });
 				else
-					m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float(M_PI), -float(M_PI), true, Vector2{ -25,0 });
+					m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, 0, float(M_PI*2), true, Vector2{ -50,0 });
 			} 
 			break;
 			case 2:
 			{
+
 				Vector2 destination;
 				if (m_DiveToTheRight)
 					destination = { surface->w + srcRect.w * GAMESCALE + distanceTravelledBeforePirouette.x, surface->h + srcRect.h * GAMESCALE + distanceTravelledBeforePirouette.y};
@@ -136,7 +129,10 @@ void BossDive::Update(float deltaT)
 					destination = { 0 - srcRect.w * GAMESCALE - distanceTravelledBeforePirouette.x , surface->h + srcRect.h * GAMESCALE + distanceTravelledBeforePirouette.y };
 
 				const Vector2 direction = (destination - pos).Normalize();
-				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
+
+				m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((GetClosestPlayerPos() - pos).Normalize());
+
 			}
 			break;
 			}
@@ -151,7 +147,7 @@ void BossDive::Update(float deltaT)
 		{
 			const Vector2 destination = { float(surface->w / 2),  pos.y };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 		}
 		break;
 		case 2:
@@ -179,7 +175,7 @@ void BossDive::Enter()
 	if (m_DiveToTheRight)
 		m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, 0, float(-M_PI * 1.5), false, Vector2{ -25,0 });
 	else
-		m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, float(M_PI * 1.5), float(M_PI * 3), true, Vector2{ 25,0 });
+		m_pState = new DSS_CircleAroundPoint(m_pGameObject, pos, -float(M_PI), float(M_PI / 2), true, Vector2{ 25,0 });
 }
 
 void BossDive::Exit()

@@ -21,6 +21,7 @@
 #include "BombRunState.h"
 #include "ButterflyDive.h"
 #include "BeeDive.h"
+#include "BossDive.h"
 #include "ShootComponent.h"
 using namespace Willem;
 
@@ -35,6 +36,7 @@ EnemyManager::EnemyManager()
 	, m_ButterflyIndexCounter{ 0 }
 	, m_BossIndexCounter{ 0 }
 	, m_SpawnEnemyInterval{ 0.1f }
+	, m_BombDiveStage{ BombDiveStage::None }
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
@@ -296,6 +298,8 @@ void EnemyManager::AlterBetweenSprites(float deltaT)
 
 	m_UpperSpriteActive = !m_UpperSpriteActive;
 
+	m_BombDiveStage = BombDiveStage::None;
+
 }
 
 int EnemyManager::GetIndexOfGameObject(const Willem::GameObject* go) const
@@ -373,7 +377,7 @@ void EnemyManager::SendAliensOnBombRuns(float)
 
 	bool foundBee = false;
 	bool foundBF = false;
-
+	bool foundBoss = false;
 	for (auto& pair : m_pEnemies)
 	{
 		Willem::GameObject* go = pair.second.lock().get();
@@ -387,13 +391,18 @@ void EnemyManager::SendAliensOnBombRuns(float)
 		if (!foundBee && pair.first.second == EnemyType::Bee)
 		{
 			foundBee = true;
-			flyComp->SetState(new BombRunState(go, new BeeDive(go, transformComponent->GetPosition().x < (surface->w/2))));
+			//flyComp->SetState(new BombRunState(go, new BeeDive(go, transformComponent->GetPosition().x < (surface->w/2))));
 
 		}
 		else if (!foundBF && pair.first.second == EnemyType::Butterfly)
 		{
 			foundBF = true;
-			flyComp->SetState(new BombRunState(go, new ButterflyDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+			//flyComp->SetState(new BombRunState(go, new ButterflyDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+		}
+		else if (!foundBoss && pair.first.second == EnemyType::Boss)
+		{
+			foundBoss = true;
+			flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
 		}
 	}
 }

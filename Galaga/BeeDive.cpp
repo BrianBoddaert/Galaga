@@ -95,7 +95,7 @@ void BeeDive::Update(float deltaT)
 				destination = { xBorderOffset, beeDiveDownYPos };
 
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, false);
 
 			// Fire
 			m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((GetClosestPlayerPos() - pos).Normalize());
@@ -119,7 +119,7 @@ void BeeDive::Update(float deltaT)
 				destination = {  xBorderOffset,  float(surface->h - yBorderOffset) };
 
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 		}
 		break;
 		case 3:
@@ -134,7 +134,7 @@ void BeeDive::Update(float deltaT)
 		{
 			const Vector2 destination = { float(surface->w / 2), float(surface->h - halfSize.h * GAMESCALE) };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, false);
 		}
 		break;
 		case 5:
@@ -146,7 +146,7 @@ void BeeDive::Update(float deltaT)
 				destination = { float(surface->w - xBorderOffset),  float(surface->h - yBorderOffset) };
 
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, false);
 		}
 		break;
 		case 6:

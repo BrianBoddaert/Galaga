@@ -23,7 +23,7 @@ void DSS_CircleAroundPoint::Update(float deltaT)
 {
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 	auto flyComp = m_pGameObject->GetComponent<AIFlyComponent>();
-	float rotSpeed = flyComp->GetRotationSpeed();
+	float rotSpeed = flyComp->GetRotationSpeed() / m_Offset;
 
 
 	//M_PI - M_PI/5

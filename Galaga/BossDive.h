@@ -18,6 +18,5 @@ protected:
 
 	const bool m_DiveToTheRight;
 	bool m_HeadingBack;
-	bool m_FirstCycle;
 };
 

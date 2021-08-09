@@ -15,7 +15,8 @@ public:
 	~AIFlyComponent();
 	void Update(float) override;
 
-	float GetSpeed() const { return m_Speed; };
+	float GetIntroDiveSpeed() const { return m_IntroDiveSpeed; };
+	float GetBombRunSpeed() const { return m_BombRunSpeed; };
 	float GetRotationSpeed() const { return m_RotationSpeed; };
 
 	void SetRotationRadians(float radians) { m_RotationRadians = radians;};
@@ -38,7 +39,8 @@ private:
 	AlienState* m_pState = nullptr;
 	Willem::RenderComponent* m_pRenderComponent;
 
-	const float m_Speed;
+	const float m_IntroDiveSpeed;
+	const float m_BombRunSpeed;
 	const float m_RotationSpeed;
 	float m_RotationRadians;
 	int m_UpperSrcRectYPos;

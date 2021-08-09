@@ -5,6 +5,7 @@
 #include "SpawnDiveState.h"
 #include "EnemyManager.h"
 #include <cmath>
+#include "FormationState.h"
 
 using namespace Willem;
 
@@ -12,10 +13,11 @@ using namespace Willem;
 AIFlyComponent::AIFlyComponent(Willem::GameObject* go, SpawnDiveState* state, int srcRectYPos)
 	:Component{ go }
 	,m_pState{ state }
-	, m_Speed{ 400.0f }
-	, m_RotationSpeed{9} 
+	, m_IntroDiveSpeed{ 400.0f }
+	, m_RotationSpeed{ 360.0f}
 	, m_RotationRadians{float(M_PI)}
 	, m_UpperSrcRectYPos{ srcRectYPos }
+	, m_BombRunSpeed{250.0f}
 {
 	m_pRenderComponent = m_pGameObject->GetComponent<Willem::RenderComponent>();
 }
@@ -56,6 +58,9 @@ void AIFlyComponent::AdjustSpritesToFitDirection()
 	int offsetWidth = 2;
 	int highestSprite = 15;
 	int spriteIndex;
+
+	if (m_pGameObject->HasTag("Boss") && !CheckIfStateEqualsTemplate<FormationState>())
+		m_RotationRadians += float(M_PI);
 
 	if (m_RotationRadians > 0.0f)
 		spriteIndex = int(std::round(m_RotationRadians / float(M_PI / 8.0)));
