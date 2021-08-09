@@ -9,6 +9,10 @@
 #include "RenderComponent.h"
 #include "AIFlyComponent.h"
 #include "ExplosionManager.h"
+#include "ControlComponent.h"
+#include "GameObject.h"
+#include "BombRunState.h"
+
 using namespace Willem;
 
 HealthComponent::HealthComponent(int health, bool removeWhenOutOfScreen)
@@ -57,6 +61,16 @@ void HealthComponent::Hit(int amount)
 
 		renderComp->SetSrcRect(srcRect);
 	}
+	else if (m_pGameObject->HasTag("Player"))
+	{
+		auto transformComp = m_pGameObject->GetComponent<TransformComponent>();
+		ExplosionManager::GetInstance().SpawnExplosion(transformComp->GetPosition());
+
+		auto controlComp = m_pGameObject->GetComponent<ControlComponent>();
+		transformComp->SetPosition(controlComp->GetSpawnPosition());
+		controlComp->DisableCaughtInTractorBeam();
+	}
+
 
 }
 void HealthComponent::Heal(int amount)
@@ -75,6 +89,6 @@ void HealthComponent::Die()
 	auto scene = Willem::SceneManager::GetInstance().GetCurrentScene();
 	scene->RemoveObjectsByObject(m_pGameObject);
 
-	CollisionManager::GetInstance().RemoveColliderByObject(m_pGameObject);
+	CollisionManager::GetInstance().RemoveColliderByObject(m_pGameObject);	
 
 }

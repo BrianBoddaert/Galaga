@@ -4,7 +4,7 @@
 
 using namespace Willem;
 
-const float ThrusterComponent::m_ProjectileSpeed{400};
+const float ThrusterComponent::m_ProjectileSpeed{550};
 
 ThrusterComponent::ThrusterComponent(const Willem::Vector2& dir)
 	:m_Direction{dir}

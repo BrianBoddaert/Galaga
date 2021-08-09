@@ -14,7 +14,11 @@ Willem::GameObject::GameObject(const std::string& name)
 Willem::GameObject::~GameObject()
 {
 	for (size_t i = 0; i < m_Components.size(); i++)
+	{
 		delete m_Components[i];
+		m_Components[i] = nullptr;
+	}
+		
 
 	if (m_pActorChanged)
 		delete m_pActorChanged;

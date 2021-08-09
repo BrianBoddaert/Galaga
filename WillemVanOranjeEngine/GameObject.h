@@ -27,12 +27,15 @@ namespace Willem
 		void SetEnabled(bool);
 		void Notify(const Event& event);
 
+		void SetParent(std::weak_ptr<GameObject> go) { m_pParent = go; };
+		std::weak_ptr<GameObject> GetParent() const {return m_pParent;};
+
 		template<typename T>
 		T* GetComponent() const
 		{
 			for (Component * c: m_Components)
 			{
-				if (dynamic_cast<T*>(c))
+				if (c && dynamic_cast<T*>(c))
 					return (T*)c;
 			}
 			return nullptr;
@@ -49,5 +52,6 @@ namespace Willem
 		bool m_Enabled;
 		std::vector<Component*> m_Components;
 		Subject* m_pActorChanged;
+		std::weak_ptr<GameObject> m_pParent;
 	};
 }

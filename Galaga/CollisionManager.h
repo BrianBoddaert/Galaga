@@ -7,6 +7,6 @@ class CollisionManager final : public Willem::Singleton<CollisionManager>,  publ
 private:
 	friend class Willem::Singleton<CollisionManager>;
 
-    void CollisionEffect(std::shared_ptr<Willem::GameObject> player, std::shared_ptr<Willem::GameObject> collider) override;
+	bool CollisionEffect(std::shared_ptr<Willem::GameObject> player, std::shared_ptr<Willem::GameObject> collider) override;
 };
 

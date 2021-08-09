@@ -6,6 +6,8 @@
 #include "EnemyManager.h"
 #include <cmath>
 #include "FormationState.h"
+#include "HealthComponent.h"
+#include "FollowBossState.h"
 
 using namespace Willem;
 
@@ -18,6 +20,7 @@ AIFlyComponent::AIFlyComponent(Willem::GameObject* go, SpawnDiveState* state, in
 	, m_RotationRadians{float(M_PI)}
 	, m_UpperSrcRectYPos{ srcRectYPos }
 	, m_BombRunSpeed{250.0f}
+	, m_CapturedPlayerActive{ false }
 {
 	m_pRenderComponent = m_pGameObject->GetComponent<Willem::RenderComponent>();
 }
@@ -33,6 +36,12 @@ void AIFlyComponent::SetState(AlienState* state)
 AIFlyComponent::~AIFlyComponent()
 {
 	delete m_pState;
+
+	if (m_CapturedPlayerActive && m_pCapturedPlayer.use_count() > 1)
+		m_pCapturedPlayer.lock()->GetComponent<HealthComponent>()->Hit();
+
+
+		
 }
 void AIFlyComponent::Update(float deltaT)
 {

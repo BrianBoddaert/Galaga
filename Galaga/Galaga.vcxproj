@@ -174,8 +174,10 @@
     <ClCompile Include="Dive_UpToRight.cpp" />
     <ClCompile Include="DSS_CircleAroundPoint.cpp" />
     <ClCompile Include="DSS_MoveToPoint.cpp" />
+    <ClCompile Include="DSS_TractorBeam.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="ExplosionManager.cpp" />
+    <ClCompile Include="FollowBossState.cpp" />
     <ClCompile Include="FormationState.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="main.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="ShootComponent.cpp" />
     <ClCompile Include="SpawnDiveState.cpp" />
     <ClCompile Include="ThrusterComponent.cpp" />
+    <ClCompile Include="TractorBeamDive.cpp" />
     <ClCompile Include="TxtParser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -204,8 +207,10 @@
     <ClInclude Include="Dive_UpToRight.h" />
     <ClInclude Include="DSS_CircleAroundPoint.h" />
     <ClInclude Include="DSS_MoveToPoint.h" />
+    <ClInclude Include="DSS_TractorBeam.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="ExplosionManager.h" />
+    <ClInclude Include="FollowBossState.h" />
     <ClInclude Include="FormationState.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="Minigin.h" />
@@ -215,6 +220,7 @@
     <ClInclude Include="SpawnDiveState.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ThrusterComponent.h" />
+    <ClInclude Include="TractorBeamDive.h" />
     <ClInclude Include="TxtParser.h" />
   </ItemGroup>
   <ItemGroup>

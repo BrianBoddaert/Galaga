@@ -30,6 +30,8 @@ namespace Willem
 		Scene& operator=(Scene&& other) = delete;
 
 		std::shared_ptr<GameObject> GetObjectByName(const std::string& name) const;
+		std::shared_ptr<GameObject> GetObjectByObject(GameObject*) const;
+
 		std::vector<std::shared_ptr<GameObject>> GetObjectsByTag(const std::string& tag) const;
 		void AddPlayer(const std::shared_ptr<GameObject>& player);
 		std::shared_ptr<GameObject> GetPlayer(int index) const;

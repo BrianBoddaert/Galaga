@@ -111,6 +111,15 @@
     <ClCompile Include="BossDive.cpp">
       <Filter>Dives</Filter>
     </ClCompile>
+    <ClCompile Include="TractorBeamDive.cpp">
+      <Filter>Dives</Filter>
+    </ClCompile>
+    <ClCompile Include="DSS_TractorBeam.cpp">
+      <Filter>SubStates</Filter>
+    </ClCompile>
+    <ClCompile Include="FollowBossState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -196,6 +205,15 @@
     </ClInclude>
     <ClInclude Include="BossDive.h">
       <Filter>Dives</Filter>
+    </ClInclude>
+    <ClInclude Include="TractorBeamDive.h">
+      <Filter>Dives</Filter>
+    </ClInclude>
+    <ClInclude Include="DSS_TractorBeam.h">
+      <Filter>SubStates</Filter>
+    </ClInclude>
+    <ClInclude Include="FollowBossState.h">
+      <Filter>States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

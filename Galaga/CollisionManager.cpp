@@ -3,42 +3,32 @@
 #include "TransformComponent.h"
 #include "SceneManager.h"
 #include "HealthComponent.h"
+#include "InputManager.h"
+#include "ControlComponent.h"
 
-void CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playersCollider, std::shared_ptr<Willem::GameObject> aliensCollider)
+#include "RenderComponent.h"
+
+bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playersCollider, std::shared_ptr<Willem::GameObject> aliensCollider) // Returns true when it 100% removes something from a list
 {
-	if (playersCollider->HasTag("PlayerBullet") && aliensCollider->HasTag("Alien"))
+	if (playersCollider->HasTag("PlayerBullet") && aliensCollider->HasTag("Alien") && !aliensCollider->HasTag("TractorBeam"))
 	{
 		playersCollider->GetComponent<HealthComponent>()->Hit();
 		aliensCollider->GetComponent<HealthComponent>()->Hit();
+
+		return true;
 	}
-	//if (player->GetComponent<MoveComponent>()->GetIsOnDisc() || player->GetComponent<MoveComponent>()->IsFallingToDeath())
-	//	return;
 
-	//auto colliderMoveComp = collider->GetComponent<MoveComponent>();
-	//if (colliderMoveComp)
-	//	if (colliderMoveComp->IsFallingToDeath())
-	//		return;
+	else if (playersCollider->HasTag("Player") && aliensCollider->HasTag("TractorBeam") && !playersCollider->HasTag("PlayerBullet"))
+	{
+		if (aliensCollider->GetComponent<Willem::RenderComponent>()->GetSrcRect().y > 328)
+		{
+			auto controlComp = playersCollider->GetComponent<ControlComponent>();
 
-	//if (collider->HasTag(Willem::Tag::Coily) || collider->HasTag(Willem::Tag::WrongWay))
-	//{
-	//	player->GetComponent<HealthComponent>()->Die();
+			controlComp->SetEnabled(false);
+			controlComp->EnableCaughtInTractorBeam(aliensCollider->GetParent());
 
-	//	//EnemyManager::GetInstance().Reset();
-	//}
-	//else if (collider->HasTag(Willem::Tag::SlickSam))
-	//{
-	//	collider->GetComponent<HealthComponent>()->Die();
-	//	auto scoreComponent = player->GetComponent<ScoreComponent>();
-	//	scoreComponent->IncreaseScore(Willem::Event::CatchSlickOrSam);
-	//	
-	//}
-	//else if (collider->HasTag(Willem::Tag::Disc))
-	//{
-	//	auto moveComp = player->GetComponent<MoveComponent>();
-	//	if (!moveComp->GetJumpingOnDisc())
-	//		return;
+		}
+	}
 
-	//	moveComp->SetDiscGameObject(collider);
-	//	Willem::SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetDiscByGameObject(collider)->SetMoving(true);
-	//}
+	return false;
 }

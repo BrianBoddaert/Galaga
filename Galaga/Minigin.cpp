@@ -29,6 +29,7 @@
 #include "ShootComponent.h"
 #include "EnemyManager.h"
 #include "ExplosionManager.h"
+#include "HealthComponent.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -88,9 +89,6 @@ void Minigin::Initialize()
 
 }
 
-/**
- * Code constructing the scene world starts here
- */
 
 void Minigin::AssignKeys()
 {
@@ -131,10 +129,10 @@ void Minigin::LoadSinglePlayerScene() const
 	auto player = std::make_shared<GameObject>("Player1");
 
 	SDL_Rect playerSrcRect = { 109,1,16,16 };
-	const Willem::Vector2 playerHalfSize = { playerSrcRect.w/2.0f,playerSrcRect.h/2.0f };
-	const float offsetFromBottom = 40.0f;
-	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h - float(playerSrcRect.h) - offsetFromBottom,1 };
-//	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
+
+	const float offsetFromBottom = 20.0f;
+	const Willem::Vector2 playerHalfSize = { playerSrcRect.w / 2.0f,playerSrcRect.h / 2.0f };
+	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h - float(playerSrcRect.h * GAMESCALE) - offsetFromBottom,1 };
 
 	player->AddComponent(new ControlComponent(playerPos));
 
@@ -143,14 +141,14 @@ void Minigin::LoadSinglePlayerScene() const
 
 	player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
 	player->AddComponent(new ShootComponent());
-	//player->AddComponent(new HealthComponent(3));							<<< UNCOMMENT
+	player->AddComponent(new HealthComponent(3));						
 	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
 
 	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 	//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
 	player->AddTag("Player");
 	player->AddTag("Player1");
-	//CollisionManager::GetInstance().AddCollider(player);					<<< UNCOMMENT
+	CollisionManager::GetInstance().AddCollider(player);					
 	scene.AddPlayer(player);
 // 
 	//{

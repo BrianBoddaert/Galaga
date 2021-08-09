@@ -28,7 +28,8 @@ enum class EnemyType
 {
 	Bee,
 	Butterfly,
-	Boss
+	Boss,
+	CapturedPlayer
 };
 
 class EnemyManager : public Willem::Singleton<EnemyManager>
@@ -42,6 +43,8 @@ public:
 	Willem::Vector2 GetBeeFormationPosition(const Willem::GameObject*) const;
 	Willem::Vector2 GetButterflyFormationPosition(const Willem::GameObject*) const;
 	Willem::Vector2 GetBossFormationPosition(const Willem::GameObject*) const;
+
+	std::shared_ptr<Willem::GameObject>  SpawnCapturedPlayer(const Willem::Vector2& pos, std::weak_ptr<Willem::GameObject> boss);
 
 private:
 	friend class Willem::Singleton<EnemyManager>;
@@ -57,6 +60,8 @@ private:
 	template<typename T>
 	void SpawnBoss(const Willem::Vector2& pos);
 
+
+
 	void SendAliensOnBombRuns(float deltaT);
 	void UpdateEnemiesList();
 
@@ -67,6 +72,7 @@ private:
 	int m_BeeIndexCounter;
 	int m_ButterflyIndexCounter;
 	int m_BossIndexCounter;
+	int m_CapturedPlayerCounter;
 
 	IntroDiveFormation m_IntroDiveFormation;
 	BombDiveStage m_BombDiveStage;

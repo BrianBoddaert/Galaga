@@ -23,6 +23,10 @@
 #include "BeeDive.h"
 #include "BossDive.h"
 #include "ShootComponent.h"
+#include "TractorBeamDive.h"
+
+#include "FollowBossState.h"
+
 using namespace Willem;
 
 EnemyManager::EnemyManager()
@@ -254,9 +258,9 @@ void EnemyManager::SpawnBoss(const Willem::Vector2& pos)
 	boss->AddComponent(new RenderComponent(srcRect));
 	boss->SetTexture("Galaga2.png");
 	boss->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
-	boss->AddComponent(new HealthComponent(2, false));
 	boss->AddComponent(new ShootComponent());
 	boss->AddComponent(new AIFlyComponent(boss.get(), new SpawnDiveState(boss.get(), new T(boss.get())), srcRect.y));
+	boss->AddComponent(new HealthComponent(2, false));
 	boss->AddTag("Boss");
 	boss->AddTag("Alien");
 
@@ -266,6 +270,37 @@ void EnemyManager::SpawnBoss(const Willem::Vector2& pos)
 	std::weak_ptr<Willem::GameObject> weakPtr = boss;
 	m_pEnemies[std::make_pair(m_BossIndexCounter, EnemyType::Boss)] = weakPtr;
 	m_BossIndexCounter++;
+}
+
+std::shared_ptr<Willem::GameObject> EnemyManager::SpawnCapturedPlayer(const Willem::Vector2& pos, std::weak_ptr<Willem::GameObject> boss)
+{
+	auto capturedPlayer = std::make_shared<Willem::GameObject>("CapturedPlayer");
+
+	const SDL_Rect srcRect = { 1,163,16,16 };
+	const SDL_Rect halfSize = { srcRect.x / 2,srcRect.y / 2,srcRect.w / 2,srcRect.h / 2 };
+	const SDL_Surface* surface = Minigin::GetWindowSurface();
+	const Vector3 spawnPos = { surface->w / 2.0f - halfSize.w,0,0 };
+
+	capturedPlayer->AddComponent(new RenderComponent(srcRect));
+	capturedPlayer->SetTexture("Galaga2.png");
+	capturedPlayer->AddComponent(new TransformComponent(Vector3{ pos.x,pos.y,1.0f }, float(GAMESCALE)));
+	capturedPlayer->AddComponent(new HealthComponent(1));
+	capturedPlayer->AddComponent(new ShootComponent());
+	auto aiFlyComp = new AIFlyComponent(capturedPlayer.get(), nullptr, srcRect.y);
+	aiFlyComp->SetState(new FollowBossState(capturedPlayer.get(), boss));
+	capturedPlayer->AddComponent(aiFlyComp);
+	capturedPlayer->AddTag("CapturedPlayer");
+	capturedPlayer->AddTag("Alien");
+
+	CollisionManager::GetInstance().AddCollider(capturedPlayer);
+	SceneManager::GetInstance().GetCurrentScene()->Add(capturedPlayer);
+
+	std::weak_ptr<Willem::GameObject> weakPtr = capturedPlayer;
+	m_pEnemies[std::make_pair(m_CapturedPlayerCounter, EnemyType::CapturedPlayer)] = weakPtr;
+
+	m_CapturedPlayerCounter++;
+
+	return capturedPlayer;
 }
 
 void EnemyManager::AlterBetweenSprites(float deltaT)
@@ -378,6 +413,7 @@ void EnemyManager::SendAliensOnBombRuns(float)
 	bool foundBee = false;
 	bool foundBF = false;
 	bool foundBoss = false;
+
 	for (auto& pair : m_pEnemies)
 	{
 		Willem::GameObject* go = pair.second.lock().get();
@@ -402,7 +438,8 @@ void EnemyManager::SendAliensOnBombRuns(float)
 		else if (!foundBoss && pair.first.second == EnemyType::Boss)
 		{
 			foundBoss = true;
-			flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+			/*flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));*/
+			flyComp->SetState(new BombRunState(go, new TractorBeamDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
 		}
 	}
 }

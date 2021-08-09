@@ -81,6 +81,15 @@ std::shared_ptr<GameObject> Scene::GetObjectByName(const std::string& name) cons
 	return nullptr;
 }
 
+std::shared_ptr<GameObject> Scene::GetObjectByObject(GameObject* go) const
+{
+	for (const auto& object : m_pObjects)
+	{
+		if (object.get() == go)
+			return object;
+	}
+	return nullptr;
+}
 void Scene::AddPlayer(const std::shared_ptr<GameObject>& player)
 {
 	m_pPlayers.push_back(player);

@@ -7,10 +7,23 @@
 using namespace Willem;
 
 BaseCollisionManager::BaseCollisionManager()
+	:m_ReCheckCollisions{false}
 {}
 
 void BaseCollisionManager::Update(float)
 {
+	m_ReCheckCollisions = true;
+
+	while (m_ReCheckCollisions)
+	{
+		CheckCollisions();
+	}
+
+}
+
+void BaseCollisionManager::CheckCollisions()
+{
+	m_ReCheckCollisions = false;
 
 	for (size_t i = 0; i < m_pCollidersA.size(); i++)
 	{
@@ -18,12 +31,15 @@ void BaseCollisionManager::Update(float)
 		{
 			if (IsColliding(m_pCollidersA[i], m_pCollidersB[j]))
 			{
-				CollisionEffect(m_pCollidersA[i], m_pCollidersB[j]);
-				return;
+				if (CollisionEffect(m_pCollidersA[i], m_pCollidersB[j]))
+				{
+					m_ReCheckCollisions = true;
+					return;
+				}				
 			}
 		}
 	}
-
+	
 }
 void BaseCollisionManager::RemoveColliderByObject(GameObject* obj)
 {

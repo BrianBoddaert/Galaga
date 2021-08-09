@@ -22,6 +22,7 @@ public:
 	void Update(float deltaT) override;
 	AlienState* GetFollowUpState() const override;
 
+
 protected:
 	void Enter() override;
 	void Exit() override;

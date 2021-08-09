@@ -10,6 +10,7 @@ namespace Willem
 	public:
 		BaseCollisionManager();
 		void Update(float deltaT);
+		void CheckCollisions();
 		void AddCollider(const std::shared_ptr<GameObject>& gameObject);
 
 		void RemoveColliderByObject(const std::shared_ptr<GameObject>& obj);
@@ -20,10 +21,12 @@ namespace Willem
 	protected:
 
 		bool IsColliding(std::shared_ptr<GameObject> obj1, std::shared_ptr<GameObject> obj2);
-		virtual void CollisionEffect(std::shared_ptr<GameObject> colliderA, std::shared_ptr<GameObject> colliderB) = 0;
+		virtual bool CollisionEffect(std::shared_ptr<GameObject> colliderA, std::shared_ptr<GameObject> colliderB) = 0;
 
 		std::vector<std::shared_ptr<GameObject>> m_pCollidersA;
 		std::vector<std::shared_ptr<GameObject>> m_pCollidersB;
+
+		bool m_ReCheckCollisions;
 	};
 
 }
