@@ -26,6 +26,7 @@
 #include "TractorBeamDive.h"
 
 #include "FollowBossState.h"
+#include <random>
 
 using namespace Willem;
 
@@ -43,10 +44,12 @@ EnemyManager::EnemyManager()
 	, m_SpawnEnemyInterval{ 0.1f }
 	, m_BombDiveStage{ BombDiveStage::None }
 	, m_Level{ 1 }
+	, m_BombRunCounter{0}
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Boss.txt", m_BossFormationLocations);
+	srand(unsigned int(time(NULL)));
 }
 
 void EnemyManager::Update(float deltaT)
@@ -438,15 +441,31 @@ void EnemyManager::UpdateEnemiesList()
 			++it;
 	}
 }
+
+bool EnemyManager::AreThereAnyBossesAlive() const
+{
+	for (auto& pair : m_pEnemies)
+	{
+		if (pair.first.second == EnemyType::Boss)
+			return true;
+	}
+	
+	return false;
+
+}
+
 void EnemyManager::SendAliensOnBombRuns(float)
 {
-	if (m_IntroDiveFormation != IntroDiveFormation::None || m_BombDiveStage != BombDiveStage::None)
+	if (m_IntroDiveFormation != IntroDiveFormation::None || m_BombRunCounter > 0)
 		return;
 
-	m_BombDiveStage = BombDiveStage::ButterflyAndBee;
+	// Randomize which bombrun to use 1-3
+	
+	m_BombDiveStage = BombDiveStage(rand() % 3 + 1);
 
 	bool foundBee = false;
-	bool foundBF = false;
+	bool foundBF1 = false;
+	bool foundBF2 = false;
 	bool foundBoss = false;
 
 	for (auto& pair : m_pEnemies)
@@ -458,23 +477,52 @@ void EnemyManager::SendAliensOnBombRuns(float)
 
 		if (flyComp->CheckIfStateEqualsTemplate<BombRunState>())
 			continue;
+		
+		if (m_BombDiveStage == BombDiveStage::ButterflyAndBee)
+		{
+			if (!foundBee && pair.first.second == EnemyType::Bee)
+			{
+				foundBee = true;
+				flyComp->SetState(new BombRunState(go, new BeeDive(go, transformComponent->GetPosition().x < (surface->w/2))));
 
-		if (!foundBee && pair.first.second == EnemyType::Bee)
+			}
+			else if (!foundBF1 && pair.first.second == EnemyType::Butterfly)
+			{
+				foundBF1 = true;
+				flyComp->SetState(new BombRunState(go, new ButterflyDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+			}
+		}
+		else if (m_BombDiveStage == BombDiveStage::BossTractorBeam)
 		{
-			foundBee = true;
-			//flyComp->SetState(new BombRunState(go, new BeeDive(go, transformComponent->GetPosition().x < (surface->w/2))));
+			if (!foundBoss && pair.first.second == EnemyType::Boss && !pair.second.lock()->GetComponent<AIFlyComponent>()->HasCapturedPlayer() )
+			{
+				foundBoss = true;
+				/*flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));*/
+				flyComp->SetState(new BombRunState(go, new TractorBeamDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+			}
+		}
+		else if (m_BombDiveStage == BombDiveStage::BossAndTwoButterflies)
+		{
+			if (!AreThereAnyBossesAlive())
+				return;
 
+			if (!foundBoss && pair.first.second == EnemyType::Boss)
+			{
+				
+				foundBoss = true;
+				flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+
+			}
+			else if (!(foundBF1 && foundBF2)&& pair.first.second == EnemyType::Butterfly)
+			{
+				if (foundBF1)
+					foundBF2 = true;
+				else
+					foundBF1 = true;
+
+				flyComp->SetState(new BombRunState(go, new ButterflyDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+			}
 		}
-		else if (!foundBF && pair.first.second == EnemyType::Butterfly)
-		{
-			foundBF = true;
-			//flyComp->SetState(new BombRunState(go, new ButterflyDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
-		}
-		else if (!foundBoss && pair.first.second == EnemyType::Boss)
-		{
-			foundBoss = true;
-			/*flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));*/
-			flyComp->SetState(new BombRunState(go, new TractorBeamDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
-		}
+
 	}
 }

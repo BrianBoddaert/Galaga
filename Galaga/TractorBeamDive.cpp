@@ -81,8 +81,9 @@ void TractorBeamDive::Update(float deltaT)
 	const SDL_Surface* surface = Minigin::GetWindowSurface();
 	SDL_Rect srcRect = m_pGameObject->GetComponent<RenderComponent>()->GetSrcRect();
 
-	const Vector2 tractorPosRight = { float(surface->w - 100),float(surface->h - 200) };
-	const Vector2 tractorPosLeft = { float(100), float(surface->h - 200) };
+	float offsetFromSide = 150;
+	const Vector2 tractorPosRight = { float(surface->w - offsetFromSide),float(surface->h - 200) };
+	const Vector2 tractorPosLeft = { float(offsetFromSide), float(surface->h - 200) };
 
 	switch (m_DiveProcess)
 	{
@@ -96,7 +97,7 @@ void TractorBeamDive::Update(float deltaT)
 
 
 		const Vector2 direction = (destination - pos).Normalize();
-		m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, false);
+		m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, 0.6f);
 
 	}
 	break;

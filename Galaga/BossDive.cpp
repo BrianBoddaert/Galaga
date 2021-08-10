@@ -92,7 +92,7 @@ void BossDive::Update(float deltaT)
 
 			const Vector2 destination = { pos.x,  float(-srcRect.h * GAMESCALE - distanceTravelledBeforePirouette.y) };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, 1.4f);
 		}
 		else
 		{
@@ -108,7 +108,7 @@ void BossDive::Update(float deltaT)
 
 				
 				const Vector2 direction = (destination - pos).Normalize();
-				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
+				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, 0.6f);
 
 			}
 			break;
@@ -130,7 +130,7 @@ void BossDive::Update(float deltaT)
 					destination = { 0 - srcRect.w * GAMESCALE - distanceTravelledBeforePirouette.x , surface->h + srcRect.h * GAMESCALE + distanceTravelledBeforePirouette.y };
 
 				const Vector2 direction = (destination - pos).Normalize();
-				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
+				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, 0.6f);
 
 				const Vector2 closestPlayerPos = GetClosestPlayerPos();
 				m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((closestPlayerPos - pos).Normalize());
@@ -158,7 +158,7 @@ void BossDive::Update(float deltaT)
 		{
 			const Vector2 destination = { float(surface->w / 2),  pos.y };
 			const Vector2 direction = (destination - pos).Normalize();
-			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
+			m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction, 1.4f);
 		}
 		break;
 		case 2:

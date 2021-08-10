@@ -65,7 +65,7 @@ void FollowBossState::Enter()
 
 	Vector2 pos = m_pGameObject->GetComponent<TransformComponent>()->GetPosition();
 	Vector2 dir = (m_pBoss.lock()->GetComponent<TransformComponent>()->GetPosition() - pos).Normalize();
-	m_pSubState = new DSS_MoveToPoint(m_pGameObject, pos, dir, true);
+	m_pSubState = new DSS_MoveToPoint(m_pGameObject, pos, dir);
 }
 
 void FollowBossState::Exit()

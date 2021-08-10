@@ -21,7 +21,8 @@ enum class BombDiveStage
 {
 	None,
 	ButterflyAndBee,
-	BossAndTwoButterflies
+	BossAndTwoButterflies,
+	BossTractorBeam
 };
 
 enum class EnemyType
@@ -39,6 +40,7 @@ public:
 	EnemyManager();
 
 	void Update(float);
+	void AdjustBombRunCounter(int adjustment) { m_BombRunCounter += adjustment; }
 
 	Willem::Vector2 GetBeeFormationPosition(const Willem::GameObject*) const;
 	Willem::Vector2 GetButterflyFormationPosition(const Willem::GameObject*) const;
@@ -63,6 +65,7 @@ private:
 
 	void SendAliensOnBombRuns(float deltaT);
 	void UpdateEnemiesList();
+	bool AreThereAnyBossesAlive() const;
 
 
 	std::map<std::pair<int,EnemyType>, std::weak_ptr<Willem::GameObject>> m_pEnemies;
@@ -95,5 +98,7 @@ private:
 	bool m_SpawnBoss;
 
 	int m_Level;
+
+	int m_BombRunCounter;
 };
 

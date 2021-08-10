@@ -15,11 +15,10 @@ using namespace Willem;
 AIFlyComponent::AIFlyComponent(Willem::GameObject* go, SpawnDiveState* state, int srcRectYPos)
 	:Component{ go }
 	,m_pState{ state }
-	, m_IntroDiveSpeed{ 400.0f }
+	, m_Speed{ 400.0f }
 	, m_RotationSpeed{ 360.0f}
 	, m_RotationRadians{float(M_PI)}
 	, m_UpperSrcRectYPos{ srcRectYPos }
-	, m_BombRunSpeed{250.0f}
 	, m_CapturedPlayerActive{ false }
 {
 	m_pRenderComponent = m_pGameObject->GetComponent<Willem::RenderComponent>();

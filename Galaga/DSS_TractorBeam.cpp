@@ -14,11 +14,11 @@ using namespace Willem;
 
 DSS_TractorBeam::DSS_TractorBeam(Willem::GameObject* go) noexcept
 	:DiveSubState{ go }
-	, m_TractorBeamYSpriteInterval{0.5f}
+	, m_TractorBeamYSpriteInterval{0.3f}
 	, m_TractorBeamYSpriteTimer{0.0f}
 	, m_TractorBeamXSpriteInterval{ 0.15f }
 	, m_TractorBeamXSpriteTimer{ 0.0f }
-	, m_TractorBeamActiveDuration{2.0f}
+	, m_TractorBeamActiveDuration{1.0f}
 	, m_TractorBeamActiveTimer{0.0f}
 	, m_TractorBeamExpanding{ true }
 	, m_TractorBeamActive{false}

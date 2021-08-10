@@ -4,11 +4,11 @@
 #include "AIFlyComponent.h"
 using namespace Willem;
 
-DSS_MoveToPoint::DSS_MoveToPoint(Willem::GameObject* go, const Willem::Vector2& pos, const Willem::Vector2& dir, bool introDive) noexcept
+DSS_MoveToPoint::DSS_MoveToPoint(Willem::GameObject* go, const Willem::Vector2& pos, const Willem::Vector2& dir, float speedMultiplier) noexcept
 	:DiveSubState{ go }
 	,m_Destination{pos}
 	,m_Direction{dir}
-	, m_IntroDive{ introDive }
+	,m_SpeedMultiplier{ speedMultiplier }
 {
 	Enter();
 }
@@ -22,12 +22,7 @@ void DSS_MoveToPoint::Update(float deltaT)
 	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
 	const Vector3& pos = transform->GetPosition();
 	auto flyComp = m_pGameObject->GetComponent<AIFlyComponent>();
-	float speed;
-	if (m_IntroDive)
-		speed = flyComp->GetIntroDiveSpeed();
-	else
-		speed = flyComp->GetBombRunSpeed();
-
+	float speed = flyComp->GetSpeed() * m_SpeedMultiplier;
 	Vector2 distanceTravelled = m_Direction * (speed * deltaT);
 	transform->SetPosition(pos + distanceTravelled);
 

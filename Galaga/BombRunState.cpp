@@ -37,9 +37,11 @@ void BombRunState::Update(float deltaT)
 }
 void BombRunState::Enter()
 {
+	EnemyManager::GetInstance().AdjustBombRunCounter(1);
 }
 void BombRunState::Exit()
 {
+	EnemyManager::GetInstance().AdjustBombRunCounter(-1);
 	if (m_pDive)
 		delete m_pDive;
 }

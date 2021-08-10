@@ -18,8 +18,7 @@ public:
 
 	void Update(float) override;
 
-	float GetIntroDiveSpeed() const { return m_IntroDiveSpeed; };
-	float GetBombRunSpeed() const { return m_BombRunSpeed; };
+	float GetSpeed() const { return m_Speed; };
 	float GetRotationSpeed() const { return m_RotationSpeed; };
 
 	void SetRotationRadians(float radians) { m_RotationRadians = radians;};
@@ -52,8 +51,7 @@ private:
 	std::weak_ptr<Willem::GameObject> m_pCapturedPlayer;
 	bool m_CapturedPlayerActive;
 
-	const float m_IntroDiveSpeed;
-	const float m_BombRunSpeed;
+	const float m_Speed;
 	const float m_RotationSpeed;
 	float m_RotationRadians;
 	int m_UpperSrcRectYPos;
