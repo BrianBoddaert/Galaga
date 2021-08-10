@@ -41,6 +41,14 @@ void DSS_MoveToPoint::Update(float deltaT)
 }
 
 
+void DSS_MoveToPoint::SetDestinationAndCalculateDirection(const Willem::Vector2& dest)
+{
+	TransformComponent* transform = m_pGameObject->GetComponent<TransformComponent>();
+	const Vector3& pos = transform->GetPosition();
+
+	m_Destination = dest;
+	m_Direction = (dest - pos).Normalize();
+}
 void DSS_MoveToPoint::Enter()
 {
 

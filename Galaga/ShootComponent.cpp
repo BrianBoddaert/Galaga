@@ -17,6 +17,9 @@ using namespace Willem;
 
 void ShootComponent::Fire(const Vector2& dir)
 {
+	if (!m_Enabled)
+		return;
+
 	if (m_pGameObject->HasTag("Player"))
 	{
 		if (m_Bullets.size() >= 2)

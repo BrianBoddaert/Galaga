@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include <cmath>
+#include "AIFlyComponent.h"
 
 using namespace Willem;
 
@@ -131,7 +132,17 @@ void BossDive::Update(float deltaT)
 				const Vector2 direction = (destination - pos).Normalize();
 				m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction,false);
 
-				m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((GetClosestPlayerPos() - pos).Normalize());
+				const Vector2 closestPlayerPos = GetClosestPlayerPos();
+				m_pGameObject->GetComponent<ShootComponent>()->DoubleFire((closestPlayerPos - pos).Normalize());
+				auto aiFlyComp = m_pGameObject->GetComponent<AIFlyComponent>();
+
+				if (aiFlyComp->HasCapturedPlayer())
+				{
+					auto capturedPlayer = aiFlyComp->GetCapturedPlayer().lock();
+					const Vector2 capturedPlayerPos = capturedPlayer->GetComponent<TransformComponent>()->GetPosition();
+
+					capturedPlayer->GetComponent<ShootComponent>()->DoubleFire((closestPlayerPos - capturedPlayerPos).Normalize());
+				}
 
 			}
 			break;

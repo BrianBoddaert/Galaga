@@ -12,6 +12,8 @@
 #include "ControlComponent.h"
 #include "GameObject.h"
 #include "BombRunState.h"
+#include "ShootComponent.h"
+
 
 using namespace Willem;
 
@@ -69,6 +71,7 @@ void HealthComponent::Hit(int amount)
 		auto controlComp = m_pGameObject->GetComponent<ControlComponent>();
 		transformComp->SetPosition(controlComp->GetSpawnPosition());
 		controlComp->DisableCaughtInTractorBeam();
+		m_pGameObject->GetComponent<ShootComponent>()->SetEnabled(true);
 	}
 
 

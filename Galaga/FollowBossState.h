@@ -1,6 +1,8 @@
 #pragma once
 #include "AlienState.h"
 
+class DSS_MoveToPoint;
+
 class FollowBossState final :
 	public AlienState
 {
@@ -22,5 +24,7 @@ protected:
 
 	bool m_BossAlive;
 	std::weak_ptr<Willem::GameObject> m_pBoss;
+	//Substate
+	DSS_MoveToPoint* m_pSubState;
 };
 

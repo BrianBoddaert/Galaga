@@ -15,6 +15,7 @@ public:
 	DSS_MoveToPoint& operator=(const DSS_MoveToPoint& other) = delete;
 	DSS_MoveToPoint& operator=(DSS_MoveToPoint&& other) = delete;
 
+	void SetDestinationAndCalculateDirection(const Willem::Vector2& pos);
 	void Update(float) override;
 
 protected:

@@ -32,7 +32,8 @@ public:
 	void SetUpperSrcRectYPos(int upperSrcRectYPos) { m_UpperSrcRectYPos = upperSrcRectYPos; }
 
 	void SetCapturedPlayer(std::weak_ptr<Willem::GameObject> go) { m_pCapturedPlayer = go; m_CapturedPlayerActive = true; }
-
+	bool HasCapturedPlayer() const { return m_CapturedPlayerActive; }
+	std::weak_ptr<Willem::GameObject> GetCapturedPlayer() const {return m_pCapturedPlayer;}
 	template<typename T>
 	bool CheckIfStateEqualsTemplate()
 	{

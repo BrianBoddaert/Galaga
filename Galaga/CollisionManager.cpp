@@ -7,6 +7,7 @@
 #include "ControlComponent.h"
 
 #include "RenderComponent.h"
+#include "ShootComponent.h"
 
 bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playersCollider, std::shared_ptr<Willem::GameObject> aliensCollider) // Returns true when it 100% removes something from a list
 {
@@ -26,7 +27,7 @@ bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playe
 
 			controlComp->SetEnabled(false);
 			controlComp->EnableCaughtInTractorBeam(aliensCollider->GetParent());
-
+			playersCollider->GetComponent<ShootComponent>()->SetEnabled(false);
 		}
 	}
 
