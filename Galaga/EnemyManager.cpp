@@ -39,8 +39,10 @@ EnemyManager::EnemyManager()
 	, m_BeeIndexCounter{ 0 }
 	, m_ButterflyIndexCounter{ 0 }
 	, m_BossIndexCounter{ 0 }
+	, m_CapturedPlayerCounter{ 0 }
 	, m_SpawnEnemyInterval{ 0.1f }
 	, m_BombDiveStage{ BombDiveStage::None }
+	, m_Level{ 1 }
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
@@ -68,6 +70,38 @@ bool EnemyManager::AreAllEnemiesInFormation()
 	}
 
 	return true;
+}
+
+void EnemyManager::ResetAlienSpawns()
+{
+	m_BeeIndexCounter = 0;
+	m_ButterflyIndexCounter = 0;
+	m_BossIndexCounter = 0;
+	m_CapturedPlayerCounter = 0;
+
+	m_IntroDiveFormation = IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides;
+	m_BombDiveStage = BombDiveStage::None;
+	m_SpawnEnemyTimer = 0.0f;
+	m_EnemySpawnedCounter = 0;
+	m_SpawnBoss = false;
+
+	if (m_Level < 3)
+		m_Level++;
+
+	m_BeeFormationLocations.clear();
+	m_ButterflyFormationLocations.clear();
+	m_BossFormationLocations.clear();
+
+	std::string path = "../Data/Formations/Formation" + std::to_string(m_Level) + "Bees.txt";
+	TxtParser::GetInstance().Parse(path, m_BeeFormationLocations);
+
+	path = "../Data/Formations/Formation" + std::to_string(m_Level) + "Butterflies.txt";
+	TxtParser::GetInstance().Parse(path, m_ButterflyFormationLocations);
+
+	path = "../Data/Formations/Formation" + std::to_string(m_Level) + "Boss.txt";
+	TxtParser::GetInstance().Parse(path, m_BossFormationLocations);
+
+
 }
 
 void EnemyManager::SpawnAliens(float deltaT)
@@ -187,7 +221,8 @@ void EnemyManager::SpawnAliens(float deltaT)
 	break;
 	case IntroDiveFormation::None:
 	{
-
+		if (m_pEnemies.empty())
+			ResetAlienSpawns();
 	}
 	break;
 

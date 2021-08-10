@@ -52,6 +52,7 @@ private:
 	int GetIndexOfGameObject(const Willem::GameObject*) const;
 
 	void SpawnAliens(float deltaT);
+	void ResetAlienSpawns();
 
 	template<typename T>
 	void SpawnBee(const Willem::Vector2& pos);
@@ -59,8 +60,6 @@ private:
 	void SpawnButterfly(const Willem::Vector2& pos);
 	template<typename T>
 	void SpawnBoss(const Willem::Vector2& pos);
-
-
 
 	void SendAliensOnBombRuns(float deltaT);
 	void UpdateEnemiesList();
@@ -94,5 +93,7 @@ private:
 	float m_AlteringBetweenSpritesTimer;
 	bool m_UpperSpriteActive;
 	bool m_SpawnBoss;
+
+	int m_Level;
 };
 
