@@ -8,12 +8,13 @@
 #include "Texture2D.h"
 #include "RenderComponent.h"
 
-Willem::TextComponent::TextComponent(GameObject* go, const std::string& text, Font* font, float wrap)
-	:Component{go}
-	,m_NeedsUpdate(true)
+Willem::TextComponent::TextComponent(GameObject* gameObject, const std::string& text, Font* font, const SDL_Color& color, float wrap)
+	:Component{ gameObject }
+	, m_NeedsUpdate(true)
 	, m_Text(text)
 	, m_pFont(font)
 	, m_Wrap{ wrap }
+	, m_Color{color}
 { 
 	UpdateTexture();
 }
@@ -28,19 +29,20 @@ void Willem::TextComponent::Update(float)
 
 void Willem::TextComponent::UpdateTexture()
 {
-	const SDL_Color color = { 255,255,255 }; // only white text is supported now
 	int width{};
 	int height{};
 
 	SDL_Surface* surf;
+	TTF_SetFontStyle(m_pFont->GetFont(), TTF_STYLE_BOLD );
+
 	if (m_Wrap)
 	{
 		TTF_SizeText(m_pFont->GetFont(), m_Text.c_str(), &width, &height);
-		surf = TTF_RenderText_Blended_Wrapped(m_pFont->GetFont(), m_Text.c_str(), color, Uint32(width * m_Wrap));
+		surf = TTF_RenderText_Blended_Wrapped(m_pFont->GetFont(), m_Text.c_str(), m_Color, Uint32(width * m_Wrap));
 	}
 	else
 	{
-		surf = TTF_RenderText_Blended(m_pFont->GetFont(), m_Text.c_str(), color);
+		surf = TTF_RenderText_Blended(m_pFont->GetFont(), m_Text.c_str(), m_Color);
 	}
 
 	if (surf == nullptr)

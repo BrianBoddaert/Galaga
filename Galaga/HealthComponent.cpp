@@ -13,7 +13,7 @@
 #include "GameObject.h"
 #include "BombRunState.h"
 #include "ShootComponent.h"
-
+#include <string>
 
 using namespace Willem;
 
@@ -72,6 +72,9 @@ void HealthComponent::Hit(int amount)
 		transformComp->SetPosition(controlComp->GetSpawnPosition());
 		controlComp->DisableCaughtInTractorBeam();
 		m_pGameObject->GetComponent<ShootComponent>()->SetEnabled(true);
+
+		std::string name = "LifeCounter" + std::to_string(m_HealthPoints);
+		SceneManager::GetInstance().GetCurrentScene()->RemoveObjectsByName(name);
 	}
 
 

@@ -15,7 +15,7 @@ namespace Willem
 		void UpdateTexture();
 
 
-		explicit TextComponent(GameObject* gameObject, const std::string& text, Font* font, float wrap = 1.0f);
+		explicit TextComponent(GameObject* gameObject, const std::string& text, Font* font, const SDL_Color& color = { 255,255,255 }, float wrap = 1.0f);
 		virtual ~TextComponent() override = default;
 		TextComponent(const TextComponent& other) = delete;
 		TextComponent(TextComponent&& other) = delete;
@@ -26,5 +26,6 @@ namespace Willem
 		float m_Wrap;
 		std::string m_Text;
 		std::shared_ptr<Font> m_pFont;
+		const SDL_Color m_Color;
 	};
 }
