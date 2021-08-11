@@ -14,6 +14,7 @@
 #include "BombRunState.h"
 #include "ShootComponent.h"
 #include <string>
+#include "AudioClasses.h"
 
 using namespace Willem;
 
@@ -49,6 +50,15 @@ void HealthComponent::Hit(int amount)
 {
 	m_HealthPoints -= amount;
 
+	if (m_pGameObject->HasTag("Alien"))
+	{
+		ServiceLocator::GetSoundSystem().QueueSound("EnemyDies", false, 0.3f);
+	}
+	else if (m_pGameObject->HasTag("Player"))
+	{
+		ServiceLocator::GetSoundSystem().QueueSound("PlayerDies", false, 0.3f);
+	}
+
 	if (m_HealthPoints <= 0)
 		Die();
 	else if (m_pGameObject->HasTag("Boss"))
@@ -76,7 +86,6 @@ void HealthComponent::Hit(int amount)
 		std::string name = "LifeCounter" + std::to_string(m_HealthPoints);
 		SceneManager::GetInstance().GetCurrentScene()->RemoveObjectsByName(name);
 	}
-
 
 }
 void HealthComponent::Heal(int amount)

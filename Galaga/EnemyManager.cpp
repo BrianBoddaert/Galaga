@@ -27,6 +27,7 @@
 
 #include "FollowBossState.h"
 #include <random>
+#include "AudioClasses.h"
 
 using namespace Willem;
 
@@ -45,6 +46,7 @@ EnemyManager::EnemyManager()
 	, m_BombDiveStage{ BombDiveStage::None }
 	, m_Level{ 1 }
 	, m_BombRunCounter{0}
+	, m_MovingToTheRight{ true }
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
@@ -58,6 +60,7 @@ void EnemyManager::Update(float deltaT)
 	AlterBetweenSprites(deltaT);
 	SpawnAliens(deltaT);
 	SendAliensOnBombRuns(deltaT);
+	MoveEnemiesFromLeftAndRight(deltaT);
 }
 
 bool EnemyManager::AreAllEnemiesInFormation()
@@ -338,6 +341,8 @@ std::shared_ptr<Willem::GameObject> EnemyManager::SpawnCapturedPlayer(const Will
 
 	m_CapturedPlayerCounter++;
 
+	ServiceLocator::GetSoundSystem().QueueSound("CapturedShip", false, 0.3f);
+
 	return capturedPlayer;
 }
 
@@ -525,4 +530,68 @@ void EnemyManager::SendAliensOnBombRuns(float)
 		}
 
 	}
+}
+
+void EnemyManager::MoveEnemiesFromLeftAndRight(float deltaT)
+{
+	if (m_IntroDiveFormation != IntroDiveFormation::None)
+		return;
+
+	const SDL_Surface* surface = Minigin::GetWindowSurface();
+	bool switchDirection = false;
+	Vector2 direction;
+	float offset = 32;
+
+	if (m_MovingToTheRight)
+		direction = { 1,0 };
+	else
+		direction = { -1,0 };
+
+	for (auto& pos : m_BeeFormationLocations)
+	{
+		pos = pos + Vector2(direction * m_MoveToSidesSpeed * deltaT);
+		if ((m_MovingToTheRight && pos.x + offset >= surface->w) || (!m_MovingToTheRight && pos.x <= 0))
+			switchDirection = true;
+	}
+	for (auto& pos : m_ButterflyFormationLocations)
+	{
+		pos = pos + Vector2(direction * m_MoveToSidesSpeed * deltaT);
+		if ((m_MovingToTheRight && pos.x + offset >= surface->w) || (!m_MovingToTheRight && pos.x <= 0))
+			switchDirection = true;
+	}
+	for (auto& pos : m_BossFormationLocations)
+	{
+		pos = pos + Vector2(direction * m_MoveToSidesSpeed * deltaT);
+		if ((m_MovingToTheRight && pos.x + offset >= surface->w) || (!m_MovingToTheRight && pos.x <= 0))
+			switchDirection = true;
+	}
+
+	for (auto& pair : m_pEnemies)
+	{
+		auto enemy = pair.second.lock();
+		if (!enemy->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
+			continue;
+
+		TransformComponent* transform = enemy->GetComponent<TransformComponent>();
+		transform->SetPosition(transform->GetPosition() + Vector2(direction*m_MoveToSidesSpeed*deltaT));
+	}
+
+	if (switchDirection)
+		m_MovingToTheRight = !m_MovingToTheRight;
+}
+
+void EnemyManager::Reset()
+{
+	m_IntroDiveFormation = IntroDiveFormation::ButterFliesAndBeesFromUpToBothSides;
+	m_BombDiveStage = BombDiveStage::None;
+
+	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
+	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
+	{
+		CollisionManager::GetInstance().RemoveColliderByObject(it->second.lock().get());
+		m_pEnemies.erase(it++);
+	}
+
+	m_Level = 0;
+	ResetAlienSpawns();
 }

@@ -116,7 +116,7 @@ void DSS_TractorBeam::Enter()
 	beam->SetParent(SceneManager::GetInstance().GetCurrentScene()->GetObjectByObject(m_pGameObject));
 	CollisionManager::GetInstance().AddCollider(beam);
 	SceneManager::GetInstance().GetCurrentScene()->Add(beam);
-	ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 1.0f);
+	ServiceLocator::GetSoundSystem().QueueSound("TractorBeam",false, 0.3f);
 	m_pTractorBeam = beam;
 }
 void DSS_TractorBeam::Exit()

@@ -49,7 +49,7 @@ void ShootComponent::Fire(const Vector2& dir)
 	CollisionManager::GetInstance().AddCollider(bullet);
 	SceneManager::GetInstance().GetCurrentScene()->Add(bullet);
 	m_Bullets.push_back(bullet);
-	ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 1.0f);
+	ServiceLocator::GetSoundSystem().QueueSound("PlayerShoot",false, 0.3f);
 	}
 	else
 	{
@@ -75,7 +75,6 @@ void ShootComponent::Fire(const Vector2& dir)
 		CollisionManager::GetInstance().AddCollider(bullet);
 		SceneManager::GetInstance().GetCurrentScene()->Add(bullet);
 		m_Bullets.push_back(bullet);
-		ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 1.0f);
 	}
 
 

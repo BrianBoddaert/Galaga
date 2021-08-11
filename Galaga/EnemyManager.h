@@ -48,6 +48,8 @@ public:
 
 	std::shared_ptr<Willem::GameObject>  SpawnCapturedPlayer(const Willem::Vector2& pos, std::weak_ptr<Willem::GameObject> boss);
 
+	void Reset();
+
 private:
 	friend class Willem::Singleton<EnemyManager>;
 
@@ -100,5 +102,10 @@ private:
 	int m_Level;
 
 	int m_BombRunCounter;
+
+	// Enemies movign From left to Right
+	void MoveEnemiesFromLeftAndRight(float deltaT);
+	bool m_MovingToTheRight;
+	const float m_MoveToSidesSpeed = 20.0f;
 };
 

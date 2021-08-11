@@ -31,6 +31,8 @@
 #include "ExplosionManager.h"
 #include "HealthComponent.h"
 
+#include "SwitchGameModeCommand.h"
+
 using namespace std;
 using namespace std::chrono;
 using namespace Willem;
@@ -76,16 +78,12 @@ void Minigin::Initialize()
 	m_WindowSurface = SDL_GetWindowSurface(m_Window);
 
 	Willem::ServiceLocator::SetSoundSystem(new LoggingSoundSystem(new SdlSoundSystem()));
-	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Jump, "../Data/Audio/jump.mp3");
-	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fall, "../Data/Audio/fall.mp3");
-	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Lift, "../Data/Audio/lift.mp3");
-	//Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Victory, "../Data/Audio/victory.mp3");
-	//ServiceLocator::GetSoundSystem().AddSoundToLibrary(MusicId::Ambient, "../Data/royaltyFreeSong.mp3");
-
-	//ServiceLocator::GetSoundSystem().QueueSound(MusicId::Ambient,0.3f);
-	////Mix_Music* music = Mix_LoadMUS("../Data/mortalkombat.mp3"); // Wav, mp3 both work
-
-	//ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 1.0f);
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary("TractorBeam", "../Data/Audio/TractorBeam.mp3", false);
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary("PlayerShoot", "../Data/Audio/PlayerShoot.mp3",false);
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary("EnemyDies", "../Data/Audio/EnemyDies.mp3", false);
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary("PlayerDies", "../Data/Audio/PlayerDies.mp3", false);
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary("CapturedShip", "../Data/Audio/CapturedShip.mp3", false);
+	Willem::ServiceLocator::GetSoundSystem().AddSoundToLibrary("StartGame", "../Data/Audio/Start.mp3", false);
 
 }
 
@@ -94,27 +92,23 @@ void Minigin::AssignKeys()
 {
 	auto& input = InputManager::GetInstance();
 
-	//for (int i = 0; i < XUSER_MAX_COUNT; i++)
-	//{
-	//	//input.AssignControllerKey<DieCommand>(ControllerButton::LeftThumbStickUp, i);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickUp, i, (int)MoveInputDirections::Up);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickLeft, i, (int)MoveInputDirections::Left);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickRight, i, (int)MoveInputDirections::Right);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickDown, i, (int)MoveInputDirections::Down);
+	for (int i = 0; i < XUSER_MAX_COUNT; i++)
+	{
+		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickLeft, i, (int)MoveInputDirections::Left);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickRight, i, (int)MoveInputDirections::Right);
 
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonUp, i, (int)MoveInputDirections::Up);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonLeft, i, (int)MoveInputDirections::Left);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonRight, i, (int)MoveInputDirections::Right);
-	//	input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonDown, i, (int)MoveInputDirections::Down);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonLeft, i, (int)MoveInputDirections::Left);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonRight, i, (int)MoveInputDirections::Right);
 
-	//	input.AssignControllerKey<PauseCommand>(ControllerButton::ButtonStart, i);
-	//	input.AssignControllerKey<SwitchSceneCommand>(ControllerButton::TriggerRight, i);
-	//}
+		//input.AssignControllerKey<PauseCommand>(ControllerButton::ButtonStart, i);
+		input.AssignControllerKey<SwitchGameModeCommand>(ControllerButton::TriggerRight, i);
+	}
 
 	//input.AssignKeyboardKey<PauseCommand>(KeyboardButton::P);
 
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::A, (int)MoveInputDirections::Left);
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
+	input.AssignKeyboardKey<SwitchGameModeCommand>(KeyboardButton::PLUS,0);
 	input.AssignKeyboardKey<ShootCommand>(KeyboardButton::SPACE, 0);
 
 	//input.AssignKeyboardKey<SwitchSceneCommand>(KeyboardButton::PLUS, 0);
@@ -122,6 +116,7 @@ void Minigin::AssignKeys()
 
 void Minigin::LoadSinglePlayerScene() const
 {
+	ServiceLocator::GetSoundSystem().QueueSound("StartGame", false, 0.1f);
 
 	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
 	LoadHUD(scene);
@@ -150,165 +145,101 @@ void Minigin::LoadSinglePlayerScene() const
 	player->AddTag("Player1");
 	CollisionManager::GetInstance().AddCollider(player);					
 	scene.AddPlayer(player);
-// 
-	//{
-	//	auto map = std::make_shared<GameObject>("Map");
-	//	//250,200
-	//	const Willem::Vector3 highestCubePos = { float(m_WindowSurface->w / 2), float(m_WindowSurface->h / 2),0 };
-	//	map->AddComponent(new MapComponent(scene, highestCubePos));
-	//	map->AddWatcher(new LevelCompleteObserver());
-	//	scene.AddMap(map);
-	//}
-	//{
-	//	auto player = std::make_shared<GameObject>("Player1");
-	//	const Willem::Vector2 playerHalfSize = { 8,8 };
-	//	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
-	//	ControlComponent* controlComponent = new ControlComponent(playerPos);  // ControlComponent();
 
-	//	player->AddComponent(controlComponent);
-
-	//	SDL_Rect playerSrcRect = { 0,0,16,16 };
-
-	//	player->AddComponent(new RenderComponent(playerSrcRect));
-	//	player->SetTexture("Textures/Qbert2.png");
-
-	//	player->AddComponent(new TransformComponent(playerPos, 1.0f));
-	//	//player->SetPosition(playerPos.x, playerPos.y);
-
-	//	player->AddComponent(new HealthComponent(3));
-	//	player->AddComponent(new ScoreComponent(0));
-
-	//	player->AddWatcher(new LivesObserver());
-	//	player->AddWatcher(new ScoreObserver());
-	//	player->AddComponent(new MoveComponent(0));
-	//	player->AddTag(Tag::Player);
-	//	player->AddTag(Tag::Player1);
-	//	CollisionManager::GetInstance().AddCollider(player);
-	//	scene.AddPlayer(player);
-	//}
-
-	//scene.SortOnZAxis();
 }
 
 void Minigin::LoadCoOpScene() const
 {
+	ServiceLocator::GetSoundSystem().QueueSound("StartGame", false, 0.1f);
 
-	//auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)GameMode::CoOp);
+	auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)GameMode::CoOp);
+	LoadHUD(scene);
 
-	//LoadHUD(scene);
-	//auto map = std::make_shared<GameObject>("Map");
-	////250,200
-	//const Willem::Vector3 highestCubePos = { (float)m_WindowSurface->w / 2,  (float)m_WindowSurface->h / 2,0 };
-	//MapComponent* mapComp = new MapComponent(scene, highestCubePos);
-	//map->AddComponent(mapComp);
-	//map->AddWatcher(new LevelCompleteObserver());
-	//scene.AddMap(map);
-	//
-	//{
+	{
+		auto player = std::make_shared<GameObject>("Player1");
 
-	//	{
-	//		auto player = std::make_shared<GameObject>("Player1");
+		SDL_Rect playerSrcRect = { 109,1,16,16 };
 
-	//		const Willem::Vector2 playerHalfSize = { 8,8 };
-	//		const Willem::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) - 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,7 };
+		const float offsetFromBottom = 50.0f;
+		const Willem::Vector2 playerHalfSize = { playerSrcRect.w / 2.0f,playerSrcRect.h / 2.0f };
+		const Willem::Vector3 playerPos = { m_WindowSurface->w / 4 + playerHalfSize.x, m_WindowSurface->h - float(playerSrcRect.h * GAMESCALE) - offsetFromBottom,1 };
 
-	//		ControlComponent* controlComponent = new ControlComponent(playerPos);
+		player->AddComponent(new ControlComponent(playerPos));
 
-	//		player->AddComponent(controlComponent);
-	//		SDL_Rect playerSrcRect = { 0,0,16,16 };
+		player->AddComponent(new RenderComponent(playerSrcRect));
+		player->SetTexture("Galaga2.png");
 
-	//		player->AddComponent(new RenderComponent(playerSrcRect));
-	//		player->SetTexture("Textures/Qbert2.png");
-	//		//const Willem::Vector2& cubeOffset =  mapComp->GetCubeOffset();
+		player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
+		player->AddComponent(new ShootComponent());
+		player->AddComponent(new HealthComponent(3));
+		//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
 
-	//		player->AddComponent(new TransformComponent(playerPos, 1.0f));
+		//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
+		//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+		player->AddTag("Player");
+		player->AddTag("Player1");
+		CollisionManager::GetInstance().AddCollider(player);
+		scene.AddPlayer(player);
+	}
+	{
+		auto player = std::make_shared<GameObject>("Player2");
 
-	//		player->AddComponent(new HealthComponent(3));
-	//		player->AddComponent(new ScoreComponent(0));
+		SDL_Rect playerSrcRect = { 109,1,16,16 };
 
-	//		player->AddWatcher(new LivesObserver());
-	//		player->AddWatcher(new ScoreObserver());
-	//		player->AddComponent(new MoveComponent(27));
-	//		player->AddTag(Tag::Player);
-	//		player->AddTag(Tag::Player1);
-	//		CollisionManager::GetInstance().AddCollider(player);
-	//		scene.AddPlayer(player);
-	//	}
-	//	{
-	//		auto player = std::make_shared<GameObject>("Player2");
+		const float offsetFromBottom = 50.0f;
+		const Willem::Vector2 playerHalfSize = { playerSrcRect.w / 2.0f,playerSrcRect.h / 2.0f };
+		const Willem::Vector3 playerPos = { m_WindowSurface->w * 0.75f + playerHalfSize.x, m_WindowSurface->h - float(playerSrcRect.h * GAMESCALE) - offsetFromBottom,1 };
 
-	//		SDL_Rect playerSrcRect = { 0,0,16,16 };
-	//		const Willem::Vector2 playerHalfSize = { 8,8 };
-	//		player->AddComponent(new RenderComponent(playerSrcRect));
-	//		player->SetTexture("Textures/Qbert2.png");
-	//		//const Willem::Vector2& cubeOffset =  mapComp->GetCubeOffset();
-	//		const Willem::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) + 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,7 };
-	//		ControlComponent* controlComponent = new ControlComponent(playerPos);
+		player->AddComponent(new ControlComponent(playerPos));
 
-	//		player->AddComponent(controlComponent);
+		player->AddComponent(new RenderComponent(playerSrcRect));
+		player->SetTexture("Galaga2.png");
 
-	//		player->AddComponent(new TransformComponent(playerPos, 1.0f));
+		player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
+		player->AddComponent(new ShootComponent());
+		player->AddComponent(new HealthComponent(3));
+		//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
 
-	//		player->AddComponent(new HealthComponent(3));
-	//		player->AddComponent(new ScoreComponent(0));
-
-	//		player->AddWatcher(new LivesObserver());
-	//		player->AddWatcher(new ScoreObserver());
-	//		player->AddComponent(new MoveComponent(6));
-	//		player->AddTag(Tag::Player);
-	//		player->AddTag(Tag::Player2);
-	//		CollisionManager::GetInstance().AddCollider(player);
-	//		scene.AddPlayer(player);
-	//	}
-	//}
-	//scene.SortOnZAxis();
+		//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
+		//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+		player->AddTag("Player");
+		player->AddTag("Player2");
+		CollisionManager::GetInstance().AddCollider(player);
+		scene.AddPlayer(player);
+	}
 }
 
 void Minigin::LoadVersusScene() const
 {
+	ServiceLocator::GetSoundSystem().QueueSound("StartGame", false, 0.1f);
 
-	//auto& scene = SceneManager::GetInstance().CreateScene("VersusScene", (int)GameMode::Versus);
-	//LoadHUD(scene);
-	//auto map = std::make_shared<GameObject>("Map");
-	////250,200
-	//const Willem::Vector3 highestCubePos = { (float)m_WindowSurface->w / 2,  (float)m_WindowSurface->h / 2,0 };
-	//MapComponent* mapComp = new MapComponent(scene, highestCubePos);
-	//map->AddComponent(mapComp);
-	//map->AddWatcher(new LevelCompleteObserver());
-	//scene.AddMap(map);
+	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
+	LoadHUD(scene);
 
-	//{
+	auto player = std::make_shared<GameObject>("Player1");
 
-	//	{
-	//		auto player = std::make_shared<GameObject>("Player1");
+	SDL_Rect playerSrcRect = { 109,1,16,16 };
 
-	//		const Willem::Vector2 playerHalfSize = { 8,8 };
-	//		const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,0 };
+	const float offsetFromBottom = 50.0f;
+	const Willem::Vector2 playerHalfSize = { playerSrcRect.w / 2.0f,playerSrcRect.h / 2.0f };
+	const Willem::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h - float(playerSrcRect.h * GAMESCALE) - offsetFromBottom,1 };
 
-	//		ControlComponent* controlComponent = new ControlComponent(playerPos);
+	player->AddComponent(new ControlComponent(playerPos));
 
-	//		player->AddComponent(controlComponent);
-	//		SDL_Rect playerSrcRect = { 0,0,16,16 };
+	player->AddComponent(new RenderComponent(playerSrcRect));
+	player->SetTexture("Galaga2.png");
 
-	//		player->AddComponent(new RenderComponent(playerSrcRect));
-	//		player->SetTexture("Textures/Qbert2.png");
-	//		//const Willem::Vector2& cubeOffset =  mapComp->GetCubeOffset();
+	player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
+	player->AddComponent(new ShootComponent());
+	player->AddComponent(new HealthComponent(3));
+	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
 
-	//		player->AddComponent(new TransformComponent(playerPos, 1.0f));
-
-	//		player->AddComponent(new HealthComponent(3));
-	//		player->AddComponent(new ScoreComponent(0));
-
-	//		player->AddWatcher(new LivesObserver());
-	//		player->AddWatcher(new ScoreObserver());
-	//		player->AddComponent(new MoveComponent(0));
-	//		player->AddTag(Tag::Player);
-	//		player->AddTag(Tag::Player1);
-	//		CollisionManager::GetInstance().AddCollider(player);
-	//		scene.AddPlayer(player);
-	//	}
-	//}
-	//scene.SortOnZAxis();
+	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
+	//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+	player->AddTag("Player");
+	player->AddTag("Player1");
+	CollisionManager::GetInstance().AddCollider(player);
+	scene.AddPlayer(player);
 }
 
 void Minigin::LoadHUD(Willem::Scene& scene) const

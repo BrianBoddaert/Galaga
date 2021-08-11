@@ -186,6 +186,7 @@
     <ClCompile Include="ShootCommand.cpp" />
     <ClCompile Include="ShootComponent.cpp" />
     <ClCompile Include="SpawnDiveState.cpp" />
+    <ClCompile Include="SwitchGameModeCommand.cpp" />
     <ClCompile Include="ThrusterComponent.cpp" />
     <ClCompile Include="TractorBeamDive.cpp" />
     <ClCompile Include="TxtParser.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="ShootComponent.h" />
     <ClInclude Include="SpawnDiveState.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SwitchGameModeCommand.h" />
     <ClInclude Include="ThrusterComponent.h" />
     <ClInclude Include="TractorBeamDive.h" />
     <ClInclude Include="TxtParser.h" />

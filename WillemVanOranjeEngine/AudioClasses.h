@@ -9,22 +9,10 @@
 
 namespace Willem
 {
-	enum class EffectId
-	{
-		Jump,
-		Fall,
-		Lift,
-		Victory
-	};
-
-	enum class MusicId
-	{
-		Ambient
-	};
 
 	struct StoredSound
 	{
-		int soundId;
+		std::string soundId;
 		float volume;
 		bool music;
 	};
@@ -36,15 +24,12 @@ namespace Willem
 	public:
 		virtual ~SoundSystem() = default;
 
-		virtual void QueueSound(const EffectId&, float) = 0;
-		virtual void QueueSound(const MusicId&, float) = 0;
-		virtual void AddSoundToLibrary(const EffectId&, const std::string&) = 0;
-		virtual void AddSoundToLibrary(const MusicId&, const std::string&) = 0;
+		virtual void QueueSound(const std::string&, bool, float) = 0;
+		virtual void AddSoundToLibrary(const std::string&, const std::string&, bool) = 0;
 		virtual void Update() = 0;
 		virtual void TogglePause() = 0;
 	protected:
-		virtual void Play(const EffectId&, float) = 0;
-		virtual void Play(const MusicId&, float) = 0;
+		virtual void Play(const std::string&, bool, float) = 0;
 	public:
 
 		SoundSystem() = default;
@@ -86,33 +71,23 @@ namespace Willem
 		SdlSoundSystem& operator=(const SdlSoundSystem& other) = delete;
 		SdlSoundSystem& operator=(SdlSoundSystem&& other) = delete;
 
-		void QueueSound(const EffectId& key, float volume = 1.0f) override
+		void QueueSound(const std::string& key, bool music, float volume = 1.0f) override
 		{
 
-			StoredSound sound{ int(key),volume,false };
+			StoredSound sound{ key,volume,music };
 			std::lock_guard<std::mutex> mLock{ m_Mutex };
 			m_SoundQueue.push(sound);
 			m_QueueActive.notify_one();
 		}
 
-		void QueueSound(const MusicId& key, float volume = 1.0f) override
+		void AddSoundToLibrary(const std::string& key, const std::string& path, bool music) override
 		{
-
-			StoredSound sound{ int(key),volume,true };
-			std::lock_guard<std::mutex> mLock{ m_Mutex };
-			m_SoundQueue.push(sound);
-			m_QueueActive.notify_one();
+			if (music)
+				m_MusicLibrary.insert(std::pair<std::string, Mix_Music*>(key, Mix_LoadMUS(path.c_str())));
+			else
+				m_SoundLibrary.insert(std::pair<std::string, Mix_Chunk*>(key, Mix_LoadWAV(path.c_str())));
 		}
 
-		void AddSoundToLibrary(const EffectId& soundId, const std::string& path) override
-		{
-			m_SoundLibrary.insert(std::pair<EffectId, Mix_Chunk*>(soundId, Mix_LoadWAV(path.c_str())));
-		}
-
-		void AddSoundToLibrary(const MusicId& soundId, const std::string& path) override
-		{
-			m_MusicLibrary.insert(std::pair<MusicId, Mix_Music*>(soundId, Mix_LoadMUS(path.c_str())));
-		}
 
 		void Update() override
 		{
@@ -124,10 +99,7 @@ namespace Willem
 					StoredSound ps = m_SoundQueue.front();
 					m_SoundQueue.pop();
 
-					if (ps.music)
-						Play(MusicId(ps.soundId), ps.volume);
-					else
-						Play(EffectId(ps.soundId), ps.volume);
+					Play(ps.soundId, ps.music, ps.volume);
 				}
 
 				std::unique_lock<std::mutex> guard{ m_Mutex };
@@ -145,33 +117,37 @@ namespace Willem
 		}
 
 	protected:
-		void Play(const EffectId& key, float volume = 1.0f) override
+		void Play(const std::string& key,bool music, float volume = 1.0f) override
 		{
-			if (m_SoundLibrary.find(key) != m_SoundLibrary.end())
+			if (!music)
 			{
-				auto sound = m_SoundLibrary.at(key);
+				if (m_SoundLibrary.find(key) != m_SoundLibrary.end())
+				{
+					auto sound = m_SoundLibrary.at(key);
 
-				Mix_Volume(-1, int(volume * 128.0f));
-				Mix_PlayChannel(-1, sound, 0);
+					Mix_Volume(-1, int(volume * 128.0f));
+					Mix_PlayChannel(-1, sound, 0);
+				}
+				else
+				{
+					std::cout << "SoundId not found when attempting to play sound" << std::endl;
+				}
 			}
 			else
 			{
-				std::cout << "SoundId not found when attempting to play sound" << std::endl;
-			}
-		};
-		void Play(const MusicId& key, float volume = 1.0f) override
-		{
-			if (m_MusicLibrary.find(key) != m_MusicLibrary.end())
-			{
-				auto sound = m_MusicLibrary.at(key);
+				if (m_MusicLibrary.find(key) != m_MusicLibrary.end())
+				{
+					auto sound = m_MusicLibrary.at(key);
 
-				Mix_VolumeMusic(int(volume * 128.0f));
-				Mix_PlayMusic(sound, 0);
+					Mix_VolumeMusic(int(volume * 128.0f));
+					Mix_PlayMusic(sound, 0);
+				}
+				else
+				{
+					std::cout << "MusicId not found when attempting to play music" << std::endl;
+				}
 			}
-			else
-			{
-				std::cout << "MusicId not found when attempting to play music" << std::endl;
-			}
+
 		};
 		void Start()
 		{
@@ -189,8 +165,8 @@ namespace Willem
 		std::mutex m_Mutex;
 		std::condition_variable m_QueueActive{};
 		std::queue<StoredSound> m_SoundQueue{};
-		std::map<MusicId, Mix_Music*> m_MusicLibrary;
-		std::map<EffectId, Mix_Chunk*> m_SoundLibrary;
+		std::map<std::string, Mix_Music*> m_MusicLibrary;
+		std::map<std::string, Mix_Chunk*> m_SoundLibrary;
 	};
 
 	class NullSoundSystem final : public SoundSystem
@@ -202,13 +178,10 @@ namespace Willem
 		NullSoundSystem& operator=(const NullSoundSystem&) = delete;
 		NullSoundSystem(NullSoundSystem&&) = delete;
 		NullSoundSystem& operator= (NullSoundSystem&&) = delete;
-		void QueueSound(const EffectId&, float) override {};
-		void QueueSound(const MusicId&, float) override {};
-		void Play(const EffectId&, float ) override {};
-		void Play(const MusicId&, float) override {};
+		void QueueSound(const std::string&,bool, float) override {};
+		void Play(const std::string&, bool, float) override {};
 		void Update() override {};
-		void AddSoundToLibrary(const EffectId&, const std::string&) override {};
-		void AddSoundToLibrary(const MusicId&, const std::string&) override {};
+		void AddSoundToLibrary(const std::string&, const std::string&,bool) override {};
 		void TogglePause() override {};
 	};
 
@@ -222,40 +195,17 @@ namespace Willem
 			m_pRealSoundSystem->Update();
 		}
 
-		void QueueSound(const EffectId& soundId, float volume = 1.0f) override
+		void QueueSound(const std::string& soundId, bool music, float volume = 1.0f) override
 		{
 			if (!m_Muted)
 			{
-				m_pRealSoundSystem->QueueSound(soundId, volume);
-				//std::cout << "Playing " << std::to_string((int)soundId) << " at volume " << volume << std::endl;
+				m_pRealSoundSystem->QueueSound(soundId,music, volume);
 			}
-			//else
-			//{
-			//	//std::cout << "Attempting to play " << std::to_string((int)soundId) << " but the sound is muted or the ID is invalid" << std::endl;
-			//}
 		}
 
-		void QueueSound(const MusicId& soundId, float volume = 1.0f) override
+		void AddSoundToLibrary(const std::string& soundId, const std::string& path,bool music) override
 		{
-			if (!m_Muted)
-			{
-				m_pRealSoundSystem->QueueSound(soundId, volume);
-				//std::cout << "Playing " << std::to_string((int)soundId) << " at volume " << volume << std::endl;
-			}
-			//else
-			//{
-			//	//std::cout << "Attempting to play " << std::to_string((int)soundId) << " but the sound is muted or the ID is invalid" << std::endl;
-			//}
-		}
-
-		void AddSoundToLibrary(const EffectId& soundId, const std::string& path) override
-		{
-			m_pRealSoundSystem->AddSoundToLibrary(soundId, path);
-		}
-
-		void AddSoundToLibrary(const MusicId& soundId, const std::string& path) override
-		{
-			m_pRealSoundSystem->AddSoundToLibrary(soundId, path);
+			m_pRealSoundSystem->AddSoundToLibrary(soundId, path, music);
 		}
 
 		~LoggingSoundSystem() 
@@ -279,8 +229,7 @@ namespace Willem
 		bool m_Muted{};
 
 	protected:
-		void Play(const EffectId&, float) override {}
-		void Play(const MusicId&, float) override {};
+		void Play(const std::string&,bool, float) override {}
 
 	};
 

@@ -10,6 +10,7 @@ class ExplosionManager final : public Willem::Singleton<ExplosionManager>
 public:
 	void SpawnExplosion(const Willem::Vector2& pos);
 	void Update(float deltaT);
+	void Clear();
 private:
 	friend class Willem::Singleton<ExplosionManager>;
 	

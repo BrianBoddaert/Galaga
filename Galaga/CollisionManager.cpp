@@ -30,6 +30,13 @@ bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playe
 			playersCollider->GetComponent<ShootComponent>()->SetEnabled(false);
 		}
 	}
+	else if (playersCollider->HasTag("Player") && aliensCollider->HasTag("Alien") && !playersCollider->HasTag("PlayerBullet") && !aliensCollider->HasTag("TractorBeam"))
+	{
+		playersCollider->GetComponent<HealthComponent>()->Hit();
+		aliensCollider->GetComponent<HealthComponent>()->Hit(2);
+
+		return true;
+	}
 
 	return false;
 }

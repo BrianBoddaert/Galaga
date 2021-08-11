@@ -120,6 +120,9 @@
     <ClCompile Include="FollowBossState.cpp">
       <Filter>States</Filter>
     </ClCompile>
+    <ClCompile Include="SwitchGameModeCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="FollowBossState.h">
       <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="SwitchGameModeCommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

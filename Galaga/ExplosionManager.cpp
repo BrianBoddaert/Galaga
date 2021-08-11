@@ -61,13 +61,8 @@ void ExplosionManager::Update(float deltaT)
 	}
 
 }
-	//for (size_t i = 0; i < m_pExplosions.size();)
-	//{
-	//	if (m_pExplosions[i].use_count() <= 1)
-	//		m_pExplosions.erase(m_pExplosions.begin() + i++);
-	//	else
-	//	{
 
-	//		++i;
-	//	}
-	//}
+void ExplosionManager::Clear()
+{
+	m_pExplosions.clear();
+}
