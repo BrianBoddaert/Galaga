@@ -83,7 +83,11 @@ void HealthComponent::Hit(int amount)
 		controlComp->DisableCaughtInTractorBeam();
 		m_pGameObject->GetComponent<ShootComponent>()->SetEnabled(true);
 
-		std::string name = "LifeCounter" + std::to_string(m_HealthPoints);
+		std::string name;
+		if (m_pGameObject->HasTag("Player1"))
+			name = "LifeCounter" + std::to_string(m_HealthPoints);
+		else
+			name = "LifeCounter" + std::to_string(m_HealthPoints+2);
 		SceneManager::GetInstance().GetCurrentScene()->RemoveObjectsByName(name);
 	}
 

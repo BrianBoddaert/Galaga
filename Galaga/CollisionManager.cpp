@@ -21,10 +21,14 @@ bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playe
 {
 	if (playersCollider->HasTag("PlayerBullet") && !aliensCollider->HasTag("AlienBullet") && aliensCollider->HasTag("Alien") && !aliensCollider->HasTag("TractorBeam"))
 	{
-		if (aliensCollider->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
-			playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Formation");
-		else
-			playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Diving");
+		if (!aliensCollider->HasTag("Boss") || aliensCollider->GetComponent<HealthComponent>()->GetHealthPoints() == 1)
+		{
+			if (aliensCollider->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
+				playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Formation");
+			else
+				playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Diving");
+		}
+
 
 
 		Minigin::GetInstance().IncreaseBulletsHit();

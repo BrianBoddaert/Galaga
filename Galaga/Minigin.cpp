@@ -240,6 +240,7 @@ void Minigin::LoadGameOverScreen(const Willem::GameMode& gameMode) const
 
 		scene.Add(hitMissRatioNumber);
 	}
+
 	
 }
 void Minigin::LoadCoOpScene() const
@@ -325,6 +326,24 @@ void Minigin::LoadCoOpScene() const
 
 		scene.Add(scoreHUD2);
 	}
+	{
+		auto lifeCounterOne = std::make_shared<Willem::GameObject>("LifeCounter4");
+		const SDL_Rect srcRect = { 109,1,16,16 };
+		const float offset = 5.0f;
+		lifeCounterOne->AddComponent(new TransformComponent({ m_WindowSurface->w - offset- srcRect.w * GAMESCALE,float(m_WindowSurface->h - srcRect.h * GAMESCALE - offset),10 }, GAMESCALE));
+		lifeCounterOne->AddComponent(new RenderComponent(srcRect));
+		lifeCounterOne->SetTexture("Galaga2.png");
+		scene.Add(lifeCounterOne);
+	}
+	{
+		auto lifeCounterTwo = std::make_shared<Willem::GameObject>("LifeCounter3");
+		const SDL_Rect srcRect = { 109,1,16,16 };
+		const float offset = 5.0f;
+		lifeCounterTwo->AddComponent(new TransformComponent({ m_WindowSurface->w - offset - (srcRect.w * GAMESCALE) * 2,float(m_WindowSurface->h - srcRect.h * GAMESCALE - offset),10 }, GAMESCALE));
+		lifeCounterTwo->AddComponent(new RenderComponent(srcRect));
+		lifeCounterTwo->SetTexture("Galaga2.png");
+		scene.Add(lifeCounterTwo);
+	}
 }
 
 void Minigin::LoadVersusScene() const
@@ -363,7 +382,6 @@ void Minigin::LoadVersusScene() const
 
 void Minigin::LoadHUD(Willem::Scene& scene) const
 {
-	// m_WindowSurface;
 	{
 		auto oneUpHUD = std::make_shared<Willem::GameObject>("OneUpHUD");
 		oneUpHUD->AddComponent(new TransformComponent({ 20,5.0f,10 }, 1.0f));
