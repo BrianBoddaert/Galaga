@@ -132,6 +132,9 @@
     <ClCompile Include="ScoreObserver.cpp">
       <Filter>Observers</Filter>
     </ClCompile>
+    <ClCompile Include="GameOverObserver.cpp">
+      <Filter>Observers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -234,6 +237,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ScoreObserver.h">
+      <Filter>Observers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverObserver.h">
       <Filter>Observers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,15 +19,15 @@ public:
 	void LoadCoOpScene() const;
 	void LoadVersusScene() const;
 	void LoadHUD(Willem::Scene& scene) const;
+	void LoadGameOverScreen(const Willem::GameMode& gm) const;
 	void Cleanup();
+	void ClearScreen();
+	static void IncreaseBulletsFired() { AmountOfBulletsFired++; }
+	static void ResetBulletsFired() { AmountOfBulletsFired = 0; }
+	static void IncreaseBulletsHit() { AmountOfBulletsHit++; }
+	static void ResetBulletsHit() { AmountOfBulletsHit = 0; }
 	void Run();
-	bool SetPaused(bool v);
-	bool GetGameOver() const { return m_Gamestate == Willem::GameState::GameOver; }
-	bool GetPaused() const { return m_Gamestate == Willem::GameState::Paused; }
-	void SetGameState(const Willem::GameState& state) { m_Gamestate = state; }
-	const Willem::GameState& GetGameState() const { return m_Gamestate; }
 	void LoadSceneByGameMode(Willem::GameMode gameMode) const;
-	void ClearGame();
 	static SDL_Surface* GetWindowSurface() { return m_WindowSurface; }
 
 private:
@@ -35,7 +35,8 @@ private:
 
 	static const int MsPerFrame = 16; //16 for 60 fps, 33 for 30 fps		
 	static float MsPerUpdate;
-	Willem::GameState m_Gamestate;
+	static int AmountOfBulletsFired;
+	static int AmountOfBulletsHit;
 	SDL_Window* m_Window{};
 	static SDL_Surface* m_WindowSurface;
 

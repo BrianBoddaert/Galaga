@@ -15,6 +15,8 @@
 #include "AIFlyComponent.h"
 #include "FormationState.h"
 
+#include "Minigin.h"
+
 bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playersCollider, std::shared_ptr<Willem::GameObject> aliensCollider) // Returns true when it 100% removes something from a list
 {
 	if (playersCollider->HasTag("PlayerBullet") && !aliensCollider->HasTag("AlienBullet") && aliensCollider->HasTag("Alien") && !aliensCollider->HasTag("TractorBeam"))
@@ -24,6 +26,8 @@ bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playe
 		else
 			playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Diving");
 
+
+		Minigin::GetInstance().IncreaseBulletsHit();
 		playersCollider->GetComponent<HealthComponent>()->Hit();
 		aliensCollider->GetComponent<HealthComponent>()->Hit();
 

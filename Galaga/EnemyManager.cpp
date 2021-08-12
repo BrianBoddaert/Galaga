@@ -47,6 +47,7 @@ EnemyManager::EnemyManager()
 	, m_Level{ 1 }
 	, m_BombRunCounter{0}
 	, m_MovingToTheRight{ true }
+	, m_Enabled{ true }
 {
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Bees.txt", m_BeeFormationLocations);
 	TxtParser::GetInstance().Parse("../Data/Formations/Formation1Butterflies.txt", m_ButterflyFormationLocations);
@@ -56,6 +57,9 @@ EnemyManager::EnemyManager()
 
 void EnemyManager::Update(float deltaT)
 {
+	if (!m_Enabled)
+		return;
+
 	UpdateEnemiesList();
 	AlterBetweenSprites(deltaT);
 	SpawnAliens(deltaT);
@@ -588,7 +592,6 @@ void EnemyManager::Reset()
 	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
 	for (it = m_pEnemies.begin(); it != m_pEnemies.end();)
 	{
-		CollisionManager::GetInstance().RemoveColliderByObject(it->second.lock().get());
 		m_pEnemies.erase(it++);
 	}
 

@@ -98,11 +98,15 @@ void HealthComponent::Heal(int amount)
 
 void HealthComponent::Die()
 {
+
 	if (!m_pGameObject->HasTag("Bullet"))
 	ExplosionManager::GetInstance().SpawnExplosion(m_pGameObject->GetComponent<TransformComponent>()->GetPosition());
 
 	auto scene = Willem::SceneManager::GetInstance().GetCurrentScene();
 	scene->RemoveObjectsByObject(m_pGameObject);
+
+	if (m_pGameObject->HasTag("Player"))
+		m_pGameObject->Notify("PlayerDied");
 
 	CollisionManager::GetInstance().RemoveColliderByObject(m_pGameObject);	
 

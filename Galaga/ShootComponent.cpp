@@ -13,6 +13,8 @@
 #include "ThrusterComponent.h"
 #include "HealthComponent.h"
 
+#include "Minigin.h"
+
 using namespace Willem;
 
 void ShootComponent::Fire(const Vector2& dir)
@@ -51,6 +53,9 @@ void ShootComponent::Fire(const Vector2& dir)
 	SceneManager::GetInstance().GetCurrentScene()->Add(bullet);
 	m_Bullets.push_back(bullet);
 	ServiceLocator::GetSoundSystem().QueueSound("PlayerShoot",false, 0.3f);
+	
+	Minigin::IncreaseBulletsFired();
+
 	}
 	else
 	{
@@ -72,6 +77,7 @@ void ShootComponent::Fire(const Vector2& dir)
 		bullet->AddComponent(new HealthComponent(1, true));
 		bullet->AddTag("AlienBullet");
 		bullet->AddTag("Bullet");
+		bullet->AddTag("Alien");
 		bullet->SetParent(SceneManager::GetInstance().GetCurrentScene()->GetObjectByObject(m_pGameObject));
 
 		CollisionManager::GetInstance().AddCollider(bullet);

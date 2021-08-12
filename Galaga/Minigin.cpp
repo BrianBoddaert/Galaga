@@ -34,13 +34,16 @@
 #include "ScoreObserver.h"
 
 #include "SwitchGameModeCommand.h"
+#include "GameOverObserver.h"
 
 using namespace std;
 using namespace std::chrono;
 using namespace Willem;
 
 float Minigin::MsPerUpdate = 0.02f;
-SDL_Surface* Minigin::m_WindowSurface = nullptr;
+int Minigin::AmountOfBulletsFired = 0;
+int Minigin::AmountOfBulletsHit= 0;
+SDL_Surface* Minigin::m_WindowSurface = nullptr; 
 
 void Minigin::Initialize()
 {
@@ -143,6 +146,7 @@ void Minigin::LoadSinglePlayerScene() const
 
 	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 	player->AddWatcher(new ScoreObserver());
+	player->AddWatcher(new GameOverObserver());
 	player->AddTag("Player");
 	player->AddTag("Player1");
 	CollisionManager::GetInstance().AddCollider(player);					
@@ -150,6 +154,94 @@ void Minigin::LoadSinglePlayerScene() const
 
 }
 
+void Minigin::LoadGameOverScreen(const Willem::GameMode& gameMode) const
+{
+	auto& scene = SceneManager::GetInstance().CreateScene("GameOverScene", (int)gameMode);
+	float startY = 200.0f;
+	float offsetX = 200.0f;
+	float offsetY = 30.0f;
+	float xPos = float(m_WindowSurface->w / 3);
+
+	{
+		auto results = std::make_shared<Willem::GameObject>("Results");
+		results->AddComponent(new TransformComponent({ xPos + 50.0f,startY,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		results->AddComponent(new RenderComponent());
+		results->AddComponent(new Willem::TextComponent(results.get(), "--RESULTS--", font, { 255,0,0 }));
+
+		scene.Add(results);
+	}
+
+	{
+		auto shotsFired = std::make_shared<Willem::GameObject>("ShotsFired");
+		shotsFired->AddComponent(new TransformComponent({ xPos,startY + offsetY,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		shotsFired->AddComponent(new RenderComponent());
+		shotsFired->AddComponent(new Willem::TextComponent(shotsFired.get(), "SHOTS FIRED:", font, { 255,255,0 }));
+
+		scene.Add(shotsFired);
+
+		auto shotsFiredNumber = std::make_shared<Willem::GameObject>("ShotsFiredNumber");
+		shotsFiredNumber->AddComponent(new TransformComponent({ xPos + offsetX,startY + offsetY,10 }, 1.0f));
+
+		auto font2 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		shotsFiredNumber->AddComponent(new RenderComponent());
+		shotsFiredNumber->AddComponent(new Willem::TextComponent(shotsFiredNumber.get(), std::to_string(AmountOfBulletsFired), font2, { 255,255,0 }));
+
+		scene.Add(shotsFiredNumber);
+	}
+
+	{
+		auto numberOfHits = std::make_shared<Willem::GameObject>("NumberOfHits");
+		numberOfHits->AddComponent(new TransformComponent({ xPos,startY + offsetY * 2,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		numberOfHits->AddComponent(new RenderComponent());
+		numberOfHits->AddComponent(new Willem::TextComponent(numberOfHits.get(), "NUMBER OF HITS:", font, { 255,255,0 }));
+
+		scene.Add(numberOfHits);
+
+		auto numberOfHitsNumber = std::make_shared<Willem::GameObject>("NumberOfHitsNumber");
+		numberOfHitsNumber->AddComponent(new TransformComponent({ xPos + offsetX,startY + offsetY * 2,10 }, 1.0f));
+
+		auto font2 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		numberOfHitsNumber->AddComponent(new RenderComponent());
+		numberOfHitsNumber->AddComponent(new Willem::TextComponent(numberOfHitsNumber.get(), std::to_string(AmountOfBulletsHit), font2, { 255,255,0 }));
+
+		scene.Add(numberOfHitsNumber);
+	}
+
+	{
+		auto hitMissRatio = std::make_shared<Willem::GameObject>("HitMissRatio");
+		hitMissRatio->AddComponent(new TransformComponent({ xPos,startY + offsetY * 3,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		hitMissRatio->AddComponent(new RenderComponent());
+		hitMissRatio->AddComponent(new Willem::TextComponent(hitMissRatio.get(), "HIT MISS RATIO:", font, { 255,255,0 }));
+
+		scene.Add(hitMissRatio);
+
+		auto hitMissRatioNumber = std::make_shared<Willem::GameObject>("HitMissRatioNumber");
+		hitMissRatioNumber->AddComponent(new TransformComponent({ xPos + offsetX,startY + offsetY * 3,10 }, 1.0f));
+
+		std::string hitMissRat;
+
+		if (AmountOfBulletsFired > 0)
+			hitMissRat = "%" + std::to_string(int(AmountOfBulletsHit * 100 / AmountOfBulletsFired));
+		else
+			hitMissRat = "%" + std::to_string(0);
+
+
+		auto font2 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		hitMissRatioNumber->AddComponent(new RenderComponent());
+		hitMissRatioNumber->AddComponent(new Willem::TextComponent(hitMissRatioNumber.get(), hitMissRat, font2, { 255,255,0 }));
+
+		scene.Add(hitMissRatioNumber);
+	}
+	
+}
 void Minigin::LoadCoOpScene() const
 {
 	ServiceLocator::GetSoundSystem().QueueSound("StartGame", false, 0.1f);
@@ -178,6 +270,7 @@ void Minigin::LoadCoOpScene() const
 
 		//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 		player->AddWatcher(new ScoreObserver());
+		player->AddWatcher(new GameOverObserver());
 		player->AddTag("Player");
 		player->AddTag("Player1");
 		CollisionManager::GetInstance().AddCollider(player);
@@ -261,6 +354,7 @@ void Minigin::LoadVersusScene() const
 
 	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 	player->AddWatcher(new ScoreObserver());
+	player->AddWatcher(new GameOverObserver());
 	player->AddTag("Player");
 	player->AddTag("Player1");
 	CollisionManager::GetInstance().AddCollider(player);
@@ -328,6 +422,7 @@ void Minigin::LoadGame() const
 	//LoadCoOpScene();
 	//LoadVersusScene();
 	LoadSinglePlayerScene();
+	//LoadGameOverScreen(GameMode::SinglePlayer);
 
 }
 
@@ -364,7 +459,6 @@ void Minigin::Run()
 	bool doContinue = true;
 	auto lastTime = high_resolution_clock::now();
 	float lag = 0.0f;
-	m_Gamestate = GameState::Playing;
 
 	std::thread audioThread(&SoundSystem::Update, &ServiceLocator::GetSoundSystem());
 
@@ -380,13 +474,11 @@ void Minigin::Run()
 
 		while (lag >= MsPerUpdate)
 		{
-			if (m_Gamestate == GameState::Playing)
-			{
-				sceneManager.Update(deltaTime);
-				enemyManager.Update(deltaTime);
-				collisionManager.Update(deltaTime);
-				explosionManager.Update(deltaTime);
-			}
+			sceneManager.Update(deltaTime);
+			enemyManager.Update(deltaTime);
+			collisionManager.Update(deltaTime);
+			explosionManager.Update(deltaTime);
+			
 			lag -= MsPerUpdate;
 		}
 
@@ -402,44 +494,12 @@ void Minigin::Run()
 	Cleanup();
 }
 
-
-void Minigin::ClearGame()
+void Minigin::ClearScreen()
 {
-	//EnemyManager::GetInstance().Reset();
+	EnemyManager::GetInstance().Reset();
 	CollisionManager::GetInstance().ClearColliders();
+	ExplosionManager::GetInstance().Clear();
+	SceneManager::GetInstance().RemoveCurrentScene();
 
-	auto& sceneManager = Willem::SceneManager::GetInstance();
-	auto scene = sceneManager.GetCurrentScene();
-	scene->ClearObjects();
-	m_Gamestate = GameState::Playing;
-	Willem::GameMode gamemode = scene->GetGameMode();
-	sceneManager.RemoveCurrentScene();
-
-	LoadSceneByGameMode(gamemode);
+	
 }
-
-bool Minigin::SetPaused(bool v)
-{
-	if (v)
-	{
-		if (m_Gamestate == Willem::GameState::Playing)
-		{
-			m_Gamestate = Willem::GameState::Paused;
-			return true;
-		}
-
-	}
-	else
-	{
-		if (m_Gamestate == Willem::GameState::Paused)
-		{
-			m_Gamestate = Willem::GameState::Playing;
-			return true;
-		}
-
-	}
-
-	return false;
-
-}
-

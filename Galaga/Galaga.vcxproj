@@ -179,6 +179,7 @@
     <ClCompile Include="ExplosionManager.cpp" />
     <ClCompile Include="FollowBossState.cpp" />
     <ClCompile Include="FormationState.cpp" />
+    <ClCompile Include="GameOverObserver.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minigin.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="ExplosionManager.h" />
     <ClInclude Include="FollowBossState.h" />
     <ClInclude Include="FormationState.h" />
+    <ClInclude Include="GameOverObserver.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="MoveCommand.h" />
