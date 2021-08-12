@@ -27,9 +27,10 @@ void BossCommand::Execute(const int& dir)
 	if (playerIndex != 1)
 		return;
 
+	auto currentScene = SceneManager::GetInstance().GetCurrentScene();
 	auto& enemyManager = EnemyManager::GetInstance();
 
-	if (!enemyManager.IsTheIntroDiveCompleted())
+	if (!enemyManager.IsTheIntroDiveCompleted() || currentScene->GetGameMode() != GameMode::Versus)
 		return;
 
 	// Find alien
@@ -51,7 +52,7 @@ void BossCommand::Execute(const int& dir)
 	enemyManager.SetVersusModeShootTimer(0.0f);
 
 	Vector2 pos = boss.lock()->GetComponent<TransformComponent>()->GetPosition();
-	Vector2 playerPos = SceneManager::GetInstance().GetCurrentScene()->GetPlayer(0)->GetComponent<TransformComponent>()->GetPosition();
+	Vector2 playerPos = currentScene->GetPlayer(0)->GetComponent<TransformComponent>()->GetPosition();
 
 	shootComp->DoubleFire((playerPos - pos).Normalize());
 

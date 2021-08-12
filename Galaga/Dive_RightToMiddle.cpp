@@ -76,7 +76,7 @@ void Dive_RightToMiddle::Enter()
 	SDL_Rect halfSize = { srcRect.x / 2,srcRect.y / 2,srcRect.w / 2,srcRect.h / 2 };
 	const SDL_Surface* surface = Minigin::GetWindowSurface();
 
-	const Vector2 destination = { float(surface->w * 0.75),float(surface->h * 0.8) };
+	const Vector2 destination = { float(surface->w * 0.75),float(surface->h * 0.7) };
 	const Vector2 direction = (destination - pos).Normalize();
 	m_pState = new DSS_MoveToPoint(m_pGameObject, destination, direction);
 }

@@ -110,16 +110,27 @@ bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> colliderA, st
 
 void BaseCollisionManager::RemoveCollidersByTag(const std::string& tag)
 {
-	for (size_t i = 0; i < m_pCollidersA.size(); i++)
+	for (size_t i = 0; i < m_pCollidersA.size();)
 	{
 		if (m_pCollidersA[i]->HasTag(tag))
+		{
 			m_pCollidersA.erase(m_pCollidersA.begin() + i);
+			i = 0;
+		}
+		else
+			++i;
 	}
-
-	for (size_t i = 0; i < m_pCollidersB.size(); i++)
+	
+	for (size_t i = 0; i < m_pCollidersB.size();)
 	{
 		if (m_pCollidersB[i]->HasTag(tag))
+		{
 			m_pCollidersB.erase(m_pCollidersB.begin() + i);
+			i = 0;
+		}
+		else
+			++i;
+
 	}
 }
 

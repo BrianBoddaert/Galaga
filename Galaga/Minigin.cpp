@@ -490,6 +490,10 @@ void Minigin::Run()
 
 		const auto currentTime = high_resolution_clock::now();
 		float deltaTime = duration<float>(currentTime - lastTime).count();
+
+		if (deltaTime > m_DeltaTimeCap)
+			deltaTime = m_DeltaTimeCap;
+
 		lastTime = currentTime;
 		lag += deltaTime;
 

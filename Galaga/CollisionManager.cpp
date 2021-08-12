@@ -32,6 +32,7 @@ bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playe
 
 
 		Minigin::GetInstance().IncreaseBulletsHit();
+
 		playersCollider->GetComponent<HealthComponent>()->Hit();
 		aliensCollider->GetComponent<HealthComponent>()->Hit();
 

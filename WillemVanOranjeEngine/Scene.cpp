@@ -87,19 +87,29 @@ std::shared_ptr<Willem::GameObject> Scene::GetCurrentMap() const
 }
 void Scene::RemoveObjectsByTag(const std::string &tag)
 {
-	for (size_t i = 0; i < m_pObjects.size(); i++)
+	for (size_t i = 0; i < m_pObjects.size();)
 	{
 		if (m_pObjects[i]->HasTag(tag))
+		{
 			m_pObjects.erase(m_pObjects.begin() + i);
+			i = 0;
+		}
+		else
+			++i;
 	}
 }
 
 void Scene::RemovePlayersByTag(const std::string& tag)
 {
-	for (size_t i = 0; i < m_pPlayers.size(); i++)
+	for (size_t i = 0; i < m_pPlayers.size();)
 	{
 		if (m_pPlayers[i]->HasTag(tag))
+		{
 			m_pPlayers.erase(m_pPlayers.begin() + i);
+			i = 0;
+		}
+		else
+			++i;
 	}
 }
 
