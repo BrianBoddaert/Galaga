@@ -35,6 +35,7 @@
 
 #include "SwitchGameModeCommand.h"
 #include "GameOverObserver.h"
+#include "BossCommand.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -107,6 +108,12 @@ void Minigin::AssignKeys()
 
 		//input.AssignControllerKey<PauseCommand>(ControllerButton::ButtonStart, i);
 		input.AssignControllerKey<SwitchGameModeCommand>(ControllerButton::TriggerRight, i);
+
+		input.AssignControllerKey<ShootCommand>(ControllerButton::ButtonA, i, 0);
+
+		input.AssignControllerKey<BossCommand>(ControllerButton::ButtonX, i, (int)BossMoves::Shoot);
+		input.AssignControllerKey<BossCommand>(ControllerButton::ButtonY, i, (int)BossMoves::Dive);
+		input.AssignControllerKey<BossCommand>(ControllerButton::ButtonB, i, (int)BossMoves::TractorBeam);
 	}
 
 	//input.AssignKeyboardKey<PauseCommand>(KeyboardButton::P);
@@ -144,7 +151,6 @@ void Minigin::LoadSinglePlayerScene() const
 	player->AddComponent(new HealthComponent(3));						
 	player->AddComponent(new ScoreComponent(0));
 
-	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 	player->AddWatcher(new ScoreObserver());
 	player->AddWatcher(new GameOverObserver());
 	player->AddTag("Player");
@@ -350,7 +356,7 @@ void Minigin::LoadVersusScene() const
 {
 	ServiceLocator::GetSoundSystem().QueueSound("StartGame", false, 0.1f);
 
-	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
+	auto& scene = SceneManager::GetInstance().CreateScene("VersusScene", (int)GameMode::Versus);
 	LoadHUD(scene);
 
 	auto player = std::make_shared<Willem::GameObject>("Player1");
@@ -371,7 +377,6 @@ void Minigin::LoadVersusScene() const
 	player->AddComponent(new HealthComponent(3));
 	player->AddComponent(new ScoreComponent(0));
 
-	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
 	player->AddWatcher(new ScoreObserver());
 	player->AddWatcher(new GameOverObserver());
 	player->AddTag("Player");

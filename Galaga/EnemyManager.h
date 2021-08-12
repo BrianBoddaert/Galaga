@@ -46,10 +46,15 @@ public:
 	Willem::Vector2 GetButterflyFormationPosition(const Willem::GameObject*) const;
 	Willem::Vector2 GetBossFormationPosition(const Willem::GameObject*) const;
 
-	std::shared_ptr<Willem::GameObject>  SpawnCapturedPlayer(const Willem::Vector2& pos, std::weak_ptr<Willem::GameObject> boss);
+	std::shared_ptr<Willem::GameObject> SpawnCapturedPlayer(const Willem::Vector2& pos, std::weak_ptr<Willem::GameObject> boss);
 
 	void Reset();
 	void SetEnabled(bool val) { m_Enabled = val; };
+	bool IsTheIntroDiveCompleted() const { return m_IntroDiveFormation == IntroDiveFormation::None; }
+	std::weak_ptr<Willem::GameObject> GetFirstBoss(bool&) const;
+
+	bool CanVersusModeBossFire() const { return m_VersusModeBossShootTimer > m_VersusModeBossShootInterval; }
+	void SetVersusModeShootTimer(float value) { m_VersusModeBossShootTimer = value; }
 private:
 	friend class Willem::Singleton<EnemyManager>;
 
@@ -68,7 +73,6 @@ private:
 	void SendAliensOnBombRuns(float deltaT);
 	void UpdateEnemiesList();
 	bool AreThereAnyBossesAlive() const;
-
 
 	std::map<std::pair<int,EnemyType>, std::weak_ptr<Willem::GameObject>> m_pEnemies;
 	// Enemy, Index
@@ -109,6 +113,9 @@ private:
 	const float m_MoveToSidesSpeed = 20.0f;
 
 	bool m_Enabled;
+
+	const float m_VersusModeBossShootInterval = 1.5f;
+	float m_VersusModeBossShootTimer = 0.0f;
 	
 };
 

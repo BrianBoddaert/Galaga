@@ -65,6 +65,9 @@ void EnemyManager::Update(float deltaT)
 	SpawnAliens(deltaT);
 	SendAliensOnBombRuns(deltaT);
 	MoveEnemiesFromLeftAndRight(deltaT);
+
+	m_VersusModeBossShootTimer += deltaT;
+
 }
 
 bool EnemyManager::AreAllEnemiesInFormation()
@@ -437,7 +440,6 @@ Vector2 EnemyManager::GetBossFormationPosition(const Willem::GameObject* go) con
 	return m_BossFormationLocations[index];
 }
 
-
 void EnemyManager::UpdateEnemiesList()
 {
 	std::map<std::pair<int, EnemyType>, std::weak_ptr<Willem::GameObject>>::iterator it;
@@ -476,7 +478,7 @@ void EnemyManager::SendAliensOnBombRuns(float)
 	bool foundBF1 = false;
 	bool foundBF2 = false;
 	bool foundBoss = false;
-
+	bool foundTheFirstBoss = false;
 	for (auto& pair : m_pEnemies)
 	{
 		Willem::GameObject* go = pair.second.lock().get();
@@ -503,26 +505,55 @@ void EnemyManager::SendAliensOnBombRuns(float)
 		}
 		else if (m_BombDiveStage == BombDiveStage::BossTractorBeam)
 		{
-			if (!foundBoss && pair.first.second == EnemyType::Boss && !pair.second.lock()->GetComponent<AIFlyComponent>()->HasCapturedPlayer() )
+			if (SceneManager::GetInstance().GetCurrentScene()->GetGameMode() == GameMode::Versus)
+			{
+			
+				if (!foundBoss && pair.first.second == EnemyType::Boss && !foundTheFirstBoss)
+				{
+					foundTheFirstBoss = true;
+				}
+				else if (!foundBoss && pair.first.second == EnemyType::Boss && !pair.second.lock()->GetComponent<AIFlyComponent>()->HasCapturedPlayer() && foundTheFirstBoss)
+				{
+					foundBoss = true;
+					/*flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));*/
+					flyComp->SetState(new BombRunState(go, new TractorBeamDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+				}
+			}
+			else if (!foundBoss && pair.first.second == EnemyType::Boss && !pair.second.lock()->GetComponent<AIFlyComponent>()->HasCapturedPlayer())
 			{
 				foundBoss = true;
 				/*flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));*/
 				flyComp->SetState(new BombRunState(go, new TractorBeamDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
 			}
+
 		}
 		else if (m_BombDiveStage == BombDiveStage::BossAndTwoButterflies)
 		{
 			if (!AreThereAnyBossesAlive())
 				return;
 
-			if (!foundBoss && pair.first.second == EnemyType::Boss)
+			if (SceneManager::GetInstance().GetCurrentScene()->GetGameMode() == GameMode::Versus)
 			{
-				
+				if (!foundBoss && pair.first.second == EnemyType::Boss && !foundTheFirstBoss)
+				{
+					foundTheFirstBoss = true;
+				}
+				else if (!foundBoss && foundTheFirstBoss && pair.first.second == EnemyType::Boss)
+				{
+
+					foundBoss = true;
+					flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
+
+				}
+			}
+			else if (!foundBoss && pair.first.second == EnemyType::Boss)
+			{
+
 				foundBoss = true;
 				flyComp->SetState(new BombRunState(go, new BossDive(go, transformComponent->GetPosition().x < (surface->w / 2))));
 
 			}
-			else if (!(foundBF1 && foundBF2)&& pair.first.second == EnemyType::Butterfly)
+			if (!(foundBF1 && foundBF2)&& pair.first.second == EnemyType::Butterfly)
 			{
 				if (foundBF1)
 					foundBF2 = true;
@@ -597,4 +628,19 @@ void EnemyManager::Reset()
 
 	m_Level = 0;
 	ResetAlienSpawns();
+}
+
+std::weak_ptr<Willem::GameObject> EnemyManager::GetFirstBoss(bool& found) const
+{
+	for (auto& pair : m_pEnemies)
+	{
+		if (pair.first.second == EnemyType::Boss)
+		{
+			found = true;
+			return pair.second;
+		}	
+	}
+
+	found = false;
+	return std::weak_ptr<Willem::GameObject>();
 }
