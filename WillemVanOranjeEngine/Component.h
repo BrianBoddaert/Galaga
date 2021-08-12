@@ -1,12 +1,12 @@
 #pragma once
 #pragma warning(push)
 #pragma warning (disable:4201)
-#include "GameObject.h"
 #include "Structs.h"
 #pragma warning(pop)
 
 namespace Willem
 {
+	class GameObject;
 	class Font;
 	class Texture2D;
 	class Component

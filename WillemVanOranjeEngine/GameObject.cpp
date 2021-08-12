@@ -103,7 +103,7 @@ void Willem::GameObject::AddWatcher(Observer* obs)
 	m_pActorChanged->AddObserver(obs);
 }
 
-void Willem::GameObject::Notify(const Event& event)
+void Willem::GameObject::Notify(const EVENT& event)
 {
 	m_pActorChanged->Notify(this,event);
 }

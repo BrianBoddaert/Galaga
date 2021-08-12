@@ -45,6 +45,7 @@ void ShootComponent::Fire(const Vector2& dir)
 	bullet->AddComponent(new HealthComponent(1,true));
 	bullet->AddTag("PlayerBullet");
 	bullet->AddTag("Bullet");
+	bullet->SetParent(SceneManager::GetInstance().GetCurrentScene()->GetObjectByObject(m_pGameObject));
 
 	CollisionManager::GetInstance().AddCollider(bullet);
 	SceneManager::GetInstance().GetCurrentScene()->Add(bullet);
@@ -71,6 +72,7 @@ void ShootComponent::Fire(const Vector2& dir)
 		bullet->AddComponent(new HealthComponent(1, true));
 		bullet->AddTag("AlienBullet");
 		bullet->AddTag("Bullet");
+		bullet->SetParent(SceneManager::GetInstance().GetCurrentScene()->GetObjectByObject(m_pGameObject));
 
 		CollisionManager::GetInstance().AddCollider(bullet);
 		SceneManager::GetInstance().GetCurrentScene()->Add(bullet);

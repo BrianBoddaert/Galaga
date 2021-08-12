@@ -1,6 +1,7 @@
 #include "RenderComponent.h"
 #include "Renderer.h"
 #include "TransformComponent.h"
+#include "GameObject.h"
 using namespace Willem;
 
 RenderComponent::RenderComponent(Texture2D* texture)
@@ -12,6 +13,7 @@ RenderComponent::RenderComponent(Texture2D* texture)
 
 RenderComponent::RenderComponent()
 	:m_SrcRect{ 0,0,0,0 }
+	,m_pTexture{ nullptr }
 	,m_SpritePixelSize{0,0}
 {
 }
@@ -24,6 +26,7 @@ RenderComponent::RenderComponent(const SDL_Rect& src)
 
 RenderComponent::~RenderComponent()
 {
+	if (m_pTexture)
 	delete m_pTexture;
 }
 
@@ -54,6 +57,9 @@ Texture2D* RenderComponent::GetTexture()
 
 void RenderComponent::SetTexture(Texture2D* texture)
 {
+	if (m_pTexture)
+		delete m_pTexture;
+
 	m_pTexture = texture;
 }
 

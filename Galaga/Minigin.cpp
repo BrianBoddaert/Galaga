@@ -30,6 +30,8 @@
 #include "EnemyManager.h"
 #include "ExplosionManager.h"
 #include "HealthComponent.h"
+#include "ScoreComponent.h"
+#include "ScoreObserver.h"
 
 #include "SwitchGameModeCommand.h"
 
@@ -121,7 +123,7 @@ void Minigin::LoadSinglePlayerScene() const
 	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
 	LoadHUD(scene);
 
-	auto player = std::make_shared<GameObject>("Player1");
+	auto player = std::make_shared<Willem::GameObject>("Player1");
 
 	SDL_Rect playerSrcRect = { 109,1,16,16 };
 
@@ -137,10 +139,10 @@ void Minigin::LoadSinglePlayerScene() const
 	player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
 	player->AddComponent(new ShootComponent());
 	player->AddComponent(new HealthComponent(3));						
-	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
+	player->AddComponent(new ScoreComponent(0));
 
 	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
-	//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+	player->AddWatcher(new ScoreObserver());
 	player->AddTag("Player");
 	player->AddTag("Player1");
 	CollisionManager::GetInstance().AddCollider(player);					
@@ -156,7 +158,7 @@ void Minigin::LoadCoOpScene() const
 	LoadHUD(scene);
 
 	{
-		auto player = std::make_shared<GameObject>("Player1");
+		auto player = std::make_shared<Willem::GameObject>("Player1");
 
 		SDL_Rect playerSrcRect = { 109,1,16,16 };
 
@@ -172,17 +174,17 @@ void Minigin::LoadCoOpScene() const
 		player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
 		player->AddComponent(new ShootComponent());
 		player->AddComponent(new HealthComponent(3));
-		//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
+		player->AddComponent(new ScoreComponent(0));
 
 		//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
-		//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+		player->AddWatcher(new ScoreObserver());
 		player->AddTag("Player");
 		player->AddTag("Player1");
 		CollisionManager::GetInstance().AddCollider(player);
 		scene.AddPlayer(player);
 	}
 	{
-		auto player = std::make_shared<GameObject>("Player2");
+		auto player = std::make_shared<Willem::GameObject>("Player2");
 
 		SDL_Rect playerSrcRect = { 109,1,16,16 };
 
@@ -198,14 +200,37 @@ void Minigin::LoadCoOpScene() const
 		player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
 		player->AddComponent(new ShootComponent());
 		player->AddComponent(new HealthComponent(3));
-		//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
+		player->AddComponent(new ScoreComponent(0));							
 
 		//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
-		//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+		player->AddWatcher(new ScoreObserver());				
 		player->AddTag("Player");
 		player->AddTag("Player2");
 		CollisionManager::GetInstance().AddCollider(player);
 		scene.AddPlayer(player);
+	}
+	
+	float player2HUDOffset = 100.0f;
+	{
+		auto twoUpHUD = std::make_shared<Willem::GameObject>("TwoUpHUD");
+		twoUpHUD->AddComponent(new TransformComponent({ float(m_WindowSurface->w - player2HUDOffset),5.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		twoUpHUD->AddComponent(new RenderComponent());
+		twoUpHUD->AddComponent(new Willem::TextComponent(twoUpHUD.get(), "2UP", font, { 255,0,0 }));
+
+		scene.Add(twoUpHUD);
+	}
+
+	{
+		auto scoreHUD2 = std::make_shared<Willem::GameObject>("ScoreHUD2");
+		scoreHUD2->AddComponent(new TransformComponent({ float(m_WindowSurface->w - player2HUDOffset),25.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		scoreHUD2->AddComponent(new RenderComponent());
+		scoreHUD2->AddComponent(new Willem::TextComponent(scoreHUD2.get(), "0", font, { 255,255,255 }));
+
+		scene.Add(scoreHUD2);
 	}
 }
 
@@ -216,7 +241,7 @@ void Minigin::LoadVersusScene() const
 	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
 	LoadHUD(scene);
 
-	auto player = std::make_shared<GameObject>("Player1");
+	auto player = std::make_shared<Willem::GameObject>("Player1");
 
 	SDL_Rect playerSrcRect = { 109,1,16,16 };
 
@@ -232,10 +257,10 @@ void Minigin::LoadVersusScene() const
 	player->AddComponent(new TransformComponent(playerPos, float(GAMESCALE)));
 	player->AddComponent(new ShootComponent());
 	player->AddComponent(new HealthComponent(3));
-	//player->AddComponent(new ScoreComponent(0));							<<< UNCOMMENT
+	player->AddComponent(new ScoreComponent(0));
 
 	//player->AddWatcher(new LivesObserver());								<<< UNCOMMENT
-	//player->AddWatcher(new ScoreObserver());								<<< UNCOMMENT
+	player->AddWatcher(new ScoreObserver());
 	player->AddTag("Player");
 	player->AddTag("Player1");
 	CollisionManager::GetInstance().AddCollider(player);
@@ -246,7 +271,7 @@ void Minigin::LoadHUD(Willem::Scene& scene) const
 {
 	// m_WindowSurface;
 	{
-		auto oneUpHUD = std::make_shared<GameObject>("OneUpHUD");
+		auto oneUpHUD = std::make_shared<Willem::GameObject>("OneUpHUD");
 		oneUpHUD->AddComponent(new TransformComponent({ 20,5.0f,10 }, 1.0f));
 
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
@@ -257,7 +282,7 @@ void Minigin::LoadHUD(Willem::Scene& scene) const
 	}
 
 	{
-		auto scoreHUD = std::make_shared<GameObject>("ScoreHUD");
+		auto scoreHUD = std::make_shared<Willem::GameObject>("ScoreHUD");
 		scoreHUD->AddComponent(new TransformComponent({ 20,25.0f,10 }, 1.0f));
 
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
@@ -268,7 +293,7 @@ void Minigin::LoadHUD(Willem::Scene& scene) const
 	}
 
 	{
-		auto lifeCounterOne = std::make_shared<GameObject>("LifeCounter1");
+		auto lifeCounterOne = std::make_shared<Willem::GameObject>("LifeCounter1");
 		const SDL_Rect srcRect = { 109,1,16,16 };
 		const float offset = 5.0f;
 		lifeCounterOne->AddComponent(new TransformComponent({ offset,float(m_WindowSurface->h - srcRect.h * GAMESCALE - offset),10 }, GAMESCALE));
@@ -277,7 +302,7 @@ void Minigin::LoadHUD(Willem::Scene& scene) const
 		scene.Add(lifeCounterOne);
 	}
 	{
-		auto lifeCounterTwo = std::make_shared<GameObject>("LifeCounter2");
+		auto lifeCounterTwo = std::make_shared<Willem::GameObject>("LifeCounter2");
 		const SDL_Rect srcRect = { 109,1,16,16 };
 		const float offset = 5.0f;
 		lifeCounterTwo->AddComponent(new TransformComponent({ offset + srcRect.w * GAMESCALE,float(m_WindowSurface->h - srcRect.h * GAMESCALE - offset),10 }, GAMESCALE));

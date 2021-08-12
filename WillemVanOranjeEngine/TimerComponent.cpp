@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TimerComponent.h"
+#include "GameObject.h"
 
 Willem::TimerComponent::TimerComponent()
 	:m_TimerDisabled{ 0 }

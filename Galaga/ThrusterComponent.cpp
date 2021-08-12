@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ThrusterComponent.h"
 #include "TransformComponent.h"
-
+#include "GameObject.h"
 using namespace Willem;
 
 const float ThrusterComponent::m_ProjectileSpeed{550};

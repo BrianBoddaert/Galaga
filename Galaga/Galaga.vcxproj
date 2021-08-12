@@ -183,6 +183,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="MoveCommand.cpp" />
+    <ClCompile Include="ScoreComponent.cpp" />
+    <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ShootCommand.cpp" />
     <ClCompile Include="ShootComponent.cpp" />
     <ClCompile Include="SpawnDiveState.cpp" />
@@ -216,6 +218,8 @@
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="MoveCommand.h" />
+    <ClInclude Include="ScoreComponent.h" />
+    <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ShootCommand.h" />
     <ClInclude Include="ShootComponent.h" />
     <ClInclude Include="SpawnDiveState.h" />

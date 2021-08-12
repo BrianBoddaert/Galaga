@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-
 namespace Willem
 {
 	class Observer
@@ -8,7 +7,7 @@ namespace Willem
 	public:
 
 		virtual ~Observer() = default;
-		virtual void OnNotify(const GameObject* actor, Event event) = 0;
+		virtual void OnNotify(const Willem::GameObject* actor, EVENT event) = 0;
 	};
 
 } 

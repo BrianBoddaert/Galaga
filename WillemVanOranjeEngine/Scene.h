@@ -44,7 +44,6 @@ namespace Willem
 		void ClearObjects();
 		const GameMode& GetGameMode() const { return m_GameMode; };
 		void SetGameModeToNext();
-		void SortOnZAxis();
 	private: 
 		explicit Scene(const std::string& name, const GameMode& gameMode);
 		GameMode m_GameMode;

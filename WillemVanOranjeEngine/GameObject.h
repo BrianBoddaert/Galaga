@@ -1,12 +1,12 @@
 #pragma once
 #include <iostream>
 #include "SceneObject.h"
-#include "Event.h"
 #include <vector>
 
 
 namespace Willem
 {
+#define EVENT std::string
 
 	class Observer;
 	class Subject;
@@ -25,7 +25,7 @@ namespace Willem
 		void AddWatcher(Observer*);
 
 		void SetEnabled(bool);
-		void Notify(const Event& event);
+		void Notify(const EVENT& event);
 
 		void SetParent(std::weak_ptr<GameObject> go) { m_pParent = go; };
 		std::weak_ptr<GameObject> GetParent() const {return m_pParent;};

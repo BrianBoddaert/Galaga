@@ -28,30 +28,6 @@ void Scene::Update(float deltaT)
 
 }
 
-bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
-{
-	auto aTransform = a->GetComponent<TransformComponent>();
-	auto bTransform = b->GetComponent<TransformComponent>();
-	float a_z;
-	float b_z;
-	if (aTransform)
-		a_z = aTransform->GetPosition().z;
-	else
-		a_z = 0.0;
-
-	if (bTransform)
-		b_z = bTransform->GetPosition().z;
-	else
-		b_z = 0.0;
-
-	return a_z < b_z;
-}
-
-void Scene::SortOnZAxis()
-{
-	std::sort(m_pObjects.begin(), m_pObjects.end(), CompareZAxis);
-}
-
 
 void Scene::Render() const
 {
@@ -71,7 +47,7 @@ const std::string& Scene::GetTag() const
 	return m_Name;
 }
 
-std::shared_ptr<GameObject> Scene::GetObjectByName(const std::string& name) const
+std::shared_ptr<Willem::GameObject> Scene::GetObjectByName(const std::string& name) const
 {
 	for (const auto& object : m_pObjects)
 	{
@@ -81,7 +57,7 @@ std::shared_ptr<GameObject> Scene::GetObjectByName(const std::string& name) cons
 	return nullptr;
 }
 
-std::shared_ptr<GameObject> Scene::GetObjectByObject(GameObject* go) const
+std::shared_ptr<Willem::GameObject> Scene::GetObjectByObject(GameObject* go) const
 {
 	for (const auto& object : m_pObjects)
 	{
@@ -96,7 +72,7 @@ void Scene::AddPlayer(const std::shared_ptr<GameObject>& player)
 	m_pObjects.push_back(player);
 }
 
-std::shared_ptr<GameObject> Scene::GetPlayer(int index) const
+std::shared_ptr<Willem::GameObject> Scene::GetPlayer(int index) const
 {
 	if (m_pPlayers.size() <= (unsigned)index)
 		return nullptr;
@@ -105,7 +81,7 @@ std::shared_ptr<GameObject> Scene::GetPlayer(int index) const
 }
 
 
-std::shared_ptr<GameObject> Scene::GetCurrentMap() const
+std::shared_ptr<Willem::GameObject> Scene::GetCurrentMap() const
 {
 	return m_pCurrentMap;
 }
@@ -158,7 +134,7 @@ void Scene::SetGameModeToNext()
 
 }
 
-std::vector<std::shared_ptr<GameObject>> Scene::GetObjectsByTag(const std::string& tag) const
+std::vector<std::shared_ptr<Willem::GameObject>> Scene::GetObjectsByTag(const std::string& tag) const
 {
 	std::vector<std::shared_ptr<GameObject>> objects;
 	for (size_t i = 0; i < m_pObjects.size(); i++)

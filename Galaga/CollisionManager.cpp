@@ -9,10 +9,21 @@
 #include "RenderComponent.h"
 #include "ShootComponent.h"
 
+#include "SceneManager.h"
+#include "Scene.h"
+#include "ScoreComponent.h"
+#include "AIFlyComponent.h"
+#include "FormationState.h"
+
 bool CollisionManager::CollisionEffect(std::shared_ptr<Willem::GameObject> playersCollider, std::shared_ptr<Willem::GameObject> aliensCollider) // Returns true when it 100% removes something from a list
 {
-	if (playersCollider->HasTag("PlayerBullet") && aliensCollider->HasTag("Alien") && !aliensCollider->HasTag("TractorBeam"))
+	if (playersCollider->HasTag("PlayerBullet") && !aliensCollider->HasTag("AlienBullet") && aliensCollider->HasTag("Alien") && !aliensCollider->HasTag("TractorBeam"))
 	{
+		if (aliensCollider->GetComponent<AIFlyComponent>()->CheckIfStateEqualsTemplate<FormationState>())
+			playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Formation");
+		else
+			playersCollider->GetParent().lock()->GetComponent<ScoreComponent>()->IncreaseScore(aliensCollider->GetName() + "Diving");
+
 		playersCollider->GetComponent<HealthComponent>()->Hit();
 		aliensCollider->GetComponent<HealthComponent>()->Hit();
 
