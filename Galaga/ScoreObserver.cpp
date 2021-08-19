@@ -10,7 +10,7 @@
 
 using namespace Willem;
 
-void ScoreObserver::OnNotify(const Willem::GameObject* actor, EVENT event)
+void ScoreObserver::OnNotify(const Willem::GameObject* actor, const EVENT& event)
 {
 	if (event == "BeeFormation" || event == "BeeDiving" || event == "ButterflyFormation" || event == "ButterflyDiving" || event == "BossFormation" || event == "BossDiving")
 		Unlock(actor, event);

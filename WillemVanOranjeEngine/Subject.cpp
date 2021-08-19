@@ -29,7 +29,7 @@ void Willem::Subject::RemoveObserver(Observer* observer)
 	}
 }
 
-void Willem::Subject::Notify(const Willem::GameObject* actor, EVENT event)
+void Willem::Subject::Notify(const Willem::GameObject* actor, const EVENT& event)
 {
 	for (size_t i = 0; i < m_pObservers.size(); i++)
 		m_pObservers[i]->OnNotify(actor, event);

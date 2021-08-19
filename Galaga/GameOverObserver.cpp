@@ -12,7 +12,7 @@
 
 using namespace Willem;
 
-void GameOverObserver::OnNotify(const Willem::GameObject* actor, EVENT event)
+void GameOverObserver::OnNotify(const Willem::GameObject* actor, const EVENT& event)
 {
 	if (event == "PlayerDied")
 		Unlock(actor, event);

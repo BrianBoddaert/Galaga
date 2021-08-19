@@ -237,7 +237,7 @@ void Minigin::LoadGameOverScreen(const Willem::GameMode& gameMode) const
 		if (AmountOfBulletsFired > 0)
 			hitMissRat = "%" + std::to_string(int(AmountOfBulletsHit * 100 / AmountOfBulletsFired));
 		else
-			hitMissRat = "%" + std::to_string(0);
+			hitMissRat = "%" + std::to_string(100);
 
 
 		auto font2 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);

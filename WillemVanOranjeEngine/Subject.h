@@ -18,7 +18,7 @@ namespace Willem
 			void AddObserver(Observer* observer);
 			void RemoveObserver(Observer* observer);
 
-			void Notify(const GameObject* actor, EVENT event);			
+			void Notify(const GameObject* actor, const EVENT& event);			
 
 		private:
 			std::vector<Observer*> m_pObservers;

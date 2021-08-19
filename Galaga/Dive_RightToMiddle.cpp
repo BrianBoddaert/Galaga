@@ -63,7 +63,6 @@ void Dive_RightToMiddle::Update(float deltaT)
 		break;
 		}
 
-
 		m_DiveProcess++;
 	}
 }
