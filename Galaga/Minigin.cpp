@@ -36,6 +36,7 @@
 #include "SwitchGameModeCommand.h"
 #include "GameOverObserver.h"
 #include "BossCommand.h"
+#include "BackgroundComponent.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -387,6 +388,26 @@ void Minigin::LoadVersusScene() const
 
 void Minigin::LoadHUD(Willem::Scene& scene) const
 {
+	{
+		auto backgroundHUD = std::make_shared<Willem::GameObject>("BackgroundHUD1");
+		backgroundHUD->AddComponent(new TransformComponent({ 0,0,0 },0.35f));
+
+		const SDL_Rect srcRect = { 0,0,2048,2048 };
+		backgroundHUD->AddComponent(new BackgroundComponent());
+		backgroundHUD->AddComponent(new RenderComponent(srcRect));
+		backgroundHUD->SetTexture("Background.png");
+		scene.Add(backgroundHUD);
+	}
+	{
+		auto backgroundHUD = std::make_shared<Willem::GameObject>("BackgroundHUD2");
+		backgroundHUD->AddComponent(new TransformComponent({ 0,-2048 * 0.35f,0 }, 0.35f));
+
+		const SDL_Rect srcRect = { 0,0,2048,2048 };
+		backgroundHUD->AddComponent(new BackgroundComponent());
+		backgroundHUD->AddComponent(new RenderComponent(srcRect));
+		backgroundHUD->SetTexture("Background.png");
+		scene.Add(backgroundHUD);
+	}
 	{
 		auto oneUpHUD = std::make_shared<Willem::GameObject>("OneUpHUD");
 		oneUpHUD->AddComponent(new TransformComponent({ 20,5.0f,10 }, 1.0f));

@@ -138,6 +138,9 @@
     <ClCompile Include="BossCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="BackgroundComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="BossCommand.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
