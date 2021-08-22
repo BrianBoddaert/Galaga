@@ -16,7 +16,11 @@ namespace Willem
 
 
 
-		Vector3() {};
+		Vector3()
+		:x{ 0 }
+		, y{ 0 }
+			, z{ 0 }
+		{};
 		float x, y, z;
 
 		Vector3 operator+=(const Vector3& b);
@@ -35,7 +39,10 @@ namespace Willem
 			, y{ v.y }
 		{}
 
-		Vector2() {};
+		Vector2()
+			:x{0}
+			,y{0}
+		{};
 
 		Vector2 Normalize() const
 		{
