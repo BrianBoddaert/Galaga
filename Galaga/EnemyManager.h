@@ -33,7 +33,7 @@ enum class EnemyType
 	CapturedPlayer
 };
 
-class EnemyManager : public Willem::Singleton<EnemyManager>
+class EnemyManager final : public Willem::Singleton<EnemyManager>
 	// Also serves as a formation manager
 {
 public:

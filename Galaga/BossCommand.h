@@ -8,7 +8,7 @@ enum class BossMoves
 	TractorBeam
 };
 
-class BossCommand : public Willem::Command
+class BossCommand final : public Willem::Command
 {
 public:
 	BossCommand(int controllerIndex) : Willem::Command(controllerIndex) {};

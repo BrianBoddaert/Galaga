@@ -3,7 +3,7 @@
 #include "Structs.h"
 #include <vector>
 #include <string>
-class TxtParser : public Willem::Singleton<TxtParser>
+class TxtParser final : public Willem::Singleton<TxtParser>
 {
 public:
 

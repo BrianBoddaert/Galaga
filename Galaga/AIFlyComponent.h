@@ -10,7 +10,7 @@ class SpawnDiveState;
 class GameObject;
 
 
-class AIFlyComponent : public Willem::Component
+class AIFlyComponent final : public Willem::Component
 {
 public:
 	AIFlyComponent(Willem::GameObject* gameObject, SpawnDiveState* state, int srcRectYPos);

@@ -1,7 +1,7 @@
 #pragma once
 #include <Command.h>
 
-class ShootCommand :
+class ShootCommand final :
     public Willem::Command
 {
  public:

@@ -1,6 +1,6 @@
 #pragma once
 #include <Component.h>
-class ThrusterComponent :
+class ThrusterComponent final :
     public Willem::Component
 {
 public:

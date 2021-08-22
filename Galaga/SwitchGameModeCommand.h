@@ -1,7 +1,7 @@
 #pragma once
 #include "Command.h"
 
-class SwitchGameModeCommand : public Willem::Command
+class SwitchGameModeCommand final : public Willem::Command
 {
 public:
 	SwitchGameModeCommand(int controllerIndex) : Willem::Command(controllerIndex) {};

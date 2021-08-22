@@ -2,7 +2,7 @@
 #include <Component.h>
 #include "GameObject.h"
 #include "Structs.h"
-class ShootComponent :
+class ShootComponent final:
     public Willem::Component
 {
 public:

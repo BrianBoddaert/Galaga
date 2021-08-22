@@ -8,7 +8,7 @@ enum class MoveInputDirections
 	Count
 };
 
-class MoveCommand : public Willem::Command
+class MoveCommand final : public Willem::Command
 {
 public:
 	MoveCommand(int controllerIndex) : Willem::Command(controllerIndex) {};

@@ -6,7 +6,7 @@
 #include <memory>
 
 
-class ControlComponent :
+class ControlComponent final :
 	public Willem::Component
 {
 public:

@@ -44,14 +44,14 @@ Willem::Vector2 BossDive::GetClosestPlayerPos() const
 	float closestDistance = FLT_MAX;
 	int closestPlayerIndex = -1;
 
-	for (int i = 0; i < players.size(); i++)
+	for (size_t i = 0; i < players.size(); i++)
 	{
 		const Vector2 playerPos = players[i]->GetComponent<TransformComponent>()->GetPosition();
 		const float distance = (playerPos - alienPos).Magnitude();
 		if (distance < closestDistance)
 		{
 			closestDistance = distance;
-			closestPlayerIndex = i;
+			closestPlayerIndex = int(i);
 		}
 	}
 

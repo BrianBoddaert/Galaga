@@ -1,6 +1,6 @@
 #pragma once
 #include <Component.h>
-class HealthComponent :
+class HealthComponent final :
     public Willem::Component
 {
 public:

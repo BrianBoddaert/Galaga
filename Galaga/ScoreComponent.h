@@ -3,7 +3,7 @@
 #include "GameObject.h"
 
 class TextComponent;
-class ScoreComponent : public Willem::Component
+class ScoreComponent final : public Willem::Component
 {
 public:
 	ScoreComponent(const unsigned int& score);

@@ -1,7 +1,7 @@
 #pragma once
 #include <Component.h>
 
-class BackgroundComponent :
+class BackgroundComponent final :
 	public Willem::Component
 {
 public:
